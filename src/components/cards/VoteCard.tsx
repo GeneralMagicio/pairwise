@@ -13,8 +13,8 @@ export const VoteCard: FC<IVoteCard> = ({
   return (
     <div
       className={classNames(
-        'p-6 rounded-2xl border shadow-lg hover:scale-105 duration-100',
-        isSelected ? 'bg-green-300 scale-105' : 'bg-gray-200'
+        'p-6 rounded-2xl border shadow-lg hover:scale-102 duration-100',
+        isSelected ? 'bg-green-300 scale-102' : 'bg-gray-200'
       )}
     >
       {children}

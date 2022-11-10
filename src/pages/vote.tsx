@@ -1,6 +1,7 @@
 import { GetStaticProps } from 'next'
 import { useState } from 'react'
 import classNames from 'classnames'
+import axios from 'axios'
 import { VotePair } from '@/components/vote/VotePair'
 import { Project } from '@/types/project'
 
@@ -60,7 +61,8 @@ We are urgently raising funds for the support of the Ukrainian people - supporti
 
   return {
     props: {
-      pairs: projectsCombination
+      pairs: projectsCombination,
+      projects
     }
   }
 }
@@ -71,9 +73,10 @@ interface VotePair {
 
 interface IVote {
   pairs: Array<VotePair>
+  projects: Array<Project>
 }
 
-const Vote = ({ pairs }: IVote) => {
+const Vote = ({ pairs, projects }: IVote) => {
   const [pagination, setPagination] = useState<number>(0)
   const [votes, setVotes] = useState(Array(pairs.length).fill(''))
   const { alpha, beta } = pairs[pagination]
@@ -83,8 +86,27 @@ const Vote = ({ pairs }: IVote) => {
       if (index === pagination) return newVote
       return vote
     })
-
     setVotes(nextVotes)
+  }
+
+  const handleSubmit = async () => {
+    const finalVotes = votes.map((selection: string, index: number) => {
+      return {
+        alpha: pairs[index].alpha.id,
+        beta: pairs[index].beta.id,
+        preference: selection === 'alpha' ? 1 : 0
+      }
+    })
+    const projectIds = projects.map((project: Project) => project.id)
+
+    const response = await axios.post('/api/ranking', {
+      projects: projectIds,
+      votes: finalVotes
+    })
+    const { data, status } = response
+    if (status === 200) {
+      console.log(data)
+    }
   }
 
   return (
@@ -127,6 +149,7 @@ const Vote = ({ pairs }: IVote) => {
           'mt-2 px-8 py-4 w-30 text-center rounded-lg text-xl bg-blue-500 text-white font-semibold cursor-pointer',
           pagination !== pairs.length - 1 ? 'invisible' : ''
         )}
+        onClick={handleSubmit}
       >
         Vote
       </div>
