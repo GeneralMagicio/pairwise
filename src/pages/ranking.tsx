@@ -24,12 +24,14 @@ interface Ranking {
 
 export const getServerSideProps: GetServerSideProps = async () => {
   const { data: projectsData } = await graphqlClient.query({
-    query: GET_ALL_PROJECTS
+    query: GET_ALL_PROJECTS,
+    fetchPolicy: 'network-only'
   })
 
   const projects = [...projectsData?.projects]
   const { data: votesData } = await graphqlClient.query({
-    query: GET_ALL_VOTES
+    query: GET_ALL_VOTES,
+    fetchPolicy: 'network-only'
   })
   const votes = votesData.votes
   const formattedVotes: Array<Preference> = []
