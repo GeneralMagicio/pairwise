@@ -1,23 +1,35 @@
+/* eslint @typescript-eslint/no-var-requires: "off" */
 const linAlg = require('linear-algebra')()
+
+interface Preference {
+  alpha: string
+  beta: string
+  preference: number
+}
 
 export class PowerRanker {
   items // Set({ id })
   matrix // linAlg.Matrix
   verbose // bool
 
-  constructor(items, preferences, numResidents, verbose = false) {
+  constructor(
+    items: Set<string>,
+    preferences: Array<Preference>,
+    numResidents: number,
+    verbose = false
+  ) {
     if (items.size < 2) {
       throw new Error('PowerRanker: Cannot rank less than two items')
     }
 
     this.items = items
-    this.matrix = this.toMatrix(this.items, preferences, numResidents)
+    this.matrix = this.toMatrix(this.items, preferences)
     this.verbose = verbose
 
     this.log('Matrix initialized')
   }
 
-  log(msg) {
+  log(msg: string) {
     /* istanbul ignore next */
     if (this.verbose) {
       console.log(msg)
@@ -30,8 +42,8 @@ export class PowerRanker {
   }
 
   // O(items)
-  applyLabels(items, eigenvector) {
-    const itemMap = this.#toitemMap(items)
+  applyLabels(items: Set<string>, eigenvector: Array<number>) {
+    const itemMap = this.toitemMap(items)
     if (itemMap.size !== eigenvector.length) {
       throw new Error('Mismatched arguments!')
     }
@@ -40,10 +52,10 @@ export class PowerRanker {
   }
 
   // O(preferences)
-  toMatrix(items, preferences, numResidents) {
+  toMatrix(items: Set<string>, preferences: Array<Preference>) {
     // [{ alpha, beta, preference }]
     const n = items.size
-    const itemMap = this.#toitemMap(items)
+    const itemMap = this.toitemMap(items)
 
     // Initialise the matrix with (implicit) neutral preferences
     const matrix = linAlg.Matrix.zero(n, n)
@@ -54,9 +66,9 @@ export class PowerRanker {
     // Add the preferences to the off-diagonals, removing the implicit neutral preference of 0.5
     // Recall that preference > 0.5 is flow towards, preference < 0.5 is flow away
 
-    preferences.forEach((p) => {
-      const alphaIx = itemMap.get(p.alpha)
-      const betaIx = itemMap.get(p.beta)
+    preferences.forEach((p: Preference) => {
+      const alphaIx: number = itemMap.get(p.alpha) || 0
+      const betaIx: number = itemMap.get(p.beta) || 0
       if (p.preference === 0) {
         matrix.data[alphaIx][betaIx] += 1 - p.preference
       } else if (p.preference === 1) {
@@ -64,15 +76,21 @@ export class PowerRanker {
       }
       // matrix.data[alphaIx][betaIx] += 1 - p.preference;
     })
-    console.log(matrix)
 
     // Add the diagonals (sums of columns)
-    this.#sumColumns(matrix).map((sum, ix) => (matrix.data[ix][ix] = sum)) // eslint-disable-line no-return-assign
+    this.sumColumns(matrix).map(
+      (sum: number, ix: number) => (matrix.data[ix][ix] = sum)
+    ) // eslint-disable-line no-return-assign
     return matrix
   }
 
   // O(n^3)-ish
-  powerMethod(matrix, d = 1, epsilon = 0.001, nIter = 1000) {
+  powerMethod(
+    matrix: typeof linAlg.Matrix,
+    d = 1,
+    epsilon = 0.001,
+    nIter = 1000
+  ) {
     if (matrix.rows !== matrix.cols) {
       throw new Error('Matrix must be square!')
     }
@@ -80,9 +98,9 @@ export class PowerRanker {
 
     // Normalize matrix
     matrix = matrix.clone() // Make a copy for safety
-    matrix.data = matrix.data.map((row) => {
-      const rowSum = this.#sum(row)
-      return row.map((x) => x / rowSum)
+    matrix.data = matrix.data.map((row: Array<number>) => {
+      const rowSum = this.sum(row)
+      return row.map((x: number) => x / rowSum)
     })
 
     // Add damping factor
@@ -94,37 +112,38 @@ export class PowerRanker {
 
     // Power method
     let prev = eigenvector
-    for (var i = 0; i < nIter; i++) {
+    for (let i = 0; i < nIter; i++) {
       // eslint-disable-line no-var
       eigenvector = prev.dot(matrix)
-      if (this.#norm(eigenvector.minus(prev).data[0]) < epsilon) break
+      if (this.norm(eigenvector.minus(prev).data[0]) < epsilon) break
       prev = eigenvector
     }
 
-    this.log(`Eigenvector convergence after ${i} iterations`)
     return eigenvector.data[0]
   }
 
   // Internal
 
-  #toitemMap(items) {
+  toitemMap(items: Set<string>) {
     // { id }
     return new Map(
       Array.from(items)
-        .sort((a, b) => a - b) // Javascript is the worst
+        // .sort((a, b) => {
+        //   return a - b
+        // }) // Javascript is the worst
         .map((item, ix) => [item, ix]) // ItemName -> MatrixIdx
     )
   }
 
-  #norm(array) {
-    return Math.sqrt(this.#sum(array.map((x) => x * x)))
+  norm(array: Array<number>) {
+    return Math.sqrt(this.sum(array.map((x: number) => x * x)))
   }
 
-  #sum(array) {
-    return array.reduce((sumSoFar, val) => sumSoFar + val, 0)
+  sum(array: Array<number>) {
+    return array.reduce((sumSoFar: number, val: number) => sumSoFar + val, 0)
   }
 
-  #sumColumns(matrix) {
-    return matrix.trans().data.map((col) => this.#sum(col))
+  sumColumns(matrix: typeof linAlg.Matrix) {
+    return matrix.trans().data.map((col: Array<number>) => this.sum(col))
   }
 }

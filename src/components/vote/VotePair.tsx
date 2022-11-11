@@ -22,6 +22,7 @@ export const VotePair: FC<IVotePair> = ({
         <VoteCard isSelected={selected === 'alpha'}>
           <ProjectCard
             description={alpha.description}
+            id={alpha.id}
             image={alpha.image}
             owner={alpha.owner}
             title={alpha.title}
@@ -33,6 +34,7 @@ export const VotePair: FC<IVotePair> = ({
         <VoteCard isSelected={selected === 'beta'}>
           <ProjectCard
             description={beta.description}
+            id={beta.id}
             image={beta.image}
             owner={beta.owner}
             title={beta.title}

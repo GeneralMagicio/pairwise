@@ -1,52 +1,17 @@
-import { GetStaticProps } from 'next'
+import { GetServerSideProps } from 'next'
 import { useState } from 'react'
 import classNames from 'classnames'
 import axios from 'axios'
 import { VotePair } from '@/components/vote/VotePair'
 import { Project } from '@/types/project'
+import { graphqlClient } from '@/graphql/clients/client'
+import { GET_ALL_PROJECTS } from '@/graphql/queries/getAllProjects'
 
-export const getStaticProps: GetStaticProps = async () => {
-  const projects: Array<Project> = [
-    {
-      id: 'a',
-      title: 'Bridging Digital Communities',
-      url: 'https://giveth.io/project/bridging-digital-communities',
-      owner: 'Kay @geleeroyale',
-      description:
-        'I run a bridge server for chats (Discord, Telegram, Riot, ...) and am actively engaging communities connected to the Ethereum space. Especially with the advent of newDAOs my services are being requested on a regular basis. Most requested at the moment is bridging between community servers on Discord (both communities get to share a room), whereas before it was mostly mirroring rooms between different protocols. Once a bridge is up, it still needs to be maintained and I regularly check that everything is in working order.',
-      image:
-        'https://giveth.io/_next/image?url=https%3A%2F%2Fgiveth.mypinata.cloud%2Fipfs%2FQmNbtiT1JRENpxBbQqQ39Dgzp3NteQeKpXGE9QijpPpM7K&w=1920&q=75'
-    },
-    {
-      id: 'b',
-      title: 'Diamante Bridge Collective',
-      url: 'https://giveth.io/project/diamante-bridge-collective-0',
-      owner: 'Diamante Bridge Collective',
-      description: `The Diamante Bridge Collective (DBC) is a network of land stewards, individuals, organizations and communities located primarily within the Diamante Valley of Costa Rica, expanding to include those from the greater Southern Zone of Costa Rica, and those abroad.
-The DBC functions as a hub of many physical nodes, connected via global networks of shared vision and mission with the goal of restoring, preserving and consciously stewarding surrounding lands and watersheds while living harmoniously within them in alignment with our planetary values.`,
-      image:
-        'https://giveth.io/_next/image?url=https%3A%2F%2Fgiveth.mypinata.cloud%2Fipfs%2FQmajCgweP9g2o4sGmrzioh3KHyBXTdY9rYmg31h2pzUsZb&w=1920&q=75'
-    },
-    {
-      id: 'c',
-      title: 'Unchain Fund',
-      url: 'https://giveth.io/project/unchain-fund',
-      owner: 'Alex Casas',
-      description: `With your support we can quickly raise and distribute money to the people of Ukraine – to where they need it the most.
-We are urgently raising funds for the support of the Ukrainian people - supporting effective NGO's doing work on the ground right now.`,
-      image:
-        'https://giveth.io/_next/image?url=https%3A%2F%2Fgiveth.mypinata.cloud%2Fipfs%2FQmTBRjvMzeZdo32Pp9EKhF2AQjZx2AcM53JNFqLwTW2ttf&w=1920&q=75'
-    },
-    {
-      id: 'd',
-      title: 'Diamante Luz Center for Regenerative Living',
-      url: 'https://giveth.io/project/Diamante-Luz-Center-for-Regenerative-Living-0',
-      owner: 'Diamante Luz',
-      description: `Diamante Luz is a space for integrated collaboration and cooperation with nature. Our residents, neighbors, and visitors have been drawn to the area in order to co-create a space for living and working in balance with all of our relations.`,
-      image:
-        'https://giveth.io/_next/image?url=https%3A%2F%2Fgiveth.mypinata.cloud%2Fipfs%2FQmXoqPYCRgu8ZJuVXPpLnGN9dvh3TGtBxRVCwjCBCHiG4u&w=1920&q=75'
-    }
-  ]
+export const getServerSideProps: GetServerSideProps = async () => {
+  const { data } = await graphqlClient.query({
+    query: GET_ALL_PROJECTS
+  })
+  const projects: Array<Project> = data?.projects
 
   const projectsCombination = projects
     .flatMap((a, i) =>
@@ -57,8 +22,6 @@ We are urgently raising funds for the support of the Ukrainian people - supporti
     )
     .sort(() => 0.5 - Math.random())
 
-  console.log(projectsCombination)
-
   return {
     props: {
       pairs: projectsCombination,
@@ -66,6 +29,7 @@ We are urgently raising funds for the support of the Ukrainian people - supporti
     }
   }
 }
+
 interface VotePair {
   alpha: Project
   beta: Project
@@ -97,8 +61,14 @@ const Vote = ({ pairs, projects }: IVote) => {
         preference: selection === 'alpha' ? 1 : 0
       }
     })
-    const projectIds = projects.map((project: Project) => project.id)
+    await axios.post('/api/vote/insert', {
+      vote: {
+        voter: '0x62Fa674C88351866aD3385c265613EC45FEd571d',
+        preferences: finalVotes
+      }
+    })
 
+    const projectIds = projects.map((project: Project) => project.id)
     const response = await axios.post('/api/ranking', {
       projects: projectIds,
       votes: finalVotes
