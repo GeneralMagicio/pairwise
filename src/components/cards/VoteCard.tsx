@@ -6,10 +6,7 @@ interface IVoteCard {
   isSelected: boolean
 }
 
-export const VoteCard: FC<IVoteCard> = ({
-  children,
-  isSelected
-}: IVoteCard) => {
+export const VoteCard: FC<IVoteCard> = ({ children, isSelected }) => {
   return (
     <div
       className={classNames(

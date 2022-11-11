@@ -10,7 +10,7 @@ export const RankingCard: FC<Project> = ({
   owner,
   description,
   image
-}: Project) => {
+}) => {
   return (
     <div className="w-[1200px] max-w-full h-[250px] p-4 flex bg-gray-200 border-gray-300 rounded-xl shadow-lg overflow-hidden hover:scale-102 duration-100 cursor-default">
       <div className="w-[150px] rounded-xl flex items-center justify-center bg-gray-100 text-3xl text-semibold">

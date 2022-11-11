@@ -9,7 +9,7 @@ export const ProjectCard: FC<Project> = ({
   owner,
   description,
   image
-}: Project) => {
+}) => {
   return (
     <div className="w-[400px] bg-white pb-4 border-gray-300 rounded-xl shadow overflow-hidden">
       <div className="relative h-[220px] w-[400px] drop-shadow">
