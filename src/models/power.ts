@@ -69,8 +69,8 @@ export class PowerRanker {
     preferences.forEach((p: Preference) => {
       const alphaIx: number = itemMap.get(p.alpha) || 0
       const betaIx: number = itemMap.get(p.beta) || 0
-      if (p.preference === 0) {
-        matrix.data[alphaIx][betaIx] += 1 - p.preference
+      if (p.preference === -1) {
+        matrix.data[alphaIx][betaIx] -= p.preference
       } else if (p.preference === 1) {
         matrix.data[betaIx][alphaIx] += p.preference
       }

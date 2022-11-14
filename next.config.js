@@ -9,6 +9,12 @@ const nextConfig = {
         hostname: 'giveth.io',
         port: '',
         pathname: '/**'
+      },
+      {
+        protocol: 'https',
+        hostname: 'user-images.githubusercontent.com',
+        port: '',
+        pathname: '/**'
       }
     ]
   }

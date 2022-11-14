@@ -17,7 +17,7 @@ export const VotePair: FC<IVotePair> = ({
   handleVote
 }) => {
   return (
-    <div className="w-[1200px] px-20 flex items-center justify-between">
+    <div className="w-[1200px] px-20 flex items-center justify-between cursor-pointer">
       <div onClick={() => handleVote('alpha')}>
         <VoteCard isSelected={selected === 'alpha'}>
           <ProjectCard
