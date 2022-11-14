@@ -96,7 +96,7 @@ const Vote = ({ pairs, projects }: IVote) => {
   }
 
   return (
-    <div className="h-screen w-screen flex flex-col border items-center justify-center">
+    <div className="h-screen bg-gray-50 flex flex-col border items-center justify-center">
       <VotePair
         alpha={alpha}
         beta={beta}
