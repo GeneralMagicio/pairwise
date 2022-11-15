@@ -40,7 +40,7 @@ export default function Home({ budgetBoxes }: IHome) {
         <link href="/favicon.ico" rel="icon" />
       </Head>
 
-      <main className="h-full px-14 bg-gray-50">
+      <main className="h-screen px-14 bg-gray-50">
         <div className="pt-40 grid grid-cols-4 gap-y-8 justify-items-center ">
           {budgetBoxes.map((budgetBox: BudgetBox) => (
             <BudgetBoxCard key={budgetBox.id} budgetBox={budgetBox} />

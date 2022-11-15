@@ -1,20 +1,21 @@
 import { GetServerSideProps } from 'next'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import classNames from 'classnames'
 import axios from 'axios'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
+import { useAccount } from 'wagmi'
 import { VotePair } from '@/components/vote/VotePair'
 import { Project } from '@/types/project'
 import { graphqlClient } from '@/graphql/clients/client'
-import { GET_PROJECTS_FROM_BUDGET_BOX } from '@/graphql/queries/project'
+import { GET_ALLOWLIST_AND_PROJECTS_FROM_BUDGET_BOX } from '@/graphql/queries/project'
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { params } = context
   const budgetBoxId = params?.id
 
   const { data } = await graphqlClient.query({
-    query: GET_PROJECTS_FROM_BUDGET_BOX,
+    query: GET_ALLOWLIST_AND_PROJECTS_FROM_BUDGET_BOX,
     variables: {
       data: { id: budgetBoxId }
     },
@@ -22,6 +23,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   })
 
   const projects: Array<Project> = data?.budgetBox?.projects
+  const allowlist: Array<string> = data?.budgetBox?.allowlist
 
   const projectsCombination = projects
     .flatMap((a, i) =>
@@ -35,7 +37,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   return {
     props: {
       pairs: projectsCombination,
-      projects
+      projects,
+      allowlist
     }
   }
 }
@@ -48,17 +51,21 @@ interface VotePair {
 interface IVote {
   pairs: Array<VotePair>
   projects: Array<Project>
+  allowlist: Array<string>
 }
 
-const Vote = ({ pairs, projects }: IVote) => {
+const Vote = ({ pairs, projects, allowlist }: IVote) => {
   const [pagination, setPagination] = useState<number>(0)
   const [votes, setVotes] = useState<Array<string>>(
     Array(pairs.length).fill('')
   )
   const [voted, setVoted] = useState<boolean>(false)
+  const [isConnected, setIsConnected] = useState<boolean>(false)
+  const [isValidAddress, setIsValidAddress] = useState<boolean>(false)
   const { alpha, beta } = pairs[pagination]
   const router = useRouter()
   const { id: budgetBoxId } = router.query
+  const { address } = useAccount()
 
   const handleVote = (newVote: string) => {
     const nextVotes = votes.map((vote: string, index: number) => {
@@ -79,7 +86,7 @@ const Vote = ({ pairs, projects }: IVote) => {
 
     await axios.post('/api/vote/insert', {
       vote: {
-        voter: '0x62Fa674C88351866aD3385c265613EC45FEd571d',
+        voter: address,
         preferences: finalVotes,
         budgetBox: {
           link: budgetBoxId
@@ -95,62 +102,75 @@ const Vote = ({ pairs, projects }: IVote) => {
     setVoted(true)
   }
 
+  useEffect(() => {
+    setIsConnected(!!address)
+    setIsValidAddress(allowlist.includes(address as `0x${string}`))
+  }, [address, allowlist])
+
   return (
     <div className="h-screen bg-gray-50 flex flex-col border items-center justify-center">
-      <VotePair
-        alpha={alpha}
-        beta={beta}
-        handleVote={handleVote}
-        selected={votes[pagination]}
-      />
-      <div className="mt-6 py-2 w-44 flex gap-x-4">
-        <div
-          className={classNames(
-            ' px-4 py-2 w-20 text-center rounded-lg text-lg bg-gray-400 text-white font-semibold cursor-pointer',
-            pagination === 0 ? 'invisible' : ''
-          )}
-          onClick={() =>
-            setPagination((prevState) => Math.max(prevState - 1, 0))
-          }
-        >
-          Back
-        </div>
+      {isValidAddress ? (
+        <>
+          <VotePair
+            alpha={alpha}
+            beta={beta}
+            handleVote={handleVote}
+            selected={votes[pagination]}
+          />
+          <div className="mt-6 py-2 w-44 flex gap-x-4">
+            <div
+              className={classNames(
+                'px-4 py-2 w-20 text-center rounded-lg text-lg bg-gray-400 text-white font-semibold cursor-pointer',
+                pagination === 0 ? 'invisible' : ''
+              )}
+              onClick={() =>
+                setPagination((prevState) => Math.max(prevState - 1, 0))
+              }
+            >
+              Back
+            </div>
 
-        <div
-          className={classNames(
-            'px-4 py-2 w-20 text-center rounded-lg text-lg bg-blue-500 text-white font-semibold cursor-pointer',
-            pagination === pairs.length - 1 ? 'invisible' : ''
-          )}
-          onClick={() =>
-            setPagination((prevState) =>
-              Math.min(prevState + 1, pairs.length - 1)
-            )
-          }
-        >
-          Next
-        </div>
-      </div>
-      {voted ? (
-        <Link href={`/ranking/${budgetBoxId}`}>
-          <div
-            className={classNames(
-              'mt-2 px-8 py-4 text-center rounded-lg text-xl bg-blue-500 text-white font-semibold cursor-pointer',
-              pagination !== pairs.length - 1 ? 'invisible' : ''
-            )}
-          >
-            See results
+            <div
+              className={classNames(
+                'px-4 py-2 w-20 text-center rounded-lg text-lg bg-blue-500 text-white font-semibold cursor-pointer',
+                pagination === pairs.length - 1 ? 'invisible' : ''
+              )}
+              onClick={() =>
+                setPagination((prevState) =>
+                  Math.min(prevState + 1, pairs.length - 1)
+                )
+              }
+            >
+              Next
+            </div>
           </div>
-        </Link>
-      ) : (
-        <div
-          className={classNames(
-            'mt-2 px-8 py-4 text-center rounded-lg text-xl bg-blue-500 text-white font-semibold cursor-pointer',
-            pagination !== pairs.length - 1 ? 'invisible' : ''
+          {voted ? (
+            <Link href={`/ranking/${budgetBoxId}`}>
+              <div
+                className={classNames(
+                  'mt-2 px-8 py-4 text-center rounded-lg text-xl bg-blue-500 text-white font-semibold cursor-pointer',
+                  pagination !== pairs.length - 1 ? 'invisible' : ''
+                )}
+              >
+                See results
+              </div>
+            </Link>
+          ) : (
+            <div
+              className={classNames(
+                'mt-2 px-8 py-4 text-center rounded-lg text-xl bg-blue-500 text-white font-semibold cursor-pointer',
+                pagination !== pairs.length - 1 ? 'invisible' : ''
+              )}
+              onClick={handleSubmit}
+            >
+              Vote
+            </div>
           )}
-          onClick={handleSubmit}
-        >
-          Vote
-        </div>
+        </>
+      ) : isConnected ? (
+        <div>You&apos;re not allowed to vote on this budget box</div>
+      ) : (
+        <div>Connect your wallet to be able to vote</div>
       )}
     </div>
   )
