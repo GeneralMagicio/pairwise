@@ -4,9 +4,12 @@ import { ConnectButton } from '@rainbow-me/rainbowkit'
 
 export const Navbar: FC = () => {
   return (
-    <nav className="absolute top-0 bg-white h-28 w-full flex justify-between items-center px-12 shadow-md">
+    <nav className="absolute top-0 flex h-28 w-full items-center justify-between bg-white px-12 shadow-md">
       <Link href="/">
-        <div className="font-semibold text-xl cursor-pointer">Budget Boxes</div>
+        <div className="cursor-pointer text-xl font-semibold">
+          <span className="hidden sm:block">Budget Boxes</span>
+          <span className="sm:hidden">BB</span>
+        </div>
       </Link>
       <ConnectButton />
     </nav>

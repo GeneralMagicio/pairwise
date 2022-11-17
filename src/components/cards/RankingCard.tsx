@@ -12,30 +12,30 @@ export const RankingCard: FC<Project> = ({
   image
 }) => {
   return (
-    <div className="w-[1200px] max-w-full h-[250px] p-4 flex bg-gray-200 border-gray-300 rounded-xl shadow-lg overflow-hidden hover:scale-102 duration-100 cursor-default">
-      <div className="w-[150px] rounded-xl flex items-center justify-center bg-gray-100 text-3xl text-semibold">
-        {`${((power || 0) * 100).toFixed(2)}%`}
+    <Link className="relative max-w-full" href={url} target="_blank">
+      <div className="absolute -left-2 -top-2 z-10 flex h-[60px] w-[60px] items-center justify-center  rounded-full border-2 border-blue-300 bg-blue-500 text-lg font-semibold text-white shadow-md md:hidden">
+        {`${((power || 0) * 100).toFixed(1)}%`}
       </div>
-      <div className="flex ml-6 rounded-xl bg-white overflow-hidden">
-        <div className="relative w-[400px] shadow-md border-r overflow-hidden">
-          <Image
-            fill
-            alt="Project Image"
-            className="object-cover"
-            src={image}
-          />
+      <div className="flex h-[250px] w-[1200px] max-w-full cursor-pointer overflow-hidden rounded-xl border-gray-300 bg-gray-200 p-4 shadow-lg duration-100 hover:scale-102">
+        <div className="mr-6 hidden w-[150px] items-center justify-center  rounded-xl bg-gray-100 text-2xl font-semibold md:flex lg:text-3xl">
+          {`${((power || 0) * 100).toFixed(2)}%`}
         </div>
-        <div className="flex flex-col px-4 pb-4 w-[600px] justify-between">
-          <div className="text-xl mt-2">{title}</div>
-          <span className="text-blue-500">{owner}</span>
-          <div className="line-clamp-3">{description}</div>
-          <Link href={url} target="_blank">
-            <div className="px-4 border py-3 w-30 text-center rounded-lg bg-blue-500 text-white font-semibold cursor-pointer">
-              See more...
-            </div>
-          </Link>
+        <div className="flex flex-col overflow-hidden rounded-xl bg-white sm:flex-row">
+          <div className="relative h-1/2 w-full overflow-hidden border-r shadow-md sm:h-full sm:w-[400px]">
+            <Image
+              fill
+              alt="Project Image"
+              className="object-cover"
+              src={image}
+            />
+          </div>
+          <div className="flex flex-col justify-between px-4 pb-4 sm:w-[600px]">
+            <div className="mt-2 text-xl">{title}</div>
+            <span className="text-blue-500">{owner}</span>
+            <div className="line-clamp-2 sm:line-clamp-5">{description}</div>
+          </div>
         </div>
       </div>
-    </div>
+    </Link>
   )
 }

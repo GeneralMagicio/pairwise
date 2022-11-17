@@ -108,16 +108,18 @@ const Vote = ({ pairs, projects, allowlist }: IVote) => {
   }, [address, allowlist])
 
   return (
-    <div className="h-screen bg-gray-50 flex flex-col border items-center justify-center">
+    <div className="flex h-full flex-col items-center justify-center bg-gray-50">
       {isValidAddress ? (
         <>
-          <VotePair
-            alpha={alpha}
-            beta={beta}
-            handleVote={handleVote}
-            selected={votes[pagination]}
-          />
-          <div className="mt-6 py-2 w-44 flex gap-x-4">
+          <div className="flex w-full items-center justify-center pt-52">
+            <VotePair
+              alpha={alpha}
+              beta={beta}
+              handleVote={handleVote}
+              selected={votes[pagination]}
+            />
+          </div>
+          <div className="mt-6 flex w-44 gap-x-4 py-2">
             <div
               className={classNames(
                 'px-4 py-2 w-20 text-center rounded-lg text-lg bg-gray-400 text-white font-semibold cursor-pointer',
