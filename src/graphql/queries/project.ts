@@ -17,7 +17,9 @@ export const GET_ALL_PROJECTS = gql`
 export const GET_PROJECTS_FROM_BUDGET_BOX = gql`
   query ($data: BudgetBoxQueryInput) {
     budgetBox(query: $data) {
+      _id
       projects {
+        _id
         id
         title
         url
