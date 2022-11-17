@@ -1,7 +1,8 @@
 {
-  "plugins": ["@typescript-eslint"],
+  "plugins": ["@typescript-eslint", "tailwindcss"],
   "extends": [
     "next/core-web-vitals",
+    "plugin:tailwindcss/recommended",
     "plugin:@typescript-eslint/recommended",
     "prettier"
   ],
