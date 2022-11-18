@@ -4,7 +4,7 @@ import { RankingCard } from '@/components/cards/RankingCard'
 import { Project } from '@/types/project'
 import { graphqlClient } from '@/graphql/clients/client'
 import { GET_PROJECTS_FROM_BUDGET_BOX } from '@/graphql/queries/project'
-import { GET_VOTES_FROM_BUDGET_BOX } from '@/graphql/queries/vote'
+import { GET_VOTES } from '@/graphql/queries/vote'
 
 interface Vote {
   voter: string
@@ -35,7 +35,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   const projects: Array<Project> = [...projectsData?.budgetBox?.projects]
   const { data: votesData } = await graphqlClient.query({
-    query: GET_VOTES_FROM_BUDGET_BOX,
+    query: GET_VOTES,
     variables: {
       data: { budgetBox: { id: budgetBoxId } }
     },

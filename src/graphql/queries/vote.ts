@@ -11,7 +11,7 @@ export const GET_ALL_VOTES = gql`
     }
   }
 `
-export const GET_VOTES_FROM_BUDGET_BOX = gql`
+export const GET_VOTES = gql`
   query ($data: VoteQueryInput) {
     votes(query: $data) {
       voter
@@ -21,6 +21,7 @@ export const GET_VOTES_FROM_BUDGET_BOX = gql`
         preference
       }
       budgetBox {
+        _id
         id
       }
     }

@@ -33,8 +33,10 @@ export const GET_PROJECTS_FROM_BUDGET_BOX = gql`
 export const GET_ALLOWLIST_AND_PROJECTS_FROM_BUDGET_BOX = gql`
   query ($data: BudgetBoxQueryInput) {
     budgetBox(query: $data) {
+      _id
       allowlist
       projects {
+        _id
         id
         title
         url
