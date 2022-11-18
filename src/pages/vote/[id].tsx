@@ -2,9 +2,10 @@ import { GetServerSideProps } from 'next'
 import { useState, useEffect } from 'react'
 import classNames from 'classnames'
 import axios from 'axios'
-import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useAccount } from 'wagmi'
+import { PrimaryButton, ButtonColors } from '@/components/buttons/PrimaryButton'
+import { LoadingIcon } from '@/components/icons/LoadingIcon'
 import { VotePair } from '@/components/vote/VotePair'
 import { Project } from '@/types/project'
 import { graphqlClient } from '@/graphql/clients/client'
@@ -62,6 +63,7 @@ const Vote = ({ pairs, projects, allowlist }: IVote) => {
   const [voted, setVoted] = useState<boolean>(false)
   const [isConnected, setIsConnected] = useState<boolean>(false)
   const [isValidAddress, setIsValidAddress] = useState<boolean>(false)
+  const [isVoteLoading, setIsVoteLoading] = useState<boolean>(false)
   const { alpha, beta } = pairs[pagination]
   const router = useRouter()
   const { id: budgetBoxId } = router.query
@@ -76,6 +78,7 @@ const Vote = ({ pairs, projects, allowlist }: IVote) => {
   }
 
   const handleSubmit = async () => {
+    setIsVoteLoading(true)
     const finalVotes = votes.map((selection: string, index: number) => {
       return {
         alpha: pairs[index].alpha.id,
@@ -99,7 +102,12 @@ const Vote = ({ pairs, projects, allowlist }: IVote) => {
       projects: projectIds,
       votes: finalVotes
     })
+    setIsVoteLoading(false)
     setVoted(true)
+  }
+
+  const handleRedirect = (href: string) => {
+    router.push(href)
   }
 
   useEffect(() => {
@@ -119,55 +127,82 @@ const Vote = ({ pairs, projects, allowlist }: IVote) => {
               selected={votes[pagination]}
             />
           </div>
-          <div className="mt-6 flex w-44 gap-x-4 py-2">
+          <div className="mt-6 flex w-52 gap-x-4 py-2">
             <div
               className={classNames(
-                'px-4 py-2 w-20 text-center rounded-lg text-lg bg-gray-400 text-white font-semibold cursor-pointer',
+                'mt-2 h-[50px] w-full',
                 pagination === 0 ? 'invisible' : ''
               )}
-              onClick={() =>
-                setPagination((prevState) => Math.max(prevState - 1, 0))
-              }
             >
-              Back
+              <PrimaryButton
+                color={ButtonColors.GRAY}
+                fontStyles="text-lg"
+                label="Back"
+                styles="py-2 px-4"
+                onClick={() =>
+                  setPagination((prevState) => Math.max(prevState - 1, 0))
+                }
+              />
             </div>
-
             <div
               className={classNames(
-                'px-4 py-2 w-20 text-center rounded-lg text-lg bg-blue-500 text-white font-semibold cursor-pointer',
+                'mt-2 h-[50px] w-full',
                 pagination === pairs.length - 1 ? 'invisible' : ''
               )}
-              onClick={() =>
-                setPagination((prevState) =>
-                  Math.min(prevState + 1, pairs.length - 1)
-                )
-              }
             >
-              Next
+              <PrimaryButton
+                color={ButtonColors.LIGHT_BLUE}
+                fontStyles="text-lg"
+                label="Next"
+                styles="py-2 px-4"
+                onClick={() =>
+                  setPagination((prevState) =>
+                    Math.min(prevState + 1, pairs.length - 1)
+                  )
+                }
+              />
             </div>
           </div>
-          {voted ? (
-            <Link href={`/ranking/${budgetBoxId}`}>
+          <div className="flex w-52">
+            {voted ? (
               <div
                 className={classNames(
-                  'mt-2 px-8 py-4 text-center rounded-lg text-xl bg-blue-500 text-white font-semibold cursor-pointer',
+                  'mt-2 h-[50px] w-full',
                   pagination !== pairs.length - 1 ? 'invisible' : ''
                 )}
               >
-                See results
+                <PrimaryButton
+                  color={ButtonColors.LIGHT_BLUE}
+                  fontStyles="text-lg"
+                  label="See results"
+                  styles="w-full"
+                  onClick={() => handleRedirect(`/ranking/${budgetBoxId}`)}
+                />
               </div>
-            </Link>
-          ) : (
-            <div
-              className={classNames(
-                'mt-2 px-8 py-4 text-center rounded-lg text-xl bg-blue-500 text-white font-semibold cursor-pointer',
-                pagination !== pairs.length - 1 ? 'invisible' : ''
-              )}
-              onClick={handleSubmit}
-            >
-              Vote
-            </div>
-          )}
+            ) : (
+              <div
+                className={classNames(
+                  'mt-2 h-[50px] w-full',
+                  pagination !== pairs.length - 1 ? 'invisible' : ''
+                )}
+              >
+                <PrimaryButton
+                  color={ButtonColors.LIGHT_BLUE}
+                  disabled={isVoteLoading}
+                  fontStyles="text-lg"
+                  styles="w-full"
+                  label={
+                    isVoteLoading ? (
+                      <LoadingIcon label="Submitting vote" />
+                    ) : (
+                      'Vote'
+                    )
+                  }
+                  onClick={handleSubmit}
+                />
+              </div>
+            )}
+          </div>
         </>
       ) : (
         <div className="h-full w-full px-4 text-center text-lg">

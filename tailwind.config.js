@@ -13,6 +13,18 @@ module.exports = {
       scale: {
         101: '1.01',
         102: '1.02'
+      },
+      colors: {
+        black: {
+          DEFAULT: '#051425',
+          light: '#747373'
+        },
+        blue: {
+          DEFAULT: '#1B66FF',
+          light: '#03B3FF',
+          dark: '#0B58AF',
+          ocean: '#03B3FF'
+        }
       }
     }
   },
