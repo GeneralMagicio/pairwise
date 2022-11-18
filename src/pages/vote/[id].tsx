@@ -57,18 +57,6 @@ interface IVote {
   allowlist: Array<string>
 }
 
-interface IErrorResponse {
-  data: {
-    message: string
-  }
-}
-
-class ErrorResponse {
-  constructor(public response: IErrorResponse) {
-    this.response = response
-  }
-}
-
 const Vote = ({ pairs, projects, allowlist }: IVote) => {
   const [pagination, setPagination] = useState<number>(0)
   const [votes, setVotes] = useState<Array<string>>(
@@ -109,22 +97,17 @@ const Vote = ({ pairs, projects, allowlist }: IVote) => {
       }
     })
 
-    try {
-      await axios.post('/api/vote/insert', {
-        vote: {
-          voter: address,
-          preferences: finalVotes,
-          budgetBox: {
-            link: budgetBoxId
-          }
+    const { data } = await axios.post('/api/vote/insert', {
+      vote: {
+        voter: address,
+        preferences: finalVotes,
+        budgetBox: {
+          link: budgetBoxId
         }
-      })
-    } catch (e) {
-      let message
-      if (e instanceof ErrorResponse) message = e.response.data.message
-      if (message === 'Already voted') {
-        setAlreadyVoted(true)
       }
+    })
+    if (data?.message === 'Already voted') {
+      setAlreadyVoted(true)
     }
 
     const projectIds = projects.map((project: Project) => project.id)

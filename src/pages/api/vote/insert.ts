@@ -29,7 +29,7 @@ export default async function serverSideCall(
       })
 
       if (votesData?.votes.length > 0) {
-        res.status(500).json({ success: false, message: 'Already voted' })
+        res.status(200).json({ success: false, message: 'Already voted' })
       } else {
         await graphqlClient.mutate({
           mutation: INSERT_ONE_VOTE,
