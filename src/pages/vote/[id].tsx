@@ -108,10 +108,10 @@ const Vote = ({ pairs, projects, allowlist }: IVote) => {
   }, [address, allowlist])
 
   return (
-    <div className="flex h-screen flex-col items-center justify-center bg-gray-50">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-gray-50">
       {isValidAddress ? (
         <>
-          <div className="flex w-full items-center justify-center pt-72 lg:pt-52">
+          <div className="flex w-full items-center justify-center pt-36">
             <VotePair
               alpha={alpha}
               beta={beta}
@@ -170,7 +170,7 @@ const Vote = ({ pairs, projects, allowlist }: IVote) => {
           )}
         </>
       ) : (
-        <div className="w-full px-4 text-center text-lg">
+        <div className="h-full w-full px-4 text-center text-lg">
           {isConnected ? (
             <span>You&apos;re not allowed to vote on this budget box</span>
           ) : (
