@@ -4,12 +4,14 @@ import classNames from 'classnames'
 import axios from 'axios'
 import { useRouter } from 'next/router'
 import { useAccount } from 'wagmi'
+import { useQuery } from '@apollo/client'
 import { PrimaryButton, ButtonColors } from '@/components/buttons/PrimaryButton'
 import { LoadingIcon } from '@/components/icons/LoadingIcon'
 import { VotePair } from '@/components/vote/VotePair'
 import { Project } from '@/types/project'
 import { graphqlClient } from '@/api/clients/graphql'
 import { GET_ALLOWLIST_AND_PROJECTS_FROM_BUDGET_BOX } from '@/graphql/queries/project'
+import { GET_VOTES } from '@/graphql/queries/vote'
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { params } = context
@@ -55,6 +57,18 @@ interface IVote {
   allowlist: Array<string>
 }
 
+interface IErrorResponse {
+  data: {
+    message: string
+  }
+}
+
+class ErrorResponse {
+  constructor(public response: IErrorResponse) {
+    this.response = response
+  }
+}
+
 const Vote = ({ pairs, projects, allowlist }: IVote) => {
   const [pagination, setPagination] = useState<number>(0)
   const [votes, setVotes] = useState<Array<string>>(
@@ -64,10 +78,18 @@ const Vote = ({ pairs, projects, allowlist }: IVote) => {
   const [isConnected, setIsConnected] = useState<boolean>(false)
   const [isValidAddress, setIsValidAddress] = useState<boolean>(false)
   const [isVoteLoading, setIsVoteLoading] = useState<boolean>(false)
+  const [alreadyVoted, setAlreadyVoted] = useState<boolean>(false)
   const { alpha, beta } = pairs[pagination]
   const router = useRouter()
   const { id: budgetBoxId } = router.query
   const { address } = useAccount()
+
+  const { loading, data: votesData } = useQuery(GET_VOTES, {
+    variables: {
+      data: { budgetBox: { id: budgetBoxId }, voter: address }
+    },
+    fetchPolicy: 'network-only'
+  })
 
   const handleVote = (newVote: string) => {
     const nextVotes = votes.map((vote: string, index: number) => {
@@ -87,15 +109,23 @@ const Vote = ({ pairs, projects, allowlist }: IVote) => {
       }
     })
 
-    await axios.post('/api/vote/insert', {
-      vote: {
-        voter: address,
-        preferences: finalVotes,
-        budgetBox: {
-          link: budgetBoxId
+    try {
+      await axios.post('/api/vote/insert', {
+        vote: {
+          voter: address,
+          preferences: finalVotes,
+          budgetBox: {
+            link: budgetBoxId
+          }
         }
+      })
+    } catch (e) {
+      let message
+      if (e instanceof ErrorResponse) message = e.response.data.message
+      if (message === 'Already voted') {
+        setAlreadyVoted(true)
       }
-    })
+    }
 
     const projectIds = projects.map((project: Project) => project.id)
     await axios.post('/api/ranking', {
@@ -115,9 +145,21 @@ const Vote = ({ pairs, projects, allowlist }: IVote) => {
     setIsValidAddress(allowlist.includes(address as `0x${string}`))
   }, [address, allowlist])
 
+  useEffect(() => {
+    setAlreadyVoted(votesData?.votes.length > 0)
+  }, [votesData])
+
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-gray-50">
-      {isValidAddress ? (
+      {loading ? (
+        <div className="h-full w-full px-4 text-center text-lg">
+          <LoadingIcon label="loading" />
+        </div>
+      ) : !isConnected ? (
+        <div className="h-full w-full px-4 text-center text-lg">
+          <span>Connect your wallet to be able to vote</span>
+        </div>
+      ) : isValidAddress && !alreadyVoted ? (
         <>
           <div className="flex w-full items-center justify-center pt-36">
             <VotePair
@@ -204,13 +246,13 @@ const Vote = ({ pairs, projects, allowlist }: IVote) => {
             )}
           </div>
         </>
+      ) : alreadyVoted ? (
+        <div className="h-full w-full px-4 text-center text-lg">
+          <span>You have already voted on this budget box</span>
+        </div>
       ) : (
         <div className="h-full w-full px-4 text-center text-lg">
-          {isConnected ? (
-            <span>You&apos;re not allowed to vote on this budget box</span>
-          ) : (
-            <span>Connect your wallet to be able to vote</span>
-          )}
+          <span>You&apos;re not allowed to vote on this budget box</span>
         </div>
       )}
     </div>

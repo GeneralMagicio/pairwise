@@ -6,7 +6,7 @@ interface ILoadingIcon {
 
 export const LoadingIcon: FC<ILoadingIcon> = ({ label }) => {
   return (
-    <div className="flex items-center justify-between" role="status">
+    <div className="flex items-center justify-center" role="status">
       <svg
         aria-hidden="true"
         className="h-6 w-6 animate-spin fill-white text-gray-200 dark:text-gray-300"
@@ -23,7 +23,7 @@ export const LoadingIcon: FC<ILoadingIcon> = ({ label }) => {
           fill="currentFill"
         />
       </svg>
-      <div className="text-base">{label}</div>
+      <div className="ml-2 text-base">{label}</div>
       <span className="sr-only">Loading...</span>
     </div>
   )
