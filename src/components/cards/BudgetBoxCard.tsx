@@ -37,7 +37,7 @@ export const BudgetBoxCard: FC<IBudgetBoxCard> = ({ budgetBox }) => {
           fontStyles="text-lg"
           label="See results"
           styles="py-2 px-4"
-          onClick={() => handleClick(`vote/${budgetBox.id}`)}
+          onClick={() => handleClick(`ranking/${budgetBox.id}`)}
         />
       </div>
     </div>
