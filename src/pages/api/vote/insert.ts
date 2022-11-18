@@ -24,7 +24,8 @@ export default async function serverSideCall(
         query: GET_VOTES,
         variables: {
           data: { budgetBox: { id: budgetBoxId }, voter: voterAddress }
-        }
+        },
+        fetchPolicy: 'network-only'
       })
 
       if (votesData?.votes.length > 0) {
