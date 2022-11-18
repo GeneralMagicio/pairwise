@@ -1,4 +1,4 @@
-import { graphqlClient } from '@/graphql/clients/client'
+import { graphqlClient } from '@/api/clients/graphql'
 import { INSERT_ONE_VOTE } from '@/graphql/mutations/insertOneVote'
 import type { NextApiRequest, NextApiResponse } from 'next'
 

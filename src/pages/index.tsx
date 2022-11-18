@@ -1,6 +1,6 @@
 import Head from 'next/head'
 import { GetServerSideProps } from 'next'
-import { graphqlClient } from '@/graphql/clients/client'
+import { graphqlClient } from '@/api/clients/graphql'
 import { GET_ALL_BUDGET_BOXES } from '@/graphql/queries/budgetBox'
 import { BudgetBoxCard } from '@/components/cards/BudgetBoxCard'
 import { BudgetBox } from '@/types/BudgetBox'

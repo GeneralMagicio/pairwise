@@ -8,7 +8,7 @@ import { PrimaryButton, ButtonColors } from '@/components/buttons/PrimaryButton'
 import { LoadingIcon } from '@/components/icons/LoadingIcon'
 import { VotePair } from '@/components/vote/VotePair'
 import { Project } from '@/types/project'
-import { graphqlClient } from '@/graphql/clients/client'
+import { graphqlClient } from '@/api/clients/graphql'
 import { GET_ALLOWLIST_AND_PROJECTS_FROM_BUDGET_BOX } from '@/graphql/queries/project'
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
