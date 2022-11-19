@@ -133,13 +133,13 @@ const Vote = ({ pairs, projects, allowlist }: IVote) => {
   }, [votesData])
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-gray-50">
+    <div className="flex min-h-[calc(100vh_-_110px)] flex-col items-center justify-center pb-10">
       {loading ? (
-        <div className="h-full w-full px-4 text-center text-lg">
+        <div className="w-full px-4 text-center text-lg">
           <LoadingIcon label="loading" />
         </div>
       ) : !isConnected ? (
-        <div className="h-full w-full px-4 text-center text-lg">
+        <div className="w-full px-4 text-center text-lg">
           <span>Connect your wallet to be able to vote</span>
         </div>
       ) : isValidAddress && alreadyVoted === false ? (

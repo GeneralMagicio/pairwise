@@ -64,7 +64,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
 const Ranking = ({ projects, ranking }: Ranking) => {
   return (
-    <div className="flex h-full flex-col items-center justify-center gap-y-4 bg-gray-50 px-8 pt-40 pb-10">
+    <div className="flex flex-col items-center justify-center gap-y-4 px-8 pt-16 pb-10">
       {projects
         .sort((a, b) => ranking[b.id] - ranking[a.id])
         .map((project: Project) => (
