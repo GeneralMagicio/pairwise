@@ -129,7 +129,7 @@ const Vote = ({ pairs, projects, allowlist }: IVote) => {
   }, [address, allowlist])
 
   useEffect(() => {
-    setAlreadyVoted(votesData?.votes.length > 0)
+    if (!!votesData) setAlreadyVoted(votesData?.votes.length > 0)
   }, [votesData])
 
   return (
