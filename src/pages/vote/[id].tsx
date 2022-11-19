@@ -66,7 +66,7 @@ const Vote = ({ pairs, projects, allowlist }: IVote) => {
   const [isConnected, setIsConnected] = useState<boolean>(false)
   const [isValidAddress, setIsValidAddress] = useState<boolean>(false)
   const [isVoteLoading, setIsVoteLoading] = useState<boolean>(false)
-  const [alreadyVoted, setAlreadyVoted] = useState<boolean>(false)
+  const [alreadyVoted, setAlreadyVoted] = useState<boolean | null>(null)
   const { alpha, beta } = pairs[pagination]
   const router = useRouter()
   const { id: budgetBoxId } = router.query
@@ -142,7 +142,7 @@ const Vote = ({ pairs, projects, allowlist }: IVote) => {
         <div className="h-full w-full px-4 text-center text-lg">
           <span>Connect your wallet to be able to vote</span>
         </div>
-      ) : isValidAddress && !alreadyVoted ? (
+      ) : isValidAddress && alreadyVoted === false ? (
         <>
           <div className="flex w-full items-center justify-center pt-36">
             <VotePair
