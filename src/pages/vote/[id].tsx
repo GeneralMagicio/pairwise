@@ -91,7 +91,10 @@ const Vote = ({ pairs, projects, allowlist }: IVote) => {
 
   const handleVote = (newVote: string) => {
     const nextVotes = votes.map((vote: string, index: number) => {
-      if (index === pagination) return newVote
+      if (index === pagination) {
+        if (newVote === votes[index]) return ''
+        return newVote
+      }
       return vote
     })
     setVotes(nextVotes)
