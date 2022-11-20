@@ -195,7 +195,7 @@ const Vote = ({ pairs, projects, allowlist }: IVote) => {
   }, [votesData])
 
   return (
-    <div className="flex min-h-[calc(100vh_-_110px)] flex-col items-center justify-center pb-10">
+    <div className="flex min-h-[calc(100vh_-_110px)] flex-col items-center justify-center">
       {loading ? (
         <div className="w-full px-4 text-center text-lg">
           <LoadingIcon label="loading" />
@@ -206,7 +206,7 @@ const Vote = ({ pairs, projects, allowlist }: IVote) => {
         </div>
       ) : isValidAddress && alreadyVoted === false ? (
         <>
-          <div className="flex w-full items-center justify-center pt-36">
+          <div className="flex w-full items-center justify-center pt-10 lg:pt-28">
             <VotePair
               alpha={alpha}
               beta={beta}
@@ -250,7 +250,7 @@ const Vote = ({ pairs, projects, allowlist }: IVote) => {
               />
             </div>
           </div>
-          <div className="flex w-64">
+          <div className="flex w-64 pb-10">
             {voted ? (
               <div
                 className={classNames(
