@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router'
 import { FC } from 'react'
-import { BudgetBox } from '@/types/budgetBox'
+import { BudgetBox } from '@/types/BudgetBox'
 import { PrimaryButton, ButtonColors } from '@/components/buttons/PrimaryButton'
 
 interface IBudgetBoxCard {

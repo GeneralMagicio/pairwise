@@ -3,7 +3,7 @@ import { GetServerSideProps } from 'next'
 import { graphqlClient } from '@/api/clients/graphql'
 import { GET_ALL_BUDGET_BOXES } from '@/graphql/queries/budgetBox'
 import { BudgetBoxCard } from '@/components/cards/BudgetBoxCard'
-import { BudgetBox } from '@/types/budgetBox'
+import { BudgetBox } from '@/types/BudgetBox'
 
 interface IHome {
   budgetBoxes: Array<BudgetBox>
