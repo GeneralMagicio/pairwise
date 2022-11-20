@@ -3,8 +3,9 @@ import { useState, useEffect } from 'react'
 import classNames from 'classnames'
 import axios from 'axios'
 import { useRouter } from 'next/router'
-import { useAccount } from 'wagmi'
+import { useAccount, useNetwork, useSignMessage, useSwitchNetwork } from 'wagmi'
 import { useQuery } from '@apollo/client'
+import { SiweMessage } from 'siwe'
 import { PrimaryButton, ButtonColors } from '@/components/buttons/PrimaryButton'
 import { LoadingIcon } from '@/components/icons/LoadingIcon'
 import { VotePair } from '@/components/vote/VotePair'
@@ -12,6 +13,7 @@ import { Project } from '@/types/project'
 import { graphqlClient } from '@/api/clients/graphql'
 import { GET_ALLOWLIST_AND_PROJECTS_FROM_BUDGET_BOX } from '@/graphql/queries/project'
 import { GET_VOTES } from '@/graphql/queries/vote'
+import { DEFAULT_NETWORK } from '@/constants/network'
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { params } = context
@@ -66,11 +68,19 @@ const Vote = ({ pairs, projects, allowlist }: IVote) => {
   const [isConnected, setIsConnected] = useState<boolean>(false)
   const [isValidAddress, setIsValidAddress] = useState<boolean>(false)
   const [isVoteLoading, setIsVoteLoading] = useState<boolean>(false)
+  const [isSignLoading, setIsSignLoading] = useState<boolean>(false)
+  const [isWrongNetwork, setIsWrongNetwork] = useState<boolean>(false)
   const [alreadyVoted, setAlreadyVoted] = useState<boolean | null>(null)
+  const [nonce, setNonce] = useState<string | undefined>('')
+
   const { alpha, beta } = pairs[pagination]
   const router = useRouter()
   const { id: budgetBoxId } = router.query
   const { address } = useAccount()
+  const { chain: activeChain } = useNetwork()
+  const { signMessageAsync } = useSignMessage()
+  const { isLoading: isSwitchNetworkLoading, switchNetworkAsync } =
+    useSwitchNetwork()
 
   const { loading, data: votesData } = useQuery(GET_VOTES, {
     variables: {
@@ -87,41 +97,93 @@ const Vote = ({ pairs, projects, allowlist }: IVote) => {
     setVotes(nextVotes)
   }
 
-  const handleSubmit = async () => {
-    setIsVoteLoading(true)
-    const finalVotes = votes.map((selection: string, index: number) => {
-      return {
-        alpha: pairs[index].alpha.id,
-        beta: pairs[index].beta.id,
-        preference: selection === 'alpha' ? 1 : selection === 'beta' ? -1 : 0
+  const signIn = async () => {
+    try {
+      const chainId = activeChain?.id
+      if (!address || !chainId) return
+      if (chainId !== DEFAULT_NETWORK.chainId) {
+        await switchNetworkAsync?.(DEFAULT_NETWORK.chainId)
       }
-    })
+      setIsSignLoading(true)
+      const message = new SiweMessage({
+        domain: window.location.host,
+        address,
+        statement: 'Sign in with Ethereum to Budget Boxes',
+        uri: window.location.origin,
+        version: '1',
+        chainId: DEFAULT_NETWORK.chainId,
+        nonce
+      })
+      const signature = await signMessageAsync({
+        message: message.prepareMessage()
+      })
+      const { data: verifyData } = await axios.post('/api/siwe/verify', {
+        message,
+        signature
+      })
+      setIsSignLoading(false)
 
-    const { data } = await axios.post('/api/vote/insert', {
-      vote: {
-        voter: address,
-        preferences: finalVotes,
-        budgetBox: {
-          link: budgetBoxId
-        }
-      }
-    })
-    if (data?.message === 'Already voted') {
-      setAlreadyVoted(true)
+      return verifyData?.ok
+    } catch (e) {
+      setIsSignLoading(false)
+      setNonce(undefined)
+      fetchNonce()
+
+      return false
     }
+  }
 
-    const projectIds = projects.map((project: Project) => project.id)
-    await axios.post('/api/ranking', {
-      projects: projectIds,
-      votes: finalVotes
-    })
+  const handleSubmit = async () => {
+    const signSuccess = await signIn()
+    if (signSuccess) {
+      setIsVoteLoading(true)
+      const finalVotes = votes.map((selection: string, index: number) => {
+        return {
+          alpha: pairs[index].alpha.id,
+          beta: pairs[index].beta.id,
+          preference: selection === 'alpha' ? 1 : selection === 'beta' ? -1 : 0
+        }
+      })
+
+      const { data } = await axios.post('/api/vote/insert', {
+        vote: {
+          voter: address,
+          preferences: finalVotes,
+          budgetBox: {
+            link: budgetBoxId
+          }
+        }
+      })
+      if (data?.message === 'Already voted') {
+        setAlreadyVoted(true)
+      }
+
+      const projectIds = projects.map((project: Project) => project.id)
+      await axios.post('/api/ranking', {
+        projects: projectIds,
+        votes: finalVotes
+      })
+      setIsVoteLoading(false)
+      setVoted(true)
+    }
     setIsVoteLoading(false)
-    setVoted(true)
   }
 
   const handleRedirect = (href: string) => {
     router.push(href)
   }
+
+  const fetchNonce = async () => {
+    const nonceRes = await axios.get('/api/siwe/nonce')
+    setNonce(nonceRes?.data || '')
+  }
+  useEffect(() => {
+    fetchNonce()
+  }, [])
+
+  useEffect(() => {
+    setIsWrongNetwork(activeChain?.id !== DEFAULT_NETWORK.chainId)
+  }, [activeChain])
 
   useEffect(() => {
     setIsConnected(!!address)
@@ -152,7 +214,7 @@ const Vote = ({ pairs, projects, allowlist }: IVote) => {
               selected={votes[pagination]}
             />
           </div>
-          <div className="mt-6 flex w-52 gap-x-4 py-2">
+          <div className="mt-6 flex w-64 gap-x-4 py-2">
             <div
               className={classNames(
                 'mt-2 h-[50px] w-full',
@@ -188,11 +250,11 @@ const Vote = ({ pairs, projects, allowlist }: IVote) => {
               />
             </div>
           </div>
-          <div className="flex w-52">
+          <div className="flex w-64">
             {voted ? (
               <div
                 className={classNames(
-                  'mt-2 h-[50px] w-full',
+                  'mt-2 h-[60px] w-full',
                   pagination !== pairs.length - 1 ? 'invisible' : ''
                 )}
               >
@@ -213,11 +275,19 @@ const Vote = ({ pairs, projects, allowlist }: IVote) => {
               >
                 <PrimaryButton
                   color={ButtonColors.LIGHT_BLUE}
-                  disabled={isVoteLoading}
                   fontStyles="text-lg"
                   styles="w-full"
+                  disabled={
+                    isSignLoading || isVoteLoading || isSwitchNetworkLoading
+                  }
                   label={
-                    isVoteLoading ? (
+                    isSwitchNetworkLoading ? (
+                      <LoadingIcon label="Waiting switch network" />
+                    ) : isWrongNetwork ? (
+                      <span>Switch network to vote</span>
+                    ) : isSignLoading ? (
+                      <LoadingIcon label="Waiting for signature" />
+                    ) : isVoteLoading ? (
                       <LoadingIcon label="Submitting vote" />
                     ) : (
                       'Vote'
