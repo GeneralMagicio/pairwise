@@ -22,55 +22,64 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     },
     fetchPolicy: 'network-only'
   })
-
   const projects: Array<Project> = [...projectsData?.budgetBox?.projects]
-  const { data: votesData } = await graphqlClient.query({
-    query: GET_VOTES,
-    variables: {
-      data: { budgetBox: { id: budgetBoxId } }
-    },
-    fetchPolicy: 'network-only'
-  })
-  const votes = votesData.votes
-  const formattedVotes: Array<Preference> = []
-  votes.map((vote: Vote) => {
-    formattedVotes.push(...vote.preferences)
-  })
-  const projectSet: Set<string> = new Set()
-  formattedVotes.map((vote: Preference) => {
-    projectSet.add(vote.alpha)
-    projectSet.add(vote.beta)
-  })
 
-  const powerRanker = new PowerRanker(
-    projectSet,
-    formattedVotes,
-    projectSet.size
-  )
-  const rankings = powerRanker.run()
+  let rankList = {}
+  if (projects.length > 1) {
+    const { data: votesData } = await graphqlClient.query({
+      query: GET_VOTES,
+      variables: {
+        data: { budgetBox: { id: budgetBoxId } }
+      },
+      fetchPolicy: 'network-only'
+    })
+    const votes = votesData.votes
+    const formattedVotes: Array<Preference> = []
+    votes.map((vote: Vote) => {
+      formattedVotes.push(...vote.preferences)
+    })
+    const projectSet: Set<string> = new Set()
+    formattedVotes.map((vote: Preference) => {
+      projectSet.add(vote.alpha)
+      projectSet.add(vote.beta)
+    })
 
-  const rankList = Object.fromEntries(rankings)
+    const powerRanker = new PowerRanker(
+      projectSet,
+      formattedVotes,
+      projectSet.size
+    )
+    const rankings = powerRanker.run()
+
+    rankList = Object.fromEntries(rankings)
+  }
 
   return { props: { projects, ranking: rankList } }
 }
 
 const Ranking = ({ projects, ranking }: Ranking) => {
   return (
-    <div className="flex flex-col items-center justify-center gap-y-4 px-8 pt-16 pb-10">
-      {projects
-        .sort((a, b) => ranking[b.id] - ranking[a.id])
-        .map((project: Project) => (
-          <RankingCard
-            key={project.id}
-            description={project.description || ''}
-            id={project.id}
-            image={project.image}
-            owner={project.owner}
-            power={ranking[project.id]}
-            title={project.title}
-            url={project.url}
-          />
-        ))}
+    <div className="flex min-h-[calc(100vh_-_110px)] flex-col items-center justify-center gap-y-4 px-8 pt-16 pb-10">
+      {projects.length < 2 ? (
+        <span className="px-4 text-center text-lg">
+          There is no project in this budget box
+        </span>
+      ) : (
+        projects
+          .sort((a, b) => ranking[b.id] - ranking[a.id])
+          .map((project: Project) => (
+            <RankingCard
+              key={project.id}
+              description={project.description || ''}
+              id={project.id}
+              image={project.image}
+              owner={project.owner}
+              power={ranking[project.id]}
+              title={project.title}
+              url={project.url}
+            />
+          ))
+      )}
     </div>
   )
 }
