@@ -1,8 +1,12 @@
-import { Chain } from 'wagmi'
+import { z } from 'zod'
 
-export type Network = {
-  name: string
-  chainId: number
-  currency: string
-  wagmiChain: Chain
-}
+const nonEmptyStringContraint = z.string().min(1)
+
+export const NetworkSchema = z.object({
+  name: nonEmptyStringContraint,
+  chainId: z.number(),
+  currency: nonEmptyStringContraint,
+  wagmiChain: z.any()
+})
+
+export type Network = z.infer<typeof NetworkSchema>
