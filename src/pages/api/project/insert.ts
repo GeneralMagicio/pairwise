@@ -1,6 +1,6 @@
 import { graphqlClient } from '@/api/clients/graphql'
 import { INSERT_MANY_PROJECTS } from '@/graphql/mutations/project'
-import { Project } from '@/types/project'
+import { Project, ProjectSchema } from '@/types/project'
 import type { NextApiRequest, NextApiResponse } from 'next'
 
 interface Projects {
@@ -20,12 +20,21 @@ export default async function serverSideCall(
   } else {
     try {
       const { projects }: Projects = req.body
-      await graphqlClient.mutate({
-        mutation: INSERT_MANY_PROJECTS,
-        variables: {
-          data: projects
-        }
-      })
+      const ProjectsSchema = ProjectSchema.array()
+      const { success } = ProjectsSchema.safeParse(projects)
+      if (success) {
+        await graphqlClient.mutate({
+          mutation: INSERT_MANY_PROJECTS,
+          variables: {
+            data: projects
+          }
+        })
+      } else {
+        res.status(422).json({
+          success: false,
+          message: 'Invalid body format'
+        })
+      }
       res.status(200).json({ success: true })
     } catch (e) {
       let message

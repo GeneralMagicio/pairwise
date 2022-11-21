@@ -11,7 +11,9 @@ export type Preference = z.infer<typeof PreferenceSchema>
 
 export const VoteSchema = z.object({
   voter: nonEmptyStringContraint,
-  budgetBox: nonEmptyStringContraint,
+  budgetBox: z.object({
+    link: nonEmptyStringContraint
+  }),
   preferences: PreferenceSchema.array()
 })
 export type Vote = z.infer<typeof VoteSchema>
