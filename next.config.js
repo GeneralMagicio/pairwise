@@ -12,6 +12,12 @@ const nextConfig = {
       },
       {
         protocol: 'https',
+        hostname: 'giveth.mypinata.cloud',
+        port: '',
+        pathname: '/**'
+      },
+      {
+        protocol: 'https',
         hostname: 'user-images.githubusercontent.com',
         port: '',
         pathname: '/**'

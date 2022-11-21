@@ -1,5 +1,5 @@
 import { graphqlClient } from '@/api/clients/graphql'
-import { INSERT_ONE_VOTE } from '@/graphql/mutations/insertOneVote'
+import { INSERT_ONE_VOTE } from '@/graphql/mutations/vote'
 import { GET_VOTES } from '@/graphql/queries/vote'
 import type { NextApiRequest, NextApiResponse } from 'next'
 
@@ -15,8 +15,7 @@ export default async function serverSideCall(
   if (req.method !== 'POST') {
     res.status(405)
   } else {
-    const { body } = req
-    const { vote } = body
+    const { vote } = req.body
     const voterAddress = vote?.voter
     const budgetBoxId = vote?.budgetBox?.link
     try {
