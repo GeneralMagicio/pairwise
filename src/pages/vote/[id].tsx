@@ -42,7 +42,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   return {
     props: {
       pairs: projectsCombination,
-      projects,
       allowlist
     }
   }
@@ -59,7 +58,7 @@ interface IVote {
   allowlist: Array<string>
 }
 
-const Vote = ({ pairs, projects, allowlist }: IVote) => {
+const Vote = ({ pairs, allowlist }: IVote) => {
   const [pagination, setPagination] = useState<number>(0)
   const [votes, setVotes] = useState<Array<string>>(
     Array(pairs.length).fill('')
@@ -161,11 +160,6 @@ const Vote = ({ pairs, projects, allowlist }: IVote) => {
         setAlreadyVoted(true)
       }
 
-      const projectIds = projects.map((project: Project) => project.id)
-      await axios.post('/api/ranking', {
-        projects: projectIds,
-        votes: finalVotes
-      })
       setIsVoteLoading(false)
       setVoted(true)
     }
