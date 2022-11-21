@@ -205,7 +205,7 @@ const Vote = ({ pairs, projects, allowlist }: IVote) => {
         </div>
       ) : pairs.length < 1 ? (
         <div className="w-full px-4 text-center text-lg">
-          <span>There is no project in this budgetBox</span>
+          <span>There is no project in this budget box</span>
         </div>
       ) : !isConnected ? (
         <div className="w-full px-4 text-center text-lg">
