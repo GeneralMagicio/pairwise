@@ -2,20 +2,10 @@ import { GetServerSideProps } from 'next'
 import { PowerRanker } from '@/models/power'
 import { RankingCard } from '@/components/cards/RankingCard'
 import { Project } from '@/types/project'
+import { Preference, Vote } from '@/types/vote'
 import { graphqlClient } from '@/api/clients/graphql'
 import { GET_PROJECTS_FROM_BUDGET_BOX } from '@/graphql/queries/project'
 import { GET_VOTES } from '@/graphql/queries/vote'
-
-interface Vote {
-  voter: string
-  preferences: Array<Preference>
-}
-
-interface Preference {
-  alpha: string
-  beta: string
-  preference: number
-}
 
 interface Ranking {
   projects: Array<Project>
@@ -46,9 +36,11 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   votes.map((vote: Vote) => {
     formattedVotes.push(...vote.preferences)
   })
-  const projectIds = projects.map((project: Project) => project.id as string)
-
-  const projectSet: Set<string> = new Set(projectIds)
+  const projectSet: Set<string> = new Set()
+  formattedVotes.map((vote: Preference) => {
+    projectSet.add(vote.alpha)
+    projectSet.add(vote.beta)
+  })
 
   const powerRanker = new PowerRanker(
     projectSet,
