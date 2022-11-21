@@ -73,7 +73,7 @@ const Vote = ({ pairs, projects, allowlist }: IVote) => {
   const [alreadyVoted, setAlreadyVoted] = useState<boolean | null>(null)
   const [nonce, setNonce] = useState<string | undefined>('')
 
-  const { alpha, beta } = pairs[pagination]
+  const { alpha, beta } = pairs[pagination] || { alpha: '', beta: '' }
   const router = useRouter()
   const { id: budgetBoxId } = router.query
   const { address } = useAccount()
@@ -202,6 +202,10 @@ const Vote = ({ pairs, projects, allowlist }: IVote) => {
       {loading ? (
         <div className="w-full px-4 text-center text-lg">
           <LoadingIcon label="loading" />
+        </div>
+      ) : pairs.length < 1 ? (
+        <div className="w-full px-4 text-center text-lg">
+          <span>There is no project in this budgetBox</span>
         </div>
       ) : !isConnected ? (
         <div className="w-full px-4 text-center text-lg">
