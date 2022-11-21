@@ -21,6 +21,12 @@ const nextConfig = {
         hostname: 'user-images.githubusercontent.com',
         port: '',
         pathname: '/**'
+      },
+      {
+        protocol: 'https',
+        hostname: 'd2jyzh4ah9xf6q.cloudfront.net',
+        port: '',
+        pathname: '/**'
       }
     ]
   }

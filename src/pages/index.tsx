@@ -1,5 +1,5 @@
 import Head from 'next/head'
-import { GetServerSideProps } from 'next'
+import { GetStaticProps } from 'next'
 import { graphqlClient } from '@/api/clients/graphql'
 import { GET_ALL_BUDGET_BOXES } from '@/graphql/queries/budgetBox'
 import { BudgetBoxCard } from '@/components/cards/BudgetBoxCard'
@@ -9,7 +9,7 @@ interface IHome {
   budgetBoxes: Array<BudgetBox>
 }
 
-export const getServerSideProps: GetServerSideProps = async () => {
+export const getStaticProps: GetStaticProps = async () => {
   try {
     const { data } = await graphqlClient.query({
       query: GET_ALL_BUDGET_BOXES,
@@ -26,7 +26,8 @@ export const getServerSideProps: GetServerSideProps = async () => {
     return {
       props: {
         budgetBoxes: []
-      }
+      },
+      revalidate: 60
     }
   }
 }

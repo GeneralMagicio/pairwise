@@ -14,6 +14,7 @@ import { graphqlClient } from '@/api/clients/graphql'
 import { GET_ALLOWLIST_AND_PROJECTS_FROM_BUDGET_BOX } from '@/graphql/queries/project'
 import { GET_VOTES } from '@/graphql/queries/vote'
 import { DEFAULT_NETWORK } from '@/constants/network'
+import { MAX_PAIRS_PER_VOTE } from '@/constants/budgetBox'
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { params } = context
@@ -38,6 +39,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       })
     )
     .sort(() => 0.5 - Math.random())
+    .slice(0, MAX_PAIRS_PER_VOTE)
 
   return {
     props: {

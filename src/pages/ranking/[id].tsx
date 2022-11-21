@@ -1,10 +1,12 @@
-import { GetServerSideProps } from 'next'
+import { GetStaticProps, GetStaticPaths } from 'next'
 import { PowerRanker } from '@/models/power'
 import { RankingCard } from '@/components/cards/RankingCard'
 import { Project } from '@/types/project'
 import { Preference, Vote } from '@/types/vote'
 import { graphqlClient } from '@/api/clients/graphql'
+import { BudgetBox } from '@/types/BudgetBox'
 import { GET_PROJECTS_FROM_BUDGET_BOX } from '@/graphql/queries/project'
+import { GET_ALL_BUDGET_BOXES } from '@/graphql/queries/budgetBox'
 import { GET_VOTES } from '@/graphql/queries/vote'
 
 interface Ranking {
@@ -12,8 +14,27 @@ interface Ranking {
   ranking: { [name: string]: number }
 }
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { params } = context
+export const getStaticPaths: GetStaticPaths = async () => {
+  const { data } = await graphqlClient.query({
+    query: GET_ALL_BUDGET_BOXES,
+    fetchPolicy: 'network-only'
+  })
+  const { budgetBoxes } = data
+  const paths = budgetBoxes.map((budgetBox: BudgetBox) => {
+    return {
+      params: {
+        id: budgetBox.id
+      }
+    }
+  })
+
+  return {
+    paths,
+    fallback: 'blocking'
+  }
+}
+
+export const getStaticProps: GetStaticProps = async ({ params }) => {
   const budgetBoxId = params?.id
   const { data: projectsData } = await graphqlClient.query({
     query: GET_PROJECTS_FROM_BUDGET_BOX,
@@ -43,24 +64,25 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       projectSet.add(vote.alpha)
       projectSet.add(vote.beta)
     })
+    if (projectSet.size > 1) {
+      const powerRanker = new PowerRanker(
+        projectSet,
+        formattedVotes,
+        projectSet.size
+      )
+      const rankings = powerRanker.run()
 
-    const powerRanker = new PowerRanker(
-      projectSet,
-      formattedVotes,
-      projectSet.size
-    )
-    const rankings = powerRanker.run()
-
-    rankList = Object.fromEntries(rankings)
+      rankList = Object.fromEntries(rankings)
+    }
   }
 
-  return { props: { projects, ranking: rankList } }
+  return { props: { projects, ranking: rankList }, revalidate: 60 }
 }
 
 const Ranking = ({ projects, ranking }: Ranking) => {
   return (
     <div className="flex min-h-[calc(100vh_-_110px)] flex-col items-center justify-center gap-y-4 px-8 pt-16 pb-10">
-      {projects.length < 2 ? (
+      {projects?.length < 2 ? (
         <span className="px-4 text-center text-lg">
           There is no project in this budget box
         </span>
