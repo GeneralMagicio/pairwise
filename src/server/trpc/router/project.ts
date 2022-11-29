@@ -10,11 +10,17 @@ export const projectRouter = router({
         title: z.string(),
         url: z.string(),
         description: z.string(),
-        image: z.string()
+        image: z.string(),
+        BudgetBoxes: z
+          .object({
+            id: z.string()
+          })
+          .array()
+          .optional()
       })
     )
     .mutation(async ({ ctx, input }) => {
-      const { slug, owner, title, url, description, image } = input
+      const { slug, owner, title, url, description, image, BudgetBoxes } = input
       try {
         await ctx.prisma.project.create({
           data: {
@@ -23,14 +29,44 @@ export const projectRouter = router({
             title,
             url,
             description,
-            image
+            image,
+            BudgetBoxes: {
+              connect: BudgetBoxes
+            }
           }
         })
       } catch (error) {
         console.error(error)
       }
     }),
-  getAll: publicProcedure.query(({ ctx }) => {
-    return ctx.prisma.project.findMany()
-  })
+  getManyByBudgetBoxId: publicProcedure
+    .input(
+      z.object({
+        id: z.string()
+      })
+    )
+    .query(({ ctx, input }) => {
+      const { id } = input
+      return ctx.prisma.project.findMany({
+        where: {
+          BudgetBoxes: {
+            every: { id }
+          }
+        }
+      })
+    }),
+  getOne: publicProcedure
+    .input(
+      z.object({
+        id: z.string()
+      })
+    )
+    .query(({ ctx, input }) => {
+      const { id } = input
+      return ctx.prisma.project.findFirst({
+        where: {
+          id
+        }
+      })
+    })
 })

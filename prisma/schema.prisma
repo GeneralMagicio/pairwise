@@ -24,7 +24,7 @@ model BudgetBox {
   image         String
   description   String
   dampingFactor Float     @default(0.8)
-  Allowlist     User[]
+  allowlist     String[]
   Projects      Project[]
   Votes         Vote[]
 }
@@ -89,15 +89,14 @@ model Session {
 }
 
 model User {
-  id            String      @id @default(cuid())
+  id            String    @id @default(cuid())
   name          String?
-  email         String?     @unique
+  email         String?   @unique
   emailVerified DateTime?
   walletAddress String
   image         String?
   accounts      Account[]
   sessions      Session[]
-  BudgetBoxes   BudgetBox[]
 }
 
 model VerificationToken {

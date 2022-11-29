@@ -22,8 +22,9 @@ export async function getStaticProps() {
 }
 
 const Home = () => {
-  const { data: budgetBoxes } = trpc.budgetBox.getAll.useQuery()
-
+  const { data: budgetBoxes } = trpc.budgetBox.getAll.useQuery(undefined, {
+    refetchOnWindowFocus: false
+  })
   return (
     <main className="px-4 md:px-14">
       <div className="grid justify-items-center gap-y-8 px-4 pt-16 sm:px-0 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 ">

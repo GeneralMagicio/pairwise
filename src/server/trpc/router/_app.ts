@@ -1,12 +1,14 @@
 import { authRouter } from './auth'
 import { budgetBoxRouter } from './budgetBox'
 import { projectRouter } from './project'
+import { voteRouter } from './vote'
 import { router } from '../trpc'
 
 export const appRouter = router({
+  auth: authRouter,
   budgetBox: budgetBoxRouter,
   project: projectRouter,
-  auth: authRouter
+  vote: voteRouter
 })
 
 // export type definition of API
