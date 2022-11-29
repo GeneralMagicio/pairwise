@@ -1,5 +1,6 @@
 import { router, publicProcedure } from '../trpc'
 import { z } from 'zod'
+import { PowerRanker } from '@/models/power'
 
 export const budgetBoxRouter = router({
   insertOne: publicProcedure
@@ -56,5 +57,58 @@ export const budgetBoxRouter = router({
           id
         }
       })
+    }),
+  getRanking: publicProcedure
+    .input(
+      z.object({
+        id: z.string()
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const { id } = input
+      const budgetBox = await ctx.prisma.budgetBox.findFirst({
+        where: {
+          id
+        },
+        select: {
+          dampingFactor: true
+        }
+      })
+      const projects = await ctx.prisma.project.findMany({
+        where: {
+          BudgetBoxes: {
+            every: { id }
+          }
+        }
+      })
+      const votes = await ctx.prisma.preference.findMany({
+        where: {
+          Vote: {
+            budgetBoxId: id
+          }
+        }
+      })
+      const projectSet: Set<string> = new Set()
+      votes.map((vote) => {
+        if (vote.preference !== 0) {
+          projectSet.add(vote.alphaId)
+          projectSet.add(vote.betaId)
+        }
+      })
+
+      if (projectSet.size < 2) {
+        return []
+      }
+
+      const powerRanker = new PowerRanker(projectSet, votes, projectSet.size)
+      const rankings = powerRanker.run(budgetBox?.dampingFactor)
+      const rankList = Object.fromEntries(rankings)
+
+      return projects
+        .map((project) => ({
+          ...project,
+          power: rankList[project?.id] || 0
+        }))
+        .sort((projectA, projectB) => projectB.power - projectA.power)
     })
 })
