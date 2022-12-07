@@ -38,11 +38,11 @@ export const VotePair: FC<IVotePair> = ({
           <div onClick={() => handleVote('beta')}>
             <VoteCard isSelected={selected === 'beta'}>
               <ProjectCard
-                description={beta.description}
-                image={beta.image}
-                owner={beta.owner}
-                title={beta.title}
-                url={beta.url}
+                description={beta.description as string}
+                image={beta.image as string}
+                owner={beta.owner as string}
+                title={beta.title as string}
+                url={beta.url as string}
               />
             </VoteCard>
           </div>
