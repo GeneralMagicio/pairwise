@@ -1,11 +1,15 @@
 import { VoteCard } from '@/components/cards/VoteCard'
 import { ProjectCard } from '@/components/cards/ProjectCard'
-import type { Project } from '@/utils/types/project'
+import type { AppRouter } from '@/server/trpc/router/_app'
 import type { FC } from 'react'
+import type { inferRouterOutputs } from '@trpc/server'
+
+type RouterOutput = inferRouterOutputs<AppRouter>
+type Project = RouterOutput['project']['getOne']
 
 interface IVotePair {
-  alpha: Project | null | undefined
-  beta: Project | null | undefined
+  alpha: Project | undefined
+  beta: Project | undefined
   selected: string
   handleVote: (newVote: string) => void
 }
