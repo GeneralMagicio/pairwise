@@ -50,7 +50,7 @@ export const projectRouter = router({
       return ctx.prisma.project.findMany({
         where: {
           BudgetBoxes: {
-            every: { id }
+            some: { id }
           }
         }
       })

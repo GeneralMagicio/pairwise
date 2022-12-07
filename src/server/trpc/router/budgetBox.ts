@@ -58,6 +58,22 @@ export const budgetBoxRouter = router({
         }
       })
     }),
+  getManyBySpaceSlug: publicProcedure
+    .input(
+      z.object({
+        slug: z.string()
+      })
+    )
+    .query(({ ctx, input }) => {
+      const { slug } = input
+      return ctx.prisma.budgetBox.findMany({
+        where: {
+          Space: {
+            slug
+          }
+        }
+      })
+    }),
   getRanking: publicProcedure
     .input(
       z.object({
@@ -77,7 +93,7 @@ export const budgetBoxRouter = router({
       const projects = await ctx.prisma.project.findMany({
         where: {
           BudgetBoxes: {
-            every: { id }
+            some: { id }
           }
         }
       })

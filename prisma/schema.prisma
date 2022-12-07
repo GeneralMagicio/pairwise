@@ -48,12 +48,12 @@ model BudgetBox {
 
 model Project {
   id              String       @id @default(cuid())
-  slug            String
-  owner           String
+  slug            String?
+  owner           String?
   title           String
-  url             String
-  description     String
-  image           String
+  url             String?
+  description     String?
+  image           String?
   BudgetBoxes     BudgetBox[]
   PreferenceBeta  Preference[] @relation("beta")
   PreferenceAlpha Preference[] @relation("alpha")

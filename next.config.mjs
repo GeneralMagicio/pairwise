@@ -34,6 +34,16 @@ const config = {
         protocol: 'https',
         hostname: 'd2jyzh4ah9xf6q.cloudfront.net',
         pathname: '/**'
+      },
+      {
+        protocol: 'https',
+        hostname: 'pbs.twimg.com',
+        pathname: '/**'
+      },
+      {
+        protocol: 'https',
+        hostname: 'picsum.photos',
+        pathname: '/**'
       }
     ]
   }

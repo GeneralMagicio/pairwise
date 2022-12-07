@@ -3,17 +3,18 @@ import Head from 'next/head'
 import superjson from '@/utils/superjson'
 import { appRouter } from '@/server/trpc/router/_app'
 import { trpc } from '@/utils/trpc'
-import { BudgetBoxCard } from '@/components/cards/BudgetBoxCard'
+import { SpaceCard } from '@/components/cards/SpaceCard'
 import { prisma } from '@/server/db/client'
+import type { GetStaticProps, NextPage } from 'next'
 
-export async function getStaticProps() {
+export const getStaticProps: GetStaticProps = async () => {
   const ssg = createProxySSGHelpers({
     router: appRouter,
     ctx: { session: null, prisma },
     transformer: superjson
   })
 
-  await ssg.budgetBox.getAll.prefetch()
+  await ssg.space.getAll.prefetch()
   return {
     props: {
       trpcState: ssg.dehydrate()
@@ -22,20 +23,26 @@ export async function getStaticProps() {
   }
 }
 
-const Home = () => {
-  const { data: budgetBoxes } = trpc.budgetBox.getAll.useQuery(undefined, {
-    refetchOnWindowFocus: false
-  })
+const Home: NextPage = () => {
+  const { data: spaces } = trpc.space.getAll.useQuery()
   return (
     <div>
       <Head>
-        <title>Budget Boxes</title>
+        <title>Explore</title>
       </Head>
-      <main className="px-4 md:px-14">
-        <div className="grid justify-items-center gap-y-8 px-4 pt-16 sm:px-0 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 ">
-          {budgetBoxes?.map((budgetBox) => (
-            <BudgetBoxCard key={budgetBox.id} budgetBox={budgetBox} />
-          ))}
+      <main className="w-full px-4 sm:px-8 md:px-12 lg:px-32">
+        <div className="grid justify-items-center gap-y-8 px-4 pt-16 sm:grid-cols-2 sm:px-0 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 ">
+          {spaces
+            ? spaces.map((space) => (
+                <SpaceCard
+                  key={space.id}
+                  categories={space.Categories}
+                  img={space.image}
+                  slug={space.slug}
+                  title={space.title}
+                />
+              ))
+            : null}
         </div>
       </main>
     </div>
