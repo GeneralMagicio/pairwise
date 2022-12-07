@@ -51,12 +51,12 @@ const Ranking = ({ id }: InferGetStaticPropsType<typeof getStaticProps>) => {
       {projects?.map((project) => (
         <RankingCard
           key={project.id}
-          description={project.description || ''}
+          description={project.description as string}
           image={project.image as string}
-          owner={project.owner}
+          owner={project.owner as string}
           power={project.power}
-          title={project.title}
-          url={project.url}
+          title={project.title as string}
+          url={project.url as string}
         />
       ))}
     </div>
