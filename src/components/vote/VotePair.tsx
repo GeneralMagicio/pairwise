@@ -1,18 +1,11 @@
 import { VoteCard } from '@/components/cards/VoteCard'
 import { ProjectCard } from '@/components/cards/ProjectCard'
+import type { Project } from '@/utils/types/project'
 import type { FC } from 'react'
 
-interface IProjectCard {
-  title: string
-  url?: string
-  owner?: string
-  description?: string
-  image?: string
-}
-
 interface IVotePair {
-  alpha: IProjectCard | null | undefined
-  beta: IProjectCard | null | undefined
+  alpha: Project | null | undefined
+  beta: Project | null | undefined
   selected: string
   handleVote: (newVote: string) => void
 }
