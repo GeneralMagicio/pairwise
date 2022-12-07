@@ -52,7 +52,6 @@ const Ranking = ({ id }: InferGetStaticPropsType<typeof getStaticProps>) => {
         <RankingCard
           key={project.id}
           description={project.description || ''}
-          id={project.id}
           image={project.image}
           owner={project.owner}
           power={project.power}
