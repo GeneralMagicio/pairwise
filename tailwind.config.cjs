@@ -23,7 +23,8 @@ module.exports = {
           DEFAULT: '#1B66FF',
           light: '#03B3FF',
           dark: '#0B58AF',
-          ocean: '#03B3FF'
+          ocean: '#03B3FF',
+          50: '#EBF5FF'
         }
       }
     }

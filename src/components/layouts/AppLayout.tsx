@@ -1,4 +1,5 @@
-import { Navbar } from '@/components/navigation/Navbar'
+import { Navbar } from '../navigation/Navbar'
+import { Sidebar } from '@/components/navigation/Sidebar'
 import type { ReactElement } from 'react'
 
 interface IAppLayout {
@@ -7,9 +8,13 @@ interface IAppLayout {
 
 export const AppLayout = ({ children }: IAppLayout) => {
   return (
-    <>
-      <Navbar />
-      <div className="min-h-[calc(100vh_-_110px)] bg-gray-50">{children}</div>
-    </>
+    <div className="bg-gray-100">
+      <Sidebar>
+        <>
+          <Navbar />
+          {children}
+        </>
+      </Sidebar>
+    </div>
   )
 }
