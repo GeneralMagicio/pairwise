@@ -1,3 +1,6 @@
+/* eslint-disable */
+const { fontFamily } = require('tailwindcss/defaultTheme')
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: ['./src/**/*.{js,ts,jsx,tsx}'],
@@ -30,6 +33,9 @@ module.exports = {
           100: '#DEF7EC',
           800: '#03543F'
         }
+      },
+      fontFamily: {
+        sans: ['var(--font-inter)', ...fontFamily.sans]
       }
     }
   },
