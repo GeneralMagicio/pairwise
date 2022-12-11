@@ -30,13 +30,14 @@ const Home: NextPage = () => {
       <Head>
         <title>Explore</title>
       </Head>
-      <main className="w-full px-4 sm:px-8 md:px-12 lg:px-32">
-        <div className="grid justify-items-center gap-y-8 px-4 pt-16 sm:grid-cols-2 sm:px-0 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 ">
+      <main className="flex w-full  justify-center">
+        <div className="grid justify-items-center gap-y-8 gap-x-6  pt-16 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {spaces
             ? spaces.map((space) => (
                 <SpaceCard
                   key={space.id}
                   categories={space.Categories}
+                  description={space.description}
                   img={space.image}
                   slug={space.slug}
                   title={space.title}

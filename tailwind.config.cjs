@@ -25,6 +25,10 @@ module.exports = {
           dark: '#0B58AF',
           ocean: '#03B3FF',
           50: '#EBF5FF'
+        },
+        green: {
+          100: '#DEF7EC',
+          800: '#03543F'
         }
       }
     }
