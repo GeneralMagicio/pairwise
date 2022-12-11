@@ -9,12 +9,8 @@ interface IAppLayout {
 export const AppLayout = ({ children }: IAppLayout) => {
   return (
     <div className="bg-gray-100">
-      <Sidebar>
-        <>
-          <Navbar />
-          {children}
-        </>
-      </Sidebar>
+      <Navbar />
+      <Sidebar>{children}</Sidebar>
     </div>
   )
 }

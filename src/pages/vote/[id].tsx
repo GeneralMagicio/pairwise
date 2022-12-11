@@ -212,7 +212,7 @@ const Vote = ({ budgetBoxId }: IVote) => {
 
   if (isLoading)
     return (
-      <main className="flex min-h-[calc(100vh_-_110px)] flex-col items-center justify-center">
+      <main className="flex min-h-[calc(100vh_-_100px)] flex-col items-center justify-center">
         <div className="w-full px-4 text-center text-lg">
           <LoadingIcon label="loading" />
         </div>
@@ -220,7 +220,7 @@ const Vote = ({ budgetBoxId }: IVote) => {
     )
 
   return (
-    <main className="flex min-h-[calc(100vh_-_110px)] flex-col items-center justify-center">
+    <main className="flex min-h-[calc(100vh_-_100px)] flex-col items-center justify-center">
       {pairs.length < 1 ? (
         <div className="w-full px-4 text-center text-lg">
           <span>There is no project in this budget box</span>
