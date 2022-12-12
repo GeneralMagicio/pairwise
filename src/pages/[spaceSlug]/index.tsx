@@ -56,7 +56,14 @@ const SpaceDetails = ({
       <main className="px-4 md:px-14">
         <div className="grid justify-items-center gap-y-8 px-4 pt-16 sm:px-0 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 ">
           {budgetBoxes?.map((budgetBox) => (
-            <BudgetBoxCard key={budgetBox.id} budgetBox={budgetBox} />
+            <BudgetBoxCard
+              key={budgetBox.id}
+              description={budgetBox.description}
+              id={budgetBox.id}
+              image={budgetBox.image}
+              startDate={budgetBox.startDate}
+              title={budgetBox.title}
+            />
           ))}
         </div>
       </main>

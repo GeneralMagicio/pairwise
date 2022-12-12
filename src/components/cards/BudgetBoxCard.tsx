@@ -1,46 +1,47 @@
-import { useRouter } from 'next/router'
-// import type { BudgetBox } from '@/utils/types/BudgetBox'
-import { PrimaryButton, ButtonColors } from '@/components/buttons/PrimaryButton'
-import type { AppRouter } from '@/server/trpc/router/_app'
+import Image from 'next/image'
+import Link from 'next/link'
+import moment from 'moment'
 import type { FC } from 'react'
-import type { inferRouterOutputs } from '@trpc/server'
 
-type RouterOutput = inferRouterOutputs<AppRouter>
-type BudgetBox = RouterOutput['budgetBox']['getOne']
+interface IBudgetBoxCard {
+  id: string
+  title: string
+  description: string
+  image: string
+  startDate: Date
+}
 
-export const BudgetBoxCard: FC<{ budgetBox: BudgetBox }> = ({ budgetBox }) => {
-  const router = useRouter()
-
-  const handleClick = (href: string) => {
-    router.push(href)
-  }
-
+export const BudgetBoxCard: FC<IBudgetBoxCard> = ({
+  id,
+  title,
+  description,
+  image,
+  startDate
+}) => {
   return (
-    <div className="h-[250px] w-full max-w-[280px] rounded-xl border border-neutral-800 px-4 py-2 shadow-lg">
-      <div className="text-lg">{budgetBox?.title}</div>
-      <div className="text-blue-500">{`Creator: ${budgetBox?.creator.slice(
-        0,
-        6
-      )}...${budgetBox?.creator.slice(-4)}`}</div>
-      <div>{budgetBox?.description}</div>
-      <div className="mt-2 h-[50px] w-full">
-        <PrimaryButton
-          color={ButtonColors.BLUE}
-          fontStyles="text-lg"
-          label="Vote"
-          styles="py-2 px-4"
-          onClick={() => handleClick(`vote/${budgetBox?.id}`)}
-        />
+    <Link href={`vote/${id}`}>
+      <div className="h-[350px] w-[330px] overflow-hidden rounded-lg border bg-white shadow-md">
+        <div className="relative h-[200px] w-[330px] overflow-hidden ">
+          <Image
+            fill
+            alt={`${title}'s image`}
+            className="object-cover"
+            sizes="330px"
+            src={image}
+          />
+        </div>
+        <div className="m-4 gap-y-1">
+          <div className="text-xs text-gray-500">
+            {moment(startDate).fromNow()}
+          </div>
+          <div className="text-lg font-bold text-gray-900 line-clamp-1">
+            {title}
+          </div>
+          <div className="mt-1 text-sm text-gray-600 line-clamp-3">
+            {description}
+          </div>
+        </div>
       </div>
-      <div className="mt-2 h-[50px] w-full">
-        <PrimaryButton
-          color={ButtonColors.LIGHT_BLUE}
-          fontStyles="text-lg"
-          label="See results"
-          styles="py-2 px-4"
-          onClick={() => handleClick(`ranking/${budgetBox?.id}`)}
-        />
-      </div>
-    </div>
+    </Link>
   )
 }
