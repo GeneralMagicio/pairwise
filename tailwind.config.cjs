@@ -27,7 +27,11 @@ module.exports = {
           light: '#03B3FF',
           dark: '#0B58AF',
           ocean: '#03B3FF',
+          500: '#356BCF',
           50: '#EBF5FF'
+        },
+        cyan: {
+          300: '#22B7A0'
         },
         green: {
           100: '#DEF7EC',
