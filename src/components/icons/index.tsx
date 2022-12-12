@@ -1,3 +1,4 @@
+import { ArrowDownIcon } from './ArrowDownIcon'
 import { CreateIcon } from './CreateIcon'
 import { HomeIcon } from './HomeIcon'
 import { SearchIcon } from './SearchIcon'
@@ -8,4 +9,4 @@ export interface IconProps {
   width?: number
 }
 
-export { CreateIcon, HomeIcon, SearchIcon }
+export { ArrowDownIcon, CreateIcon, HomeIcon, SearchIcon }
