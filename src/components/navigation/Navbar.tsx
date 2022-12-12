@@ -1,6 +1,6 @@
-import { ConnectButton } from '@rainbow-me/rainbowkit'
 import Link from 'next/link'
 import Image from 'next/image'
+import { CustomConnectButton } from '@/components/buttons/ConnectButton'
 import type { FC } from 'react'
 
 export const Navbar: FC = () => {
@@ -15,7 +15,7 @@ export const Navbar: FC = () => {
         />
         <h2 className="ml-3 text-2xl font-semibold">Budget Boxes</h2>
       </Link>
-      <ConnectButton />
+      <CustomConnectButton />
     </nav>
   )
 }
