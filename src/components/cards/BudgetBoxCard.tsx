@@ -37,7 +37,7 @@ export const BudgetBoxCard: FC<IBudgetBoxCard> = ({
           <div className="text-lg font-bold text-gray-900 line-clamp-1">
             {title}
           </div>
-          <div className="mt-1 text-sm text-gray-600 line-clamp-3">
+          <div className="mt-1 font-light text-gray-500 line-clamp-3">
             {description}
           </div>
         </div>
