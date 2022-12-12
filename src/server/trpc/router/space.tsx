@@ -58,5 +58,22 @@ export const spaceRouter = router({
           Categories: true
         }
       })
+    }),
+  getOneBySlug: publicProcedure
+    .input(
+      z.object({
+        slug: z.string()
+      })
+    )
+    .query(({ ctx, input }) => {
+      const { slug } = input
+      return ctx.prisma.space.findFirst({
+        where: {
+          slug
+        },
+        include: {
+          Categories: true
+        }
+      })
     })
 })

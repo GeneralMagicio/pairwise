@@ -48,7 +48,7 @@ const Home: NextPage = () => {
             value={search}
             onChange={searchInputHandler}
           />
-          <div className="grid w-[1200px]  justify-items-center gap-y-8 gap-x-6 pt-10 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <div className="grid w-[1200px] justify-items-center gap-y-8 gap-x-6 pt-10 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {spaces
               ? spaces
                   .filter((space) =>

@@ -5,6 +5,7 @@ import { appRouter } from '@/server/trpc/router/_app'
 import { trpc } from '@/utils/trpc'
 import { prisma } from '@/server/db/client'
 import { BudgetBoxCard } from '@/components/cards/BudgetBoxCard'
+import { SpaceHeroCard } from '@/components/cards/SpaceHeroCard'
 import type {
   GetStaticPaths,
   InferGetStaticPropsType,
@@ -30,6 +31,7 @@ export const getStaticProps = async (
     transformer: superjson
   })
   const spaceSlug = context.params?.spaceSlug as string
+  await ssg.space.getOneBySlug.prefetch({ slug: spaceSlug })
   await ssg.budgetBox.getManyBySpaceSlug.prefetch({ slug: spaceSlug })
 
   return {
@@ -47,26 +49,37 @@ const SpaceDetails = ({
   const { data: budgetBoxes } = trpc.budgetBox.getManyBySpaceSlug.useQuery({
     slug: spaceSlug
   })
+  const { data: space } = trpc.space.getOneBySlug.useQuery({ slug: spaceSlug })
 
   return (
     <div>
       <Head>
         <title>{spaceSlug}</title>
       </Head>
-      <main className="px-4 md:px-14">
-        <div className="grid justify-items-center gap-y-8 px-4 pt-16 sm:px-0 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 ">
-          {budgetBoxes?.map((budgetBox) => (
-            <BudgetBoxCard
-              key={budgetBox.id}
-              description={budgetBox.description}
-              id={budgetBox.id}
-              image={budgetBox.image}
-              startDate={budgetBox.startDate}
-              title={budgetBox.title}
+      {space ? (
+        <main className="py-16">
+          <div className="mx-auto w-[1100px]">
+            <SpaceHeroCard
+              categories={space.Categories}
+              description={space.description}
+              image={space.image}
+              title={space.title}
             />
-          ))}
-        </div>
-      </main>
+            <div className="mt-16 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+              {budgetBoxes?.map((budgetBox) => (
+                <BudgetBoxCard
+                  key={budgetBox.id}
+                  description={budgetBox.description}
+                  id={budgetBox.id}
+                  image={budgetBox.image}
+                  startDate={budgetBox.startDate}
+                  title={budgetBox.title}
+                />
+              ))}
+            </div>
+          </div>
+        </main>
+      ) : null}
     </div>
   )
 }

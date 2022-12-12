@@ -8,7 +8,7 @@ export const SpaceCategoryTags: FC<ISpaceCategoryTags> = ({ categories }) => {
   return (
     <>
       {categories.length > 0 ? (
-        <div className="flex w-full flex-wrap justify-center gap-1 px-2">
+        <div className="flex w-fit flex-wrap justify-center gap-1">
           {categories.map(({ category }) => (
             <span
               key={category}

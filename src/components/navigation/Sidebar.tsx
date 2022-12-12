@@ -24,7 +24,7 @@ const sidebarItems = [
 export const Sidebar = ({ children }: IAppLayout) => {
   return (
     <div className="flex min-h-[calc(100vh_-_100px)]">
-      <aside className="sticky top-[100px] hidden h-[calc(100vh_-_100px)] w-[180px] flex-col items-start justify-start gap-y-10 bg-blue-50 pl-6 pt-8 sm:flex">
+      <aside className="sticky top-[100px] hidden h-[calc(100vh_-_100px)] min-w-[180px] flex-col items-start justify-start gap-y-10 bg-blue-50 pl-6 pt-8 sm:flex">
         {sidebarItems.map((item) => (
           <Link key={item.title} className="flex items-center" href={'/'}>
             <div className="grid h-8 w-8 place-content-center rounded-full bg-gradient-to-b from-blue-500 to-cyan-300">
