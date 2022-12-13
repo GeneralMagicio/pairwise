@@ -1,13 +1,12 @@
 import { createProxySSGHelpers } from '@trpc/react-query/ssg'
 import Head from 'next/head'
-import { useState } from 'react'
 import superjson from '@/utils/superjson'
 import { appRouter } from '@/server/trpc/router/_app'
 import { trpc } from '@/utils/trpc'
 import { SpaceCard } from '@/components/cards/SpaceCard'
 import { prisma } from '@/server/db/client'
 import { SearchInput } from '@/components/inputs/SearchInput'
-import type { FormEvent } from 'react'
+import { useSearchInput } from '@/hooks/useSearchInput'
 import type { GetStaticProps, NextPage } from 'next'
 
 export const getStaticProps: GetStaticProps = async () => {
@@ -27,13 +26,8 @@ export const getStaticProps: GetStaticProps = async () => {
 }
 
 const Home: NextPage = () => {
-  const [search, setSearch] = useState<string>('')
+  const [search, searchInputHandler] = useSearchInput()
   const { data: spaces } = trpc.space.getAll.useQuery()
-
-  const searchInputHandler = (event: FormEvent<HTMLInputElement>) => {
-    event.preventDefault()
-    setSearch((event.target as HTMLInputElement).value.toLowerCase())
-  }
 
   return (
     <div>
@@ -53,7 +47,7 @@ const Home: NextPage = () => {
               ? spaces
                   .filter((space) =>
                     [space.title, space.description].some((item) =>
-                      item.toLowerCase().includes(search)
+                      item.toLowerCase().includes(search.toLowerCase())
                     )
                   )
                   .map((space) => (
