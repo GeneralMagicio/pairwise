@@ -6,6 +6,7 @@ import { trpc } from '@/utils/trpc'
 import { prisma } from '@/server/db/client'
 import { BudgetBoxCard } from '@/components/cards/BudgetBoxCard'
 import { SpaceHeroCard } from '@/components/cards/SpaceHeroCard'
+import { Divider } from '@/components/general/Divider'
 import { SearchInput } from '@/components/inputs/SearchInput'
 import { useSearchInput } from '@/hooks/useSearchInput'
 import { textSearch } from '@/utils/helpers/textSearch'
@@ -75,6 +76,7 @@ const SpaceDetails = ({
               value={search}
               onChange={searchInputHandler}
             />
+            <Divider text="Now Voting" />
             <div className="mt-10 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
               {budgetBoxes
                 ?.filter(({ title, description }) =>
