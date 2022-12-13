@@ -31,7 +31,8 @@ module.exports = {
           50: '#EBF5FF'
         },
         cyan: {
-          300: '#22B7A0'
+          300: '#22B7A0',
+          400: '#27A1AD'
         },
         green: {
           100: '#DEF7EC',

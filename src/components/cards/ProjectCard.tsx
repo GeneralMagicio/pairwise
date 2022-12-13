@@ -1,8 +1,11 @@
 import Image from 'next/image'
-import { PrimaryButton, ButtonColors } from '@/components/buttons/PrimaryButton'
+import Link from 'next/link'
+import classNames from 'classnames'
+import { CircleGradientIcon, CircleGradientTickIcon } from '@/components/icons'
 import type { FC } from 'react'
 
 interface IProjectCard {
+  isSelected: boolean
   title: string
   url?: string
   owner?: string
@@ -11,19 +14,24 @@ interface IProjectCard {
 }
 
 export const ProjectCard: FC<IProjectCard> = ({
+  isSelected,
   title,
   url,
   owner,
   description,
   image
 }) => {
-  const handleClick = (href: string) => {
-    window.open(href, '_blank', 'noopener,noreferrer')
-  }
   return (
-    <div className="w-full max-w-[400px] overflow-hidden rounded-xl border-gray-300 bg-white pb-4 shadow sm:w-[400px]">
+    <div
+      className={classNames(
+        'h-[470px] w-full cursor-pointer overflow-hidden rounded-lg bg-white pb-4 shadow-md transition duration-200  hover:shadow-cyan-300 hover:ring-2 hover:ring-cyan-300 sm:max-w-[370px]',
+        isSelected
+          ? 'shadow-lg shadow-cyan-300 ring-4 ring-cyan-300 hover:ring-4 '
+          : ''
+      )}
+    >
       {image ? (
-        <div className="relative h-[120px] w-full drop-shadow lg:h-[220px]">
+        <div className="relative h-[120px] w-full lg:h-[250px]">
           <Image
             fill
             priority
@@ -35,15 +43,19 @@ export const ProjectCard: FC<IProjectCard> = ({
         </div>
       ) : null}
       {owner || description ? (
-        <div className="h-[120px] px-4 lg:h-[200px]">
-          <div className="mt-2 text-lg font-semibold line-clamp-2 lg:text-xl">
+        <div className="px-6">
+          <div className="mt-4 text-lg font-semibold line-clamp-1 lg:text-xl">
             {title}
           </div>
           {owner ? (
-            <span className="hidden text-blue-500 lg:inline">{owner}</span>
+            <span className="hidden text-xs text-gray-500 lg:inline">
+              {owner}
+            </span>
           ) : null}
           {description ? (
-            <div className="line-clamp-3 lg:line-clamp-5">{description}</div>
+            <div className="mt-2 text-sm font-light text-gray-500 line-clamp-3">
+              {description}
+            </div>
           ) : null}
         </div>
       ) : (
@@ -53,19 +65,20 @@ export const ProjectCard: FC<IProjectCard> = ({
           </div>
         </div>
       )}
-      {url ? (
-        <div className="mt-4 flex w-full justify-center">
-          <div className="h-[50px] w-fit">
-            <PrimaryButton
-              color={ButtonColors.LIGHT_BLUE}
-              fontStyles="text-lg"
-              label="See more..."
-              styles="py-2 px-4"
-              onClick={() => handleClick(url)}
-            />
-          </div>
-        </div>
-      ) : null}
+      <div className="mx-6 mt-6 flex items-center justify-between">
+        {url ? (
+          <Link href={url} target="_blank">
+            <div className="w-fit font-medium">View Details</div>
+          </Link>
+        ) : (
+          <div></div>
+        )}
+        {isSelected ? (
+          <CircleGradientTickIcon height={32} width={32} />
+        ) : (
+          <CircleGradientIcon height={32} width={32} />
+        )}
+      </div>
     </div>
   )
 }

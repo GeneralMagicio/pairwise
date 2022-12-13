@@ -1,4 +1,6 @@
 import { ArrowDownIcon } from './ArrowDownIcon'
+import { CircleGradientIcon } from './CircleGradientIcon'
+import { CircleGradientTickIcon } from './CircleGradientTickIcon'
 import { CreateIcon } from './CreateIcon'
 import { HomeIcon } from './HomeIcon'
 import { SearchIcon } from './SearchIcon'
@@ -10,4 +12,12 @@ export interface IconProps {
   width?: number
 }
 
-export { ArrowDownIcon, CreateIcon, HomeIcon, SearchIcon, TickIcon }
+export {
+  ArrowDownIcon,
+  CircleGradientIcon,
+  CircleGradientTickIcon,
+  CreateIcon,
+  HomeIcon,
+  SearchIcon,
+  TickIcon
+}
