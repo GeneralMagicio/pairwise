@@ -6,6 +6,9 @@ import { trpc } from '@/utils/trpc'
 import { prisma } from '@/server/db/client'
 import { BudgetBoxCard } from '@/components/cards/BudgetBoxCard'
 import { SpaceHeroCard } from '@/components/cards/SpaceHeroCard'
+import { SearchInput } from '@/components/inputs/SearchInput'
+import { useSearchInput } from '@/hooks/useSearchInput'
+import { textSearch } from '@/utils/helpers/textSearch'
 import type {
   GetStaticPaths,
   InferGetStaticPropsType,
@@ -46,6 +49,7 @@ export const getStaticProps = async (
 const SpaceDetails = ({
   spaceSlug
 }: InferGetStaticPropsType<typeof getStaticProps>) => {
+  const [search, searchInputHandler] = useSearchInput()
   const { data: budgetBoxes } = trpc.budgetBox.getManyBySpaceSlug.useQuery({
     slug: spaceSlug
   })
@@ -65,18 +69,28 @@ const SpaceDetails = ({
               image={space.image}
               title={space.title}
             />
-            <div className="mt-16 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-              {budgetBoxes?.map((budgetBox) => (
-                <BudgetBoxCard
-                  key={budgetBox.id}
-                  description={budgetBox.description}
-                  id={budgetBox.id}
-                  image={budgetBox.image}
-                  spaceSlug={spaceSlug}
-                  startDate={budgetBox.startDate}
-                  title={budgetBox.title}
-                />
-              ))}
+            <SearchInput
+              className="mt-14"
+              placeholder="Search boxes"
+              value={search}
+              onChange={searchInputHandler}
+            />
+            <div className="mt-10 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+              {budgetBoxes
+                ?.filter(({ title, description }) =>
+                  textSearch(search, [title, description])
+                )
+                .map((budgetBox) => (
+                  <BudgetBoxCard
+                    key={budgetBox.id}
+                    description={budgetBox.description}
+                    id={budgetBox.id}
+                    image={budgetBox.image}
+                    spaceSlug={spaceSlug}
+                    startDate={budgetBox.startDate}
+                    title={budgetBox.title}
+                  />
+                ))}
             </div>
           </div>
         </main>

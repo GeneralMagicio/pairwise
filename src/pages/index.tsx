@@ -7,6 +7,7 @@ import { SpaceCard } from '@/components/cards/SpaceCard'
 import { prisma } from '@/server/db/client'
 import { SearchInput } from '@/components/inputs/SearchInput'
 import { useSearchInput } from '@/hooks/useSearchInput'
+import { textSearch } from '@/utils/helpers/textSearch'
 import type { GetStaticProps, NextPage } from 'next'
 
 export const getStaticProps: GetStaticProps = async () => {
@@ -45,10 +46,8 @@ const Home: NextPage = () => {
           <div className="grid w-[1200px] justify-items-center gap-y-8 gap-x-6 pt-10 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {spaces
               ? spaces
-                  .filter((space) =>
-                    [space.title, space.description].some((item) =>
-                      item.toLowerCase().includes(search.toLowerCase())
-                    )
+                  .filter(({ title, description }) =>
+                    textSearch(search, [title, description])
                   )
                   .map((space) => (
                     <SpaceCard
