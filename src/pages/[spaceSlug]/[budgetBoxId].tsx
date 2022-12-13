@@ -7,6 +7,7 @@ import { prisma } from '@/server/db/client'
 import { BudgetBoxDetails } from '@/components/details/BudgetBoxDetails'
 import { BudgetBoxInfoButtonCard } from '@/components/cards/BudgetBoxInfoButtonCard'
 import { BudgetBoxInfoLiveCard } from '@/components/cards/BudgetBoxInfoLiveCard'
+import { BudgetBoxInfoVotingCard } from '@/components/cards/BudgetBoxInfoVotingCard'
 import type {
   GetStaticPaths,
   GetStaticPropsContext,
@@ -101,6 +102,12 @@ export const BudgetBoxDetailsPage = ({
                 projectsCount={projects?.length || 0}
                 title="Live project information"
                 topProjects={topProjects}
+              />
+              <BudgetBoxInfoVotingCard
+                allowanceMethod="Allowlist"
+                endDate={budgetBox.endDate}
+                startDate={budgetBox.startDate}
+                title="Voting information"
               />
             </div>
           </div>
