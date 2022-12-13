@@ -8,6 +8,7 @@ interface IBudgetBoxCard {
   title: string
   description: string
   image: string
+  spaceSlug: string
   startDate: Date
 }
 
@@ -16,12 +17,13 @@ export const BudgetBoxCard: FC<IBudgetBoxCard> = ({
   title,
   description,
   image,
+  spaceSlug,
   startDate
 }) => {
   return (
     <Link
       className="h-[350px] min-w-[330px] overflow-hidden rounded-lg border bg-white shadow-md"
-      href={`vote/${id}`}
+      href={`${spaceSlug}/${id}`}
     >
       <div className="relative h-[200px] min-w-[330px] overflow-hidden ">
         <Image

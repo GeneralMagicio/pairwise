@@ -8,7 +8,8 @@ export enum ButtonColors {
   GRAY = 'gray',
   WHITE = 'white',
   PURPLE = 'purple',
-  RED = 'red'
+  RED = 'red',
+  BLUE_GRADIENT = 'blue-gradient'
 }
 
 const colors: { [key in ButtonColors]: string } = {
@@ -18,7 +19,9 @@ const colors: { [key in ButtonColors]: string } = {
   gray: 'bg-gray-400 hover:bg-gray-400/90 disabled:bg-gray-400/70',
   white: 'bg-white hover:bg-white/90 disabled:bg-gray-200',
   purple: 'bg-purple hover:bg-purple/90 disabled:bg-purple/70',
-  red: 'bg-red hover:bg-red/90 disabled:bg-red/70'
+  red: 'bg-red hover:bg-red/90 disabled:bg-red/70',
+  'blue-gradient':
+    'bg-gradient-to-b from-blue-500 to-cyan-300 hover:from-blue-500/90 hover:to-cyan-300/90 disabled:from-blue-500/70 disabled:to-cyan-300/70'
 }
 
 const textColor: { [key in ButtonColors]: string } = {
@@ -28,7 +31,8 @@ const textColor: { [key in ButtonColors]: string } = {
   gray: 'text-white',
   white: 'text-black',
   purple: 'text-white',
-  red: 'text-white'
+  red: 'text-white',
+  'blue-gradient': 'text-white'
 }
 
 interface IPrimaryButton {

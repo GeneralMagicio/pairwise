@@ -58,7 +58,7 @@ const SpaceDetails = ({
       </Head>
       {space ? (
         <main className="py-16">
-          <div className="mx-auto w-[1100px]">
+          <div className="mx-auto max-w-[1100px]">
             <SpaceHeroCard
               categories={space.Categories}
               description={space.description}
@@ -72,6 +72,7 @@ const SpaceDetails = ({
                   description={budgetBox.description}
                   id={budgetBox.id}
                   image={budgetBox.image}
+                  spaceSlug={spaceSlug}
                   startDate={budgetBox.startDate}
                   title={budgetBox.title}
                 />
