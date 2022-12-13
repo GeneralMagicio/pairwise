@@ -2,6 +2,7 @@ import { ArrowDownIcon } from './ArrowDownIcon'
 import { CreateIcon } from './CreateIcon'
 import { HomeIcon } from './HomeIcon'
 import { SearchIcon } from './SearchIcon'
+import { TickIcon } from './TickIcon'
 
 export interface IconProps {
   color?: string
@@ -9,4 +10,4 @@ export interface IconProps {
   width?: number
 }
 
-export { ArrowDownIcon, CreateIcon, HomeIcon, SearchIcon }
+export { ArrowDownIcon, CreateIcon, HomeIcon, SearchIcon, TickIcon }

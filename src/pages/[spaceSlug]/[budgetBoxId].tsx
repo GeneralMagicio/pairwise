@@ -6,6 +6,7 @@ import { trpc } from '@/utils/trpc'
 import { prisma } from '@/server/db/client'
 import { BudgetBoxDetails } from '@/components/details/BudgetBoxDetails'
 import { BudgetBoxInfoButtonCard } from '@/components/cards/BudgetBoxInfoButtonCard'
+import { BudgetBoxInfoLiveCard } from '@/components/cards/BudgetBoxInfoLiveCard'
 import type {
   GetStaticPaths,
   GetStaticPropsContext,
@@ -44,8 +45,10 @@ export const getStaticProps = async (
   })
   const spaceSlug = context.params?.spaceSlug as string
   const budgetBoxId = context.params?.budgetBoxId as string
-  await ssg.space.getOneBySlug.prefetch({ slug: spaceSlug })
+
   await ssg.budgetBox.getOne.prefetch({ id: budgetBoxId })
+  await ssg.project.getManyByBudgetBoxId.prefetch({ id: budgetBoxId })
+  await ssg.budgetBox.getRanking.prefetch({ id: budgetBoxId })
 
   return {
     props: {
@@ -63,6 +66,17 @@ export const BudgetBoxDetailsPage = ({
   const { data: budgetBox } = trpc.budgetBox.getOne.useQuery({
     id: budgetBoxId
   })
+  const { data: projects } = trpc.project.getManyByBudgetBoxId.useQuery({
+    id: budgetBoxId
+  })
+  const { data: ranking } = trpc.budgetBox.getRanking.useQuery({
+    id: budgetBoxId
+  })
+  const topProjects = ranking?.slice(0, 3).map(({ power, title }) => ({
+    power,
+    title
+  }))
+
   return (
     <div>
       <Head>
@@ -77,11 +91,16 @@ export const BudgetBoxDetailsPage = ({
               image={budgetBox.image}
               title={budgetBox.title}
             />
-            <div className="col-span-1">
+            <div className="col-span-1 grid gap-y-6">
               <BudgetBoxInfoButtonCard
                 budgetBoxId={budgetBox.id}
                 description={budgetBox.description}
                 title="Information"
+              />
+              <BudgetBoxInfoLiveCard
+                projectsCount={projects?.length || 0}
+                title="Live project information"
+                topProjects={topProjects}
               />
             </div>
           </div>
