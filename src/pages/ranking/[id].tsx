@@ -1,9 +1,11 @@
 import { createProxySSGHelpers } from '@trpc/react-query/ssg'
 import superjson from 'superjson'
+import Head from 'next/head'
 import { appRouter } from '@/server/trpc/router/_app'
 import { trpc } from '@/utils/trpc'
 import { prisma } from '@/server/db/client'
 import { RankingCard } from '@/components/cards/RankingCard'
+import { LoadingIcon } from '@/components/icons/LoadingIcon'
 import type { InferGetStaticPropsType } from 'next'
 import type { GetStaticPaths, GetStaticPropsContext } from 'next'
 
@@ -34,6 +36,9 @@ export const getStaticProps = async (
   await ssg.budgetBox.getRanking.prefetch({
     id
   })
+  await ssg.budgetBox.getOne.prefetch({
+    id
+  })
 
   return {
     props: {
@@ -44,25 +49,34 @@ export const getStaticProps = async (
   }
 }
 
-const Ranking = ({ id }: InferGetStaticPropsType<typeof getStaticProps>) => {
-  const { data: projects } = trpc.budgetBox.getRanking.useQuery({ id })
+const RankingPage = ({
+  id
+}: InferGetStaticPropsType<typeof getStaticProps>) => {
+  const {
+    data: projects,
+    isLoading: projectsLoading,
+    isSuccess: projectsSuccess
+  } = trpc.budgetBox.getRanking.useQuery({
+    id: 'dsdsddsdsd'
+  })
+  const { data: budgetBox } = trpc.budgetBox.getOne.useQuery({ id })
+
   return (
-    <main className="py-16">
-      <div className="flex flex-col items-center justify-center gap-y-4 px-8 pt-16 pb-10">
-        <div className="bg-gray-50"></div>
-        {projects?.map((project) => (
-          <RankingCard
-            key={project.id}
-            image={project.image as string}
-            owner={project.owner as string}
-            power={project.power}
-            title={project.title as string}
-            url={project.url as string}
-          />
-        ))}
-      </div>
-    </main>
+    <>
+      <Head>
+        <title>{`${budgetBox?.title || ''} Ranking`}</title>
+      </Head>
+      {projectsLoading ? (
+        <LoadingIcon label="Loading" />
+      ) : projectsSuccess ? (
+        <RankingCard projects={projects} />
+      ) : (
+        <h2 className="text-center text-xl font-semibold text-red-600">
+          An error occured, refresh the page and try again
+        </h2>
+      )}
+    </>
   )
 }
 
-export default Ranking
+export default RankingPage

@@ -34,7 +34,7 @@ export const Sidebar = ({ children }: IAppLayout) => {
           </Link>
         ))}
       </aside>
-      <div className="w-full">{children}</div>
+      <div className="w-full py-12">{children}</div>
     </div>
   )
 }
