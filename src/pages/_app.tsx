@@ -23,11 +23,11 @@ const MyApp: AppType<{ session: Session | null }> = ({
     <SessionProvider session={session}>
       <WagmiConfig client={wagmiClient}>
         <RainbowKitProvider chains={chains}>
-          <main className={`${inter.variable} font-sans`}>
+          <div className={`${inter.variable} font-sans`}>
             <AppLayout>
               <Component {...pageProps} />
             </AppLayout>
-          </main>
+          </div>
         </RainbowKitProvider>
       </WagmiConfig>
     </SessionProvider>
