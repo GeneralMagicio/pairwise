@@ -56,9 +56,7 @@ const RankingPage = ({
     data: projects,
     isLoading: projectsLoading,
     isSuccess: projectsSuccess
-  } = trpc.budgetBox.getRanking.useQuery({
-    id: 'dsdsddsdsd'
-  })
+  } = trpc.budgetBox.getRanking.useQuery({ id })
   const { data: budgetBox } = trpc.budgetBox.getOne.useQuery({ id })
 
   return (
