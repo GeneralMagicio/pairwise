@@ -1,5 +1,5 @@
 import className from 'classnames'
-import type { FC, ReactElement } from 'react'
+import type { ReactElement } from 'react'
 
 export enum ButtonColors {
   BLACK = 'black',
@@ -47,7 +47,7 @@ interface IPrimaryButton {
   type?: 'button' | 'submit' | 'reset' | undefined
 }
 
-export const PrimaryButton: FC<IPrimaryButton> = ({
+export const PrimaryButton = ({
   border,
   color,
   disabled,
@@ -56,7 +56,7 @@ export const PrimaryButton: FC<IPrimaryButton> = ({
   styles,
   fontStyles,
   type = 'button'
-}) => {
+}: IPrimaryButton) => {
   return (
     <button
       disabled={disabled}

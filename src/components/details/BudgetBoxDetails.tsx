@@ -1,5 +1,4 @@
 import Image from 'next/image'
-import type { FC } from 'react'
 
 interface IBudgetBoxDetails {
   className?: string
@@ -8,12 +7,12 @@ interface IBudgetBoxDetails {
   title: string
 }
 
-export const BudgetBoxDetails: FC<IBudgetBoxDetails> = ({
+export const BudgetBoxDetails = ({
   className,
   description,
   image,
   title
-}) => {
+}: IBudgetBoxDetails) => {
   return (
     <div className={className}>
       <div className="relative h-[390px] w-[660px]">

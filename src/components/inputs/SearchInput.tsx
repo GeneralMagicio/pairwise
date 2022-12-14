@@ -1,6 +1,6 @@
 import classNames from 'classnames'
 import { SearchIcon } from '@/components/icons'
-import type { FC, FormEvent } from 'react'
+import type { FormEvent } from 'react'
 
 interface ISearchInput {
   className?: string
@@ -9,12 +9,12 @@ interface ISearchInput {
   onChange?: (event: FormEvent<HTMLInputElement>) => void
 }
 
-export const SearchInput: FC<ISearchInput> = ({
+export const SearchInput = ({
   className,
   placeholder,
   value,
   onChange
-}) => {
+}: ISearchInput) => {
   return (
     <form className={classNames('flex items-center', className)}>
       <input

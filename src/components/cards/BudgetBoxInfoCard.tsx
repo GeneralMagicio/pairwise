@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import type { FC, ReactElement } from 'react'
+import type { ReactElement } from 'react'
 
 interface IBudgetBoxInfoCard {
   children: ReactElement
@@ -7,11 +7,11 @@ interface IBudgetBoxInfoCard {
   title: string
 }
 
-export const BudgetBoxInfoCard: FC<IBudgetBoxInfoCard> = ({
+export const BudgetBoxInfoCard = ({
   children,
   className,
   title
-}) => {
+}: IBudgetBoxInfoCard) => {
   return (
     <div
       className={classNames(

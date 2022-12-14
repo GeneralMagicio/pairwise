@@ -1,7 +1,6 @@
 import { PrimaryButton, ButtonColors } from '../buttons/PrimaryButton'
 import { useRouter } from 'next/router'
 import { BudgetBoxInfoCard } from '@/components/cards/BudgetBoxInfoCard'
-import type { FC } from 'react'
 
 interface IBudgetBoxInfoButtonCard {
   budgetBoxId: string
@@ -9,11 +8,11 @@ interface IBudgetBoxInfoButtonCard {
   title: string
 }
 
-export const BudgetBoxInfoButtonCard: FC<IBudgetBoxInfoButtonCard> = ({
+export const BudgetBoxInfoButtonCard = ({
   budgetBoxId,
   description,
   title
-}) => {
+}: IBudgetBoxInfoButtonCard) => {
   const router = useRouter()
 
   const handleRedirect = (href: string) => router.push(href)

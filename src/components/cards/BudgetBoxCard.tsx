@@ -1,7 +1,6 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import moment from 'moment'
-import type { FC } from 'react'
 
 interface IBudgetBoxCard {
   id: string
@@ -12,14 +11,14 @@ interface IBudgetBoxCard {
   startDate: Date
 }
 
-export const BudgetBoxCard: FC<IBudgetBoxCard> = ({
+export const BudgetBoxCard = ({
   id,
   title,
   description,
   image,
   spaceSlug,
   startDate
-}) => {
+}: IBudgetBoxCard) => {
   return (
     <Link
       className="h-[350px] min-w-[330px] overflow-hidden rounded-lg border bg-white shadow-md"

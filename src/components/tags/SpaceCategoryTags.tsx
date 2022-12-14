@@ -1,10 +1,8 @@
-import type { FC } from 'react'
-
 interface ISpaceCategoryTags {
   categories: Array<{ category: string }>
 }
 
-export const SpaceCategoryTags: FC<ISpaceCategoryTags> = ({ categories }) => {
+export const SpaceCategoryTags = ({ categories }: ISpaceCategoryTags) => {
   return (
     <>
       {categories.length > 0 ? (

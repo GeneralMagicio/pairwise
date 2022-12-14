@@ -1,7 +1,6 @@
 import { BudgetBoxInfoCard } from '@/components/cards/BudgetBoxInfoCard'
 import { TickIcon } from '@/components/icons'
 import { ProjectVotesBar } from '@/components/charts/ProjectVotesBar'
-import type { FC } from 'react'
 
 interface ITopProject {
   power: number
@@ -14,11 +13,11 @@ interface IBudgetBoxInfoLiveCard {
   topProjects?: Array<ITopProject>
 }
 
-export const BudgetBoxInfoLiveCard: FC<IBudgetBoxInfoLiveCard> = ({
+export const BudgetBoxInfoLiveCard = ({
   projectsCount,
   title,
   topProjects
-}) => {
+}: IBudgetBoxInfoLiveCard) => {
   const maxPercentage =
     topProjects && topProjects?.length > 0 && topProjects[0]
       ? Math.min(100 * topProjects[0].power, 100)

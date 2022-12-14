@@ -1,9 +1,8 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { CustomConnectButton } from '@/components/buttons/ConnectButton'
-import type { FC } from 'react'
 
-export const Navbar: FC = () => {
+export const Navbar = () => {
   return (
     <nav className="sticky top-0 z-20 flex h-[100px] w-full items-center justify-between bg-blue-50 px-8">
       <Link className="flex items-center" href={'/'}>

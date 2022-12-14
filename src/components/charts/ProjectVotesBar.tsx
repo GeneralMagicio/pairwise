@@ -1,5 +1,4 @@
 import { BarChart } from '@/components/charts/BarChart'
-import type { FC } from 'react'
 
 interface IProjectVotesBar {
   maxPercentage: number
@@ -7,11 +6,11 @@ interface IProjectVotesBar {
   title: string
 }
 
-export const ProjectVotesBar: FC<IProjectVotesBar> = ({
+export const ProjectVotesBar = ({
   maxPercentage,
   projectPercentage,
   title
-}) => {
+}: IProjectVotesBar) => {
   return (
     <>
       <div className="flex h-6 justify-between pt-1 text-sm text-gray-500">

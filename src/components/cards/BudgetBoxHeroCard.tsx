@@ -1,17 +1,16 @@
 import Image from 'next/image'
 import { HeroCard } from '@/components/cards/HeroCard'
-import type { FC } from 'react'
 
 interface IBudgetBoxHeroCard {
   image: string
   title: string
   description: string
 }
-export const BudgetBoxHeroCard: FC<IBudgetBoxHeroCard> = ({
+export const BudgetBoxHeroCard = ({
   image,
   title,
   description
-}) => {
+}: IBudgetBoxHeroCard) => {
   return (
     <HeroCard>
       <>

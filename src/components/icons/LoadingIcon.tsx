@@ -1,10 +1,8 @@
-import type { FC } from 'react'
-
 interface ILoadingIcon {
   label: string
 }
 
-export const LoadingIcon: FC<ILoadingIcon> = ({ label }) => {
+export const LoadingIcon = ({ label }: ILoadingIcon) => {
   return (
     <div className="flex items-center justify-center" role="status">
       <svg

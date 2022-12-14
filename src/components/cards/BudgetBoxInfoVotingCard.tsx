@@ -1,6 +1,5 @@
 import { BudgetBoxInfoCard } from './BudgetBoxInfoCard'
 import moment from 'moment'
-import type { FC } from 'react'
 
 interface IBudgetBoxInfoVotingCard {
   allowanceMethod: string
@@ -9,12 +8,12 @@ interface IBudgetBoxInfoVotingCard {
   title: string
 }
 
-export const BudgetBoxInfoVotingCard: FC<IBudgetBoxInfoVotingCard> = ({
+export const BudgetBoxInfoVotingCard = ({
   allowanceMethod,
   endDate,
   startDate,
   title
-}) => {
+}: IBudgetBoxInfoVotingCard) => {
   return (
     <BudgetBoxInfoCard className="h-[195px]" title={title}>
       <>

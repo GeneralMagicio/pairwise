@@ -1,13 +1,12 @@
 import type { IconProps } from '.'
-import type { FC } from 'react'
 
-export const NextArrowIcon: FC<IconProps> = ({
+export const NextArrowIcon = ({
   className = '',
   color = '#1F2A37',
   height = 40,
   onClick = () => null,
   width = 40
-}) => (
+}: IconProps) => (
   <svg
     className={className}
     fill="none"

@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import type { FC } from 'react'
+
 classNames
 
 interface IBarChart {
@@ -8,11 +8,11 @@ interface IBarChart {
   maxPercentage?: number
 }
 
-export const BarChart: FC<IBarChart> = ({
+export const BarChart = ({
   height = 2,
   percentage,
   maxPercentage = 100
-}) => {
+}: IBarChart) => {
   return (
     <div
       className="w-full overflow-hidden  rounded-md bg-gray-200"

@@ -1,6 +1,6 @@
 import { ProjectCard } from '@/components/cards/ProjectCard'
 import type { AppRouter } from '@/server/trpc/router/_app'
-import type { FC } from 'react'
+
 import type { inferRouterOutputs } from '@trpc/server'
 
 type RouterOutput = inferRouterOutputs<AppRouter>
@@ -14,13 +14,13 @@ interface IVotePair {
   page: number
 }
 
-export const VotePair: FC<IVotePair> = ({
+export const VotePair = ({
   alpha,
   beta,
   selected,
   handleVote,
   page
-}) => {
+}: IVotePair) => {
   return (
     <div className="flex w-full max-w-[920px] flex-col items-center justify-between gap-y-4 px-4 lg:flex-row lg:px-10">
       {alpha && beta && (

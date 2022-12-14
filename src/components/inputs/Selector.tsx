@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ArrowDownIcon } from '@/components/icons'
-import type { FC } from 'react'
 
 const variants = {
   open: {
@@ -18,11 +17,7 @@ interface ISelector {
   handleSelect: (option: number) => void
 }
 
-export const Selector: FC<ISelector> = ({
-  selected,
-  options,
-  handleSelect
-}) => {
+export const Selector = ({ selected, options, handleSelect }: ISelector) => {
   const [open, setOpen] = useState<boolean>(false)
 
   return (

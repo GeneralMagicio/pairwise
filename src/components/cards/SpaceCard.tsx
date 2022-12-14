@@ -1,7 +1,6 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { SpaceCategoryTags } from '@/components/tags/SpaceCategoryTags'
-import type { FC } from 'react'
 
 interface ISpaceCard {
   categories: Array<{ category: string }>
@@ -11,13 +10,13 @@ interface ISpaceCard {
   description: string
 }
 
-export const SpaceCard: FC<ISpaceCard> = ({
+export const SpaceCard = ({
   categories,
   img,
   slug,
   title,
   description
-}) => {
+}: ISpaceCard) => {
   return (
     <div className="w-full">
       <Link href={`/${slug}`}>

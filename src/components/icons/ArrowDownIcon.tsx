@@ -1,11 +1,10 @@
 import type { IconProps } from '.'
-import type { FC } from 'react'
 
-export const ArrowDownIcon: FC<IconProps> = ({
+export const ArrowDownIcon = ({
   color = '#FFFFFF',
   height = 24,
   width = 24
-}) => (
+}: IconProps) => (
   <svg
     fill="FFFFFF"
     height={height}

@@ -1,11 +1,10 @@
 import type { IconProps } from '.'
-import type { FC } from 'react'
 
-export const TickIcon: FC<IconProps> = ({
+export const TickIcon = ({
   color = '#FFFFFF',
   height = 24,
   width = 24
-}) => (
+}: IconProps) => (
   <svg
     fill={color}
     height={height}

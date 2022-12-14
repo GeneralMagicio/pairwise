@@ -3,7 +3,6 @@ import Link from 'next/link'
 import classNames from 'classnames'
 import { motion, AnimatePresence } from 'framer-motion'
 import { CircleGradientIcon, CircleGradientTickIcon } from '@/components/icons'
-import type { FC } from 'react'
 
 interface IProjectCard {
   isSelected: boolean
@@ -15,7 +14,7 @@ interface IProjectCard {
   page: number
 }
 
-export const ProjectCard: FC<IProjectCard> = ({
+export const ProjectCard = ({
   isSelected,
   title,
   url,
@@ -23,7 +22,7 @@ export const ProjectCard: FC<IProjectCard> = ({
   description,
   image,
   page
-}) => {
+}: IProjectCard) => {
   return (
     <AnimatePresence exitBeforeEnter>
       <motion.div

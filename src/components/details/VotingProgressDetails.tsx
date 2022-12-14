@@ -1,15 +1,14 @@
 import { BarChart } from '@/components/charts/BarChart'
-import type { FC } from 'react'
 
 interface IVotingProgressDetails {
   currentProject: number
   maxProjects: number
 }
 
-export const VotingProgressDetails: FC<IVotingProgressDetails> = ({
+export const VotingProgressDetails = ({
   currentProject,
   maxProjects
-}) => {
+}: IVotingProgressDetails) => {
   return (
     <div className="mt-14 w-full">
       <div className="mb-4 text-2xl font-bold text-blue-900">

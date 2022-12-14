@@ -1,10 +1,6 @@
 import type { IconProps } from '.'
-import type { FC } from 'react'
 
-export const CircleGradientIcon: FC<IconProps> = ({
-  height = 24,
-  width = 24
-}) => (
+export const CircleGradientIcon = ({ height = 24, width = 24 }: IconProps) => (
   <svg
     fill="none"
     height={height}

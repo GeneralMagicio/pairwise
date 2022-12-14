@@ -1,7 +1,6 @@
 import Image from 'next/image'
 import { HeroCard } from '@/components/cards/HeroCard'
 import { SpaceCategoryTags } from '@/components/tags/SpaceCategoryTags'
-import type { FC } from 'react'
 
 interface ISpaceHeroCard {
   categories: Array<{ category: string }>
@@ -9,12 +8,12 @@ interface ISpaceHeroCard {
   title: string
   description: string
 }
-export const SpaceHeroCard: FC<ISpaceHeroCard> = ({
+export const SpaceHeroCard = ({
   categories,
   image,
   title,
   description
-}) => {
+}: ISpaceHeroCard) => {
   return (
     <HeroCard>
       <>

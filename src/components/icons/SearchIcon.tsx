@@ -1,11 +1,10 @@
 import type { IconProps } from '.'
-import type { FC } from 'react'
 
-export const SearchIcon: FC<IconProps> = ({
+export const SearchIcon = ({
   color = '#FFFFFF',
   height = 24,
   width = 24
-}) => (
+}: IconProps) => (
   <svg
     fill="FFFFFF"
     height={height}

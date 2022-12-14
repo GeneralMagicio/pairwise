@@ -1,10 +1,8 @@
-import type { FC } from 'react'
-
 interface IDivider {
   text: string
 }
 
-export const Divider: FC<IDivider> = ({ text }) => {
+export const Divider = ({ text }: IDivider) => {
   return (
     <>
       <h3 className="mt-8 text-2xl font-bold">{text}</h3>

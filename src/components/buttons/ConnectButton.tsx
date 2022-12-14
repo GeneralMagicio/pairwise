@@ -1,7 +1,6 @@
 import { ConnectButton } from '@rainbow-me/rainbowkit'
-import type { FC } from 'react'
 
-export const CustomConnectButton: FC = () => {
+export const CustomConnectButton = () => {
   return (
     <ConnectButton.Custom>
       {({

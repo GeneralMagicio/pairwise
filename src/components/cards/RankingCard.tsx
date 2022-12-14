@@ -1,6 +1,5 @@
 import Image from 'next/image'
 import Link from 'next/link'
-import type { FC } from 'react'
 
 interface IRankingCard {
   power: number
@@ -10,13 +9,13 @@ interface IRankingCard {
   image?: string
 }
 
-export const RankingCard: FC<IRankingCard> = ({
+export const RankingCard = ({
   power,
   title,
   url,
   owner,
   image
-}) => {
+}: IRankingCard) => {
   return (
     <Link href={url || ''} target={url ? '_blank' : '_self'}>
       <div className="flex w-[550px] items-center justify-between rounded-lg bg-white p-6 shadow-sm transition duration-100 hover:bg-green-50">
