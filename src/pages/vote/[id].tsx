@@ -8,8 +8,11 @@ import { PrimaryButton, ButtonColors } from '@/components/buttons/PrimaryButton'
 import { trpc } from '@/utils/trpc'
 import { VotePair } from '@/components/vote/VotePair'
 import { LoadingIcon } from '@/components/icons/LoadingIcon'
+import { BudgetBoxHeroCard } from '@/components/cards/BudgetBoxHeroCard'
+import { VotingProgressDetails } from '@/components/details/VotingProgressDetails'
 import { DEFAULT_NETWORK } from '@/constants/network'
 import type { AppRouter } from '@/server/trpc/router/_app'
+import { NextArrowIcon } from '@/components/icons'
 import type { GetServerSideProps } from 'next'
 import type { inferRouterOutputs } from '@trpc/server'
 
@@ -85,6 +88,7 @@ const Vote = ({ budgetBoxId }: IVote) => {
   }
 
   const handleVote = (newVote: string) => {
+    setPagination((prevState) => Math.min(prevState + 1, pairs.length - 1))
     const nextVotes = votes.map((vote: string, index: number) => {
       if (index === pagination) {
         if (newVote === votes[index]) return ''
@@ -219,57 +223,50 @@ const Vote = ({ budgetBoxId }: IVote) => {
       </main>
     )
 
+  if (!budgetBoxData) return <main>No Budget box found</main>
+
   return (
-    <main className="flex min-h-[calc(100vh_-_100px)] flex-col items-center justify-center">
-      {pairs.length < 1 ? (
-        <div className="w-full px-4 text-center text-lg">
-          <span>There is no project in this budget box</span>
-        </div>
-      ) : !isConnected ? (
-        <div className="w-full px-4 text-center text-lg">
-          <span>Connect your wallet to be able to vote</span>
-        </div>
-      ) : isValidAddress && alreadyVoted === false ? (
-        <>
-          <div className="flex w-full items-center justify-center pt-10 lg:pt-28">
-            <VotePair
-              alpha={pairs[pagination]?.alpha}
-              beta={pairs[pagination]?.beta}
-              handleVote={handleVote}
-              selected={votes[pagination] || ''}
+    <main className="py-16">
+      <div className="mx-auto flex max-w-[1100px] flex-col items-center justify-center">
+        <BudgetBoxHeroCard
+          description={budgetBoxData.description}
+          image={budgetBoxData.image}
+          title={budgetBoxData.title}
+        />
+
+        {pairs.length < 1 ? (
+          <div className="grid h-[500px] w-full place-content-center px-4 text-xl">
+            There is no project in this budget box
+          </div>
+        ) : !isConnected ? (
+          <div className="grid h-[500px] w-full place-content-center px-4 text-xl">
+            <span>Connect your wallet to be able to vote</span>
+          </div>
+        ) : isValidAddress && alreadyVoted === false ? (
+          <>
+            <VotingProgressDetails
+              currentProject={pagination + 1}
+              maxProjects={pairs.length}
             />
-          </div>
-          <div className="mt-8 text-2xl font-semibold">
-            {pagination + 1}/{pairs.length}
-          </div>
-          <div className="mt-2 flex w-64 gap-x-4 ">
-            <div
-              className={classNames(
-                'mt-2 h-[50px] w-full',
-                pagination === 0 ? 'invisible' : ''
-              )}
-            >
-              <PrimaryButton
-                color={ButtonColors.GRAY}
-                fontStyles="text-lg"
-                label="Back"
-                styles="py-2 px-4"
+            <div className="flex w-full items-center justify-center pt-8 lg:pt-16">
+              <NextArrowIcon
+                className={classNames(
+                  'rotate-180',
+                  pagination === 0 ? 'opacity-50' : ''
+                )}
                 onClick={() =>
                   setPagination((prevState) => Math.max(prevState - 1, 0))
                 }
               />
-            </div>
-            <div
-              className={classNames(
-                'mt-2 h-[50px] w-full',
-                pagination === pairs.length - 1 ? 'invisible' : ''
-              )}
-            >
-              <PrimaryButton
-                color={ButtonColors.LIGHT_BLUE}
-                fontStyles="text-lg"
-                label="Next"
-                styles="py-2 px-4"
+              <VotePair
+                alpha={pairs[pagination]?.alpha}
+                beta={pairs[pagination]?.beta}
+                handleVote={handleVote}
+                page={pagination}
+                selected={votes[pagination] || ''}
+              />
+              <NextArrowIcon
+                className={pagination === pairs.length - 1 ? 'opacity-50' : ''}
                 onClick={() =>
                   setPagination((prevState) =>
                     Math.min(prevState + 1, pairs.length - 1)
@@ -277,65 +274,60 @@ const Vote = ({ budgetBoxId }: IVote) => {
                 }
               />
             </div>
-          </div>
-          <div className="mb-10 mt-2 flex w-64">
-            {voted ? (
-              <div
-                className={classNames(
-                  'mt-2 h-[60px] w-full',
-                  pagination !== pairs.length - 1 ? 'invisible' : ''
-                )}
-              >
+            <div className="mt-8 flex h-[60px] gap-x-8">
+              <div className="w-44">
                 <PrimaryButton
-                  color={ButtonColors.LIGHT_BLUE}
-                  fontStyles="text-lg"
-                  label="See results"
-                  styles="w-full"
-                  onClick={() => handleRedirect(`/ranking/${budgetBoxId}`)}
+                  color={ButtonColors.BLUE_GRADIENT}
+                  fontStyles="text-lg font-normal"
+                  label="Abstain"
+                  onClick={() => handleVote('')}
                 />
               </div>
-            ) : (
-              <div
-                className={classNames(
-                  'mt-2 h-[50px] w-full',
-                  pagination !== pairs.length - 1 ? 'invisible' : ''
+              <div className="w-44">
+                {voted ? (
+                  <PrimaryButton
+                    color={ButtonColors.BLUE_GRADIENT}
+                    fontStyles="text-lg font-normal"
+                    label="See results"
+                    onClick={() => handleRedirect(`/ranking/${budgetBoxId}`)}
+                  />
+                ) : (
+                  <PrimaryButton
+                    color={ButtonColors.BLUE_GRADIENT}
+                    fontStyles="text-lg font-normal"
+                    disabled={
+                      isSignLoading ||
+                      isVoteLoading ||
+                      isSwitchNetworkLoading ||
+                      pagination !== pairs.length - 1
+                    }
+                    label={
+                      isSwitchNetworkLoading ? (
+                        <LoadingIcon label="Waiting switch network" />
+                      ) : isWrongNetwork ? (
+                        <span>Switch network to vote</span>
+                      ) : isSignLoading ? (
+                        <LoadingIcon label="Waiting for signature" />
+                      ) : isVoteLoading ? (
+                        <LoadingIcon label="Submitting vote" />
+                      ) : (
+                        'Submit Vote'
+                      )
+                    }
+                    onClick={handleSubmit}
+                  />
                 )}
-              >
-                <PrimaryButton
-                  color={ButtonColors.LIGHT_BLUE}
-                  fontStyles="text-lg"
-                  styles="w-full"
-                  disabled={
-                    isSignLoading || isVoteLoading || isSwitchNetworkLoading
-                  }
-                  label={
-                    isSwitchNetworkLoading ? (
-                      <LoadingIcon label="Waiting switch network" />
-                    ) : isWrongNetwork ? (
-                      <span>Switch network to vote</span>
-                    ) : isSignLoading ? (
-                      <LoadingIcon label="Waiting for signature" />
-                    ) : isVoteLoading ? (
-                      <LoadingIcon label="Submitting vote" />
-                    ) : (
-                      'Vote'
-                    )
-                  }
-                  onClick={handleSubmit}
-                />
               </div>
-            )}
+            </div>
+          </>
+        ) : (
+          <div className="grid h-[500px] w-full place-content-center px-4 text-xl">
+            {alreadyVoted
+              ? 'You have already voted on this budget box'
+              : `You're not allowed to vote on this budget box`}
           </div>
-        </>
-      ) : alreadyVoted ? (
-        <div className="h-full w-full px-4 text-center text-lg">
-          <span>You have already voted on this budget box</span>
-        </div>
-      ) : (
-        <div className="h-full w-full px-4 text-center text-lg">
-          <span>You&apos;re not allowed to vote on this budget box</span>
-        </div>
-      )}
+        )}
+      </div>
     </main>
   )
 }

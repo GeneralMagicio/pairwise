@@ -1,3 +1,4 @@
+import { BarChart } from '@/components/charts/BarChart'
 import type { FC } from 'react'
 
 interface IProjectVotesBar {
@@ -17,12 +18,11 @@ export const ProjectVotesBar: FC<IProjectVotesBar> = ({
         <span>{title}</span>
         <span className="self-end">{`${projectPercentage.toFixed(1)}%`}</span>
       </div>
-      <div className="h-2 w-full overflow-hidden rounded-md bg-gray-200">
-        <div
-          className="h-2 bg-gradient-to-b from-cyan-600 to-cyan-500"
-          style={{ width: `${(100 * projectPercentage) / maxPercentage}%` }}
-        ></div>
-      </div>
+      <BarChart
+        height={6}
+        maxPercentage={maxPercentage}
+        percentage={projectPercentage}
+      />
     </>
   )
 }
