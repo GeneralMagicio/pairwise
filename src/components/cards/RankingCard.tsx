@@ -7,7 +7,6 @@ interface IRankingCard {
   title: string
   url?: string
   owner?: string
-  description?: string
   image?: string
 }
 
@@ -16,16 +15,35 @@ export const RankingCard: FC<IRankingCard> = ({
   title,
   url,
   owner,
-  description,
   image
 }) => {
   return (
-    <Link
-      className="relative max-w-full"
-      href={url || '#'}
-      target={url ? '_blank' : '_self'}
-    >
-      <div className="absolute -left-2 -top-2 z-10 flex h-[60px] w-[60px] items-center justify-center  rounded-full border-2 border-blue-300 bg-blue-500 text-lg font-semibold text-white shadow-md md:hidden">
+    <Link href={url || ''} target={url ? '_blank' : '_self'}>
+      <div className="flex w-[550px] items-center justify-between rounded-lg bg-white p-6 shadow-sm transition duration-100 hover:bg-green-50">
+        {image ? (
+          <div className="relative h-[60px] w-[65px] overflow-hidden rounded-xl shadow">
+            <Image
+              fill
+              alt={`${title} logo`}
+              className="object-cover"
+              sizes="100px"
+              src={image}
+            />
+          </div>
+        ) : null}
+        <div className="w-[150px]">
+          <h3 className="text-sm font-semibold">{title}</h3>
+          <h4 className="text-xs font-medium text-gray-500">{owner}</h4>
+        </div>
+        <p className="w-24 text-center text-2xl font-black text-blue-900">{`${(
+          (power || 0) * 100
+        ).toFixed(2)}%`}</p>
+      </div>
+    </Link>
+  )
+}
+{
+  /* <div className="absolute -left-2 -top-2 z-10 flex h-[60px] w-[60px] items-center justify-center  rounded-full border-2 border-blue-300 bg-blue-500 text-lg font-semibold text-white shadow-md md:hidden">
         {`${((power || 0) * 100).toFixed(1)}%`}
       </div>
       <div className="flex h-[250px] w-[1200px] max-w-full cursor-pointer overflow-hidden rounded-xl border-gray-300 bg-gray-200 p-4 shadow-lg duration-100 hover:scale-102">
@@ -59,7 +77,5 @@ export const RankingCard: FC<IRankingCard> = ({
             </div>
           )}
         </div>
-      </div>
-    </Link>
-  )
+      </div> */
 }

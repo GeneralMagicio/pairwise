@@ -47,19 +47,21 @@ export const getStaticProps = async (
 const Ranking = ({ id }: InferGetStaticPropsType<typeof getStaticProps>) => {
   const { data: projects } = trpc.budgetBox.getRanking.useQuery({ id })
   return (
-    <div className="flex min-h-[calc(100vh_-_100px)] flex-col items-center justify-center gap-y-4 px-8 pt-16 pb-10">
-      {projects?.map((project) => (
-        <RankingCard
-          key={project.id}
-          description={project.description as string}
-          image={project.image as string}
-          owner={project.owner as string}
-          power={project.power}
-          title={project.title as string}
-          url={project.url as string}
-        />
-      ))}
-    </div>
+    <main className="py-16">
+      <div className="flex flex-col items-center justify-center gap-y-4 px-8 pt-16 pb-10">
+        <div className="bg-gray-50"></div>
+        {projects?.map((project) => (
+          <RankingCard
+            key={project.id}
+            image={project.image as string}
+            owner={project.owner as string}
+            power={project.power}
+            title={project.title as string}
+            url={project.url as string}
+          />
+        ))}
+      </div>
+    </main>
   )
 }
 
