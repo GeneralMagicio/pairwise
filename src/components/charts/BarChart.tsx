@@ -13,7 +13,6 @@ export const BarChart: FC<IBarChart> = ({
   percentage,
   maxPercentage = 100
 }) => {
-  console.log(height)
   return (
     <div
       className="w-full overflow-hidden  rounded-md bg-gray-200"
