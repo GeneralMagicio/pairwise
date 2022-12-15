@@ -26,8 +26,8 @@ export const CircleGradientIcon = ({ height = 24, width = 24 }: IconProps) => (
         y1="0"
         y2="24"
       >
-        <stop stop-color="#2E86BE" />
-        <stop offset="1" stop-color="#25A9A8" />
+        <stop stopColor="#2E86BE" />
+        <stop offset="1" stopColor="#25A9A8" />
       </linearGradient>
     </defs>
   </svg>

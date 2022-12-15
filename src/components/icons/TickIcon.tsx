@@ -14,10 +14,10 @@ export const TickIcon = ({
   >
     <rect fill="#fff" height="24" rx="12" width="24" />
     <path
-      clip-rule="evenodd"
+      clipRule="evenodd"
       d="M12 24a12 12 0 1 0 0-24 12 12 0 0 0 0 24Zm5.56-13.94a1.5 1.5 0 0 0-2.12-2.12l-4.94 4.939-1.94-1.94a1.5 1.5 0 0 0-2.12 2.121l3 3a1.5 1.5 0 0 0 2.12 0l6-6Z"
       fill="url(#a)"
-      fill-rule="evenodd"
+      fillRule="evenodd"
     />
     <defs>
       <linearGradient
@@ -28,8 +28,8 @@ export const TickIcon = ({
         y1="0"
         y2="24"
       >
-        <stop stop-color="#2D89BC" />
-        <stop offset="1" stop-color="#25A9A8" />
+        <stop stopColor="#2D89BC" />
+        <stop offset="1" stopColor="#25A9A8" />
       </linearGradient>
     </defs>
   </svg>
