@@ -7,8 +7,7 @@ import { FormSelector } from '@/components/inputs/FormSelector'
 import { TextArea } from '@/components/inputs//TextArea'
 import { TextField } from '@/components/inputs/TextField'
 import { PrimaryButton, ButtonColors } from '@/components/buttons/PrimaryButton'
-import { RegistrationMain } from '@/components/registration/RegistrationMain'
-import { RegistrationSidebar } from '@/components/registration/RegistrationSidebar'
+import { RegistrationLayout } from '@/components/registration/layout/RegistrationLayout'
 import { trpc } from '@/utils/trpc'
 import type { FormikHelpers } from 'formik'
 
@@ -160,51 +159,44 @@ export const SpaceRegistrationView = ({
   const validationSchema = validationSchemas[selected]
 
   return (
-    <div className="mx-auto grid max-w-7xl grid-cols-4 gap-x-6">
-      <div className="col-span-1">
-        <RegistrationSidebar options={options} selected={selected} />
-      </div>
-      <div className="col-span-3">
-        <RegistrationMain title="Create your space">
-          <Formik
-            validationSchema={validationSchema}
-            initialValues={{
-              creatorName: '',
-              creatorAddress: address || '',
-              adminAddresses: '',
-              spaceName: '',
-              spaceSlug: '',
-              spaceCategory: '',
-              spaceDescription: '',
-              spaceUrl: ''
-            }}
-            onSubmit={handleSubmit}
-          >
-            <Form>
-              <CurrentForms index={selected} />
-              <div className="mt-10 flex justify-between">
-                <PrimaryButton
-                  color={ButtonColors.BLUE_GRADIENT}
-                  fontStyles="font-medium"
-                  label="Previous"
-                  styles={classNames(
-                    'w-32 h-12',
-                    selected === 0 ? 'invisible' : ''
-                  )}
-                  onClick={() => handleChange(-1)}
-                />
-                <PrimaryButton
-                  color={ButtonColors.BLUE_GRADIENT}
-                  fontStyles="font-medium"
-                  label={selected === options.length - 1 ? 'Register' : 'Next'}
-                  styles="w-32 h-12"
-                  type="submit"
-                />
-              </div>
-            </Form>
-          </Formik>
-        </RegistrationMain>
-      </div>
-    </div>
+    <RegistrationLayout options={options} selected={selected}>
+      <Formik
+        validationSchema={validationSchema}
+        initialValues={{
+          creatorName: '',
+          creatorAddress: address || '',
+          adminAddresses: '',
+          spaceName: '',
+          spaceSlug: '',
+          spaceCategory: '',
+          spaceDescription: '',
+          spaceUrl: ''
+        }}
+        onSubmit={handleSubmit}
+      >
+        <Form>
+          <CurrentForms index={selected} />
+          <div className="mt-10 flex justify-between">
+            <PrimaryButton
+              color={ButtonColors.BLUE_GRADIENT}
+              fontStyles="font-medium"
+              label="Previous"
+              styles={classNames(
+                'w-32 h-12',
+                selected === 0 ? 'invisible' : ''
+              )}
+              onClick={() => handleChange(-1)}
+            />
+            <PrimaryButton
+              color={ButtonColors.BLUE_GRADIENT}
+              fontStyles="font-medium"
+              label={selected === options.length - 1 ? 'Register' : 'Next'}
+              styles="w-32 h-12"
+              type="submit"
+            />
+          </div>
+        </Form>
+      </Formik>
+    </RegistrationLayout>
   )
 }

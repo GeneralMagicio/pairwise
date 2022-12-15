@@ -1,5 +1,5 @@
-import { TickIcon } from '../icons'
 import classNames from 'classnames'
+import { TickIcon } from '@/components/icons'
 interface IRegistrationSidebar {
   options: Array<string>
   selected: number
