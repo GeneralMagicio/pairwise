@@ -37,7 +37,7 @@ export function TextField({
   const [field, meta] = useField(name)
 
   return (
-    <div className="relative flex flex-col gap-y-2">
+    <div className="relative my-2 flex flex-col">
       <label htmlFor={name}>{title}</label>
       <input
         disabled={disabled}
@@ -47,7 +47,7 @@ export function TextField({
         placeholder={placeholder}
         type={visibility ? 'text' : type}
         className={classNames(
-          'peer h-[42px] w-full rounded-lg border border-gray-300 bg-gray-50 pl-4 placeholder-gray-200 transition duration-150 invalid:bg-opacity-10 hover:border-cyan-300/70 focus:border-cyan-300 focus:outline-0',
+          'peer mt-1 h-[42px] w-full rounded-lg border border-gray-300 bg-gray-50 pl-4 placeholder-gray-200 transition duration-150 invalid:bg-opacity-10 hover:border-cyan-300/70 focus:border-cyan-300 focus:outline-0',
           disabled && 'bg-gray-200 bg-opacity-20 text-gray-500',
           meta.touched && meta.error ? 'border-red-500 bg-red-100/20' : ''
         )}
