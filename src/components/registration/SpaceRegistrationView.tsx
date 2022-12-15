@@ -165,7 +165,7 @@ export const SpaceRegistrationView = ({
         <RegistrationSidebar options={options} selected={selected} />
       </div>
       <div className="col-span-3">
-        <RegistrationMain handleChange={handleChange}>
+        <RegistrationMain title="Create your space">
           <Formik
             validationSchema={validationSchema}
             initialValues={{
@@ -193,7 +193,6 @@ export const SpaceRegistrationView = ({
                   )}
                   onClick={() => handleChange(-1)}
                 />
-
                 <PrimaryButton
                   color={ButtonColors.BLUE_GRADIENT}
                   fontStyles="font-medium"
