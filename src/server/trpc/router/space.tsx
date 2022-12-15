@@ -59,6 +59,16 @@ export const spaceRouter = router({
         }
       })
     }),
+  getOneByAddress: publicProcedure
+    .input(z.object({ address: z.string() }))
+    .query(({ ctx, input }) => {
+      const { address } = input
+      return ctx.prisma.space.findFirst({
+        where: {
+          address
+        }
+      })
+    }),
   getOneBySlug: publicProcedure
     .input(
       z.object({
