@@ -23,6 +23,7 @@
     "classnames": "^2.3.2",
     "decimal.js": "^10.4.2",
     "ethers": "^5.7.2",
+    "formik": "^2.2.9",
     "framer-motion": "^7.6.19",
     "iron-session": "^6.3.1",
     "linear-algebra": "^3.1.4",
@@ -35,6 +36,7 @@
     "siwe": "^1.1.6",
     "superjson": "1.9.1",
     "wagmi": "^0.8.6",
+    "yup": "^0.32.11",
     "zod": "^3.18.0"
   },
   "devDependencies": {

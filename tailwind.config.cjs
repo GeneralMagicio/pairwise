@@ -35,7 +35,7 @@ module.exports = {
           400: '#27A1AD'
         },
         gray: {
-          50: '#F9FAFB'
+          350: '#F9FAFB'
         },
         green: {
           50: '#F3FAF7',
