@@ -6,12 +6,14 @@ interface IRegistrationLayout {
   children: ReactElement
   options: Array<string>
   selected: number
+  title: string
 }
 
 export const RegistrationLayout = ({
   children,
   options,
-  selected
+  selected,
+  title
 }: IRegistrationLayout) => {
   return (
     <div className="mx-auto grid max-w-7xl grid-cols-4 gap-x-6">
@@ -19,9 +21,7 @@ export const RegistrationLayout = ({
         <RegistrationSidebar options={options} selected={selected} />
       </div>
       <div className="col-span-3">
-        <RegistrationMain title="Create your space">
-          {children}
-        </RegistrationMain>
+        <RegistrationMain title={title}>{children}</RegistrationMain>
       </div>
     </div>
   )

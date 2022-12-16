@@ -109,7 +109,7 @@ export const SpaceRegistrationView = () => {
       />
       <TextArea
         name="adminAddresses"
-        title="Set up admin accounts for your space"
+        title="Set up admin accounts for your space (add comma separated addresses)"
       />
     </>,
     <>
@@ -137,7 +137,7 @@ export const SpaceRegistrationView = () => {
     if (selected === options.length - 1) {
       insertOneSpaceMutation.mutate({
         address: values.creatorAddress,
-        admins: values.adminAddresses.split(' '),
+        admins: values.adminAddresses.split(','),
         categoryName: values.spaceCategory,
         creator: values.creatorName,
         description: values.spaceDescription,
@@ -158,7 +158,11 @@ export const SpaceRegistrationView = () => {
   const validationSchema = validationSchemas[selected]
 
   return (
-    <RegistrationLayout options={options} selected={selected}>
+    <RegistrationLayout
+      options={options}
+      selected={selected}
+      title="Create your space"
+    >
       <Formik
         validateOnChange={false}
         validationSchema={validationSchema}

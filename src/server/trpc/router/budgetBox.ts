@@ -12,7 +12,9 @@ export const budgetBoxRouter = router({
         title: z.string(),
         image: z.string(),
         description: z.string(),
-        dampingFactor: z.number().min(0).max(1)
+        dampingFactor: z.number().min(0).max(1),
+        allowlist: z.string().array(),
+        spaceSlug: z.string().min(1)
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -23,7 +25,9 @@ export const budgetBoxRouter = router({
         title,
         image,
         description,
-        dampingFactor
+        dampingFactor,
+        allowlist,
+        spaceSlug
       } = input
       try {
         await ctx.prisma.budgetBox.create({
@@ -34,7 +38,13 @@ export const budgetBoxRouter = router({
             title,
             image,
             description,
-            dampingFactor
+            dampingFactor,
+            allowlist,
+            Space: {
+              connect: {
+                slug: spaceSlug
+              }
+            }
           }
         })
       } catch (error) {
