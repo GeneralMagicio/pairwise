@@ -6,6 +6,7 @@ export const spaceRouter = router({
     .input(
       z.object({
         title: z.string(),
+        categoryName: z.string(),
         creator: z.string(),
         slug: z.string(),
         address: z.string(),
@@ -16,9 +17,24 @@ export const spaceRouter = router({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      const { title, creator, slug, address, image, description, url, admins } =
-        input
+      const {
+        title,
+        creator,
+        slug,
+        address,
+        image,
+        description,
+        url,
+        admins,
+        categoryName
+      } = input
+
       try {
+        const SelectedCategory = await ctx.prisma.category.findFirst({
+          where: {
+            category: categoryName
+          }
+        })
         await ctx.prisma.space.create({
           data: {
             title,
@@ -28,7 +44,12 @@ export const spaceRouter = router({
             image,
             description,
             url,
-            admins
+            admins,
+            Categories: {
+              connect: {
+                id: SelectedCategory?.id
+              }
+            }
           }
         })
       } catch (error) {

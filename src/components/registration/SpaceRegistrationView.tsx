@@ -60,11 +60,7 @@ export const SpaceRegistrationView = () => {
             return !space
           }
         ),
-
-      adminAddresses: Yup.string()
-        .max(42, 'Must be 42 characters')
-
-        .required('Required')
+      adminAddresses: Yup.string().required('Required')
     }),
     Yup.object({
       spaceName: Yup.string()
@@ -89,10 +85,14 @@ export const SpaceRegistrationView = () => {
         .max(15, 'Must be 15 characters or less')
         .required('Required'),
       spaceDescription: Yup.string()
-        .max(15, 'Must be 15 characters or less')
+        .min(20, 'Must be 15 characters or less')
         .required('Required'),
       spaceUrl: Yup.string()
-        .max(15, 'Must be 15 characters or less')
+        .matches(
+          /^((http|https):\/\/)?(www.)?(?!.*(http|https|www.))[a-zA-Z0-9_-]+(\.[a-zA-Z]+)+(\/)?.([\w\?[a-zA-Z-_%\/@?]+)*([^\/\w\?[a-zA-Z0-9_-]+=\w+(&[a-zA-Z0-9_]+=\w+)*)?$/,
+          'Website should be a valid URL'
+        )
+
         .required('Required')
     })
   ]
@@ -138,11 +138,13 @@ export const SpaceRegistrationView = () => {
       insertOneSpaceMutation.mutate({
         address: values.creatorAddress,
         admins: values.adminAddresses.split(' '),
-        creator: values.creatorAddress,
+        categoryName: values.spaceCategory,
+        creator: values.creatorName,
         description: values.spaceDescription,
         image:
           'https://user-images.githubusercontent.com/18421017/206027384-4869ad77-e635-4525-a5e8-e88eb8a5b206.png',
         slug: values.spaceSlug,
+
         title: values.spaceName,
         url: values.spaceUrl
       })
@@ -158,6 +160,7 @@ export const SpaceRegistrationView = () => {
   return (
     <RegistrationLayout options={options} selected={selected}>
       <Formik
+        validateOnChange={false}
         validationSchema={validationSchema}
         initialValues={{
           creatorName: '',
