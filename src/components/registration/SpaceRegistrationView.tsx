@@ -24,13 +24,7 @@ interface Values {
 
 const options = ['Select addresses for Space', "Setup your Space's Profile"]
 
-interface ISpaceRegistrationView {
-  categoryOptions: Array<string>
-}
-
-export const SpaceRegistrationView = ({
-  categoryOptions
-}: ISpaceRegistrationView) => {
+export const SpaceRegistrationView = () => {
   const [selected, setSelected] = useState<number>(0)
   const [newSpaceSlug, setNewSpaceSlug] = useState<string>('')
   const { address } = useAccount()
@@ -42,6 +36,9 @@ export const SpaceRegistrationView = ({
     address: address || ''
   })
   const insertOneSpaceMutation = trpc.space.insertOne.useMutation()
+  const { data: categories } = trpc.categoryRouter.getAll.useQuery()
+
+  const categoryOptions = categories?.map(({ category }) => category) || []
 
   const validationSchemas = [
     Yup.object({
