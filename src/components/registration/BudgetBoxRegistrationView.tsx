@@ -85,15 +85,30 @@ export const BudgetBoxRegistrationView = () => {
     </>,
 
     <>
-      <DatePicker name="startDate" title="Start Date" />
-      <DatePicker name="endDate" title="End Date" />
-      <TextField name="maxVotesPerUser" title="Max votes per user" />
-      <TextField
-        name="maxPairsPerVote"
-        title="Max pairs per vote"
-        type="number"
-      />
-      <TextField name="dampingFactor" title="Damping Factor" type="number" />
+      <div className="flex justify-between gap-x-8">
+        <TextField
+          className="grow"
+          name="maxVotesPerUser"
+          title="Max votes per user"
+        />
+        <TextField
+          className="grow"
+          name="maxPairsPerVote"
+          title="Max pairs per vote"
+          type="number"
+        />
+        <TextField
+          className="grow"
+          name="dampingFactor"
+          title="Damping Factor"
+          type="number"
+        />
+      </div>
+      <div className="flex justify-between gap-x-14">
+        <DatePicker className="grow" name="startDate" title="Start Date" />
+
+        <DatePicker className="grow" name="endDate" title="End Date" />
+      </div>
       <TextArea
         name="allowlist"
         title="Allowlist (add comma separated addresses)"
@@ -141,7 +156,7 @@ export const BudgetBoxRegistrationView = () => {
   return (
     <RegistrationLayout
       options={options}
-      selected={0}
+      selected={selected}
       title="Create your Budget Box"
     >
       <Formik

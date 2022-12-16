@@ -2,12 +2,14 @@ import classNames from 'classnames'
 import { useField } from 'formik'
 
 interface IDatePicker {
+  className?: string
   disabled?: boolean
   name: string
   title: string
 }
 
 export const DatePicker = ({
+  className = '',
   disabled = false,
   name,
   title,
@@ -16,7 +18,7 @@ export const DatePicker = ({
   const [field, meta] = useField(name)
 
   return (
-    <>
+    <div className={className}>
       <label htmlFor={name}>{title}</label>
       <input
         placeholder="Select date"
@@ -33,6 +35,6 @@ export const DatePicker = ({
           <span className="text-xs text-red-400"> {meta.error}</span>
         </div>
       ) : null}
-    </>
+    </div>
   )
 }

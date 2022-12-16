@@ -5,7 +5,7 @@ import { useField } from 'formik'
 import type { ChangeEvent, MouseEvent, HTMLInputTypeAttribute } from 'react'
 
 interface ITextField {
-  inputRef?: HTMLInputElement | null
+  className?: string
   disabled?: boolean
   errorMessage?: string
   maxLength?: number
@@ -21,6 +21,7 @@ interface ITextField {
 }
 
 export function TextField({
+  className = '',
   disabled = false,
   errorMessage,
   maxLength = 30,
@@ -37,7 +38,7 @@ export function TextField({
   const [field, meta] = useField(name)
 
   return (
-    <div className="relative my-2 flex flex-col">
+    <div className={classNames('relative my-2 flex flex-col', className)}>
       <label htmlFor={name}>{title}</label>
       <input
         disabled={disabled}
