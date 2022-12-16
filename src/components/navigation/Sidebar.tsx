@@ -25,6 +25,12 @@ const sidebarItems = [
     alt: 'New Budget Box button',
     link: '/new/budget-box',
     icon: <CreateIcon height={iconSize} width={iconSize} />
+  },
+  {
+    title: 'New Project',
+    alt: 'New Project button',
+    link: '/new/project',
+    icon: <CreateIcon height={iconSize} width={iconSize} />
   }
 ]
 
