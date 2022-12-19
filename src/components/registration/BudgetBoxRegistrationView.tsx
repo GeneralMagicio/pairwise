@@ -1,15 +1,12 @@
-import { useState } from 'react'
-import { Formik, Form } from 'formik'
 import * as Yup from 'yup'
-import classNames from 'classnames'
 import { useAccount } from 'wagmi'
-import { PrimaryButton, ButtonColors } from '@/components/buttons/PrimaryButton'
 import { RegistrationLayout } from '@/components/registration/layout/RegistrationLayout'
 import { FormSelector } from '@/components/inputs/FormSelector'
 import { DatePicker } from '@/components/inputs/DatePicker'
 import { TextArea } from '@/components/inputs/TextArea'
 import { TextField } from '@/components/inputs/TextField'
 import { trpc } from '@/utils/trpc'
+import { useFormNavigation } from '@/hooks/useFormNavigation'
 import type { FormikHelpers } from 'formik'
 
 const options = [
@@ -31,7 +28,7 @@ interface Values {
 }
 
 export const BudgetBoxRegistrationView = () => {
-  const [selected, setSelected] = useState<number>(0)
+  const { selected, setSelected, handleNavigation } = useFormNavigation()
   const { address } = useAccount()
 
   const { data: spaces, isSuccess } = trpc.space.getAll.useQuery()
@@ -39,6 +36,19 @@ export const BudgetBoxRegistrationView = () => {
 
   const spaceOptions = isSuccess ? spaces.map((space) => space.slug) : []
   spaceOptions.unshift('')
+
+  const initialValues = {
+    spaceSlug: '',
+    name: '',
+    creatorAddress: address || '',
+    description: '',
+    startDate: new Date(),
+    endDate: new Date(),
+    maxVotesPerUser: 1,
+    maxPairsPerVote: 20,
+    dampingFactor: 0.8,
+    allowlist: ''
+  }
 
   const validationSchemas = [
     Yup.object({
@@ -69,7 +79,6 @@ export const BudgetBoxRegistrationView = () => {
         .required('Required')
     })
   ]
-  const validationSchema = validationSchemas[selected]
 
   const formList = [
     <>
@@ -83,7 +92,6 @@ export const BudgetBoxRegistrationView = () => {
       />
       <TextArea name="description" title="Description" />
     </>,
-
     <>
       <div className="flex justify-between gap-x-8">
         <TextField
@@ -106,7 +114,6 @@ export const BudgetBoxRegistrationView = () => {
       </div>
       <div className="flex justify-between gap-x-14">
         <DatePicker className="grow" name="startDate" title="Start Date" />
-
         <DatePicker className="grow" name="endDate" title="End Date" />
       </div>
       <TextArea
@@ -116,9 +123,7 @@ export const BudgetBoxRegistrationView = () => {
     </>
   ]
   const CurrentForms = ({ index }: { index: number }) => formList[index] || null
-  const handleChange = (indexChange: number) => {
-    setSelected((prevSelected) => prevSelected + indexChange)
-  }
+
   const handleSubmit = (
     {
       spaceSlug,
@@ -155,58 +160,15 @@ export const BudgetBoxRegistrationView = () => {
 
   return (
     <RegistrationLayout
+      handleNavigation={handleNavigation}
+      handleSubmit={handleSubmit}
+      initialValues={initialValues}
       options={options}
       selected={selected}
       title="Create your Budget Box"
+      validationSchemas={validationSchemas}
     >
-      <Formik
-        validationSchema={validationSchema}
-        initialValues={{
-          spaceSlug: '',
-          name: '',
-          creatorAddress: address || '',
-          description: '',
-          startDate: new Date(),
-          endDate: new Date(),
-          maxVotesPerUser: 1,
-          maxPairsPerVote: 20,
-          dampingFactor: 0.8,
-          allowlist: ''
-        }}
-        onSubmit={handleSubmit}
-      >
-        {({ isSubmitting }) => (
-          <Form>
-            <CurrentForms index={selected} />
-            <div className="mt-10 flex justify-between">
-              <PrimaryButton
-                color={ButtonColors.BLUE_GRADIENT}
-                fontStyles="font-medium"
-                label="Previous"
-                styles={classNames(
-                  'w-32 h-12',
-                  selected === 0 ? 'invisible' : ''
-                )}
-                onClick={() => handleChange(-1)}
-              />
-              <PrimaryButton
-                color={ButtonColors.BLUE_GRADIENT}
-                disabled={isSubmitting}
-                fontStyles="font-medium"
-                styles="w-32 h-12"
-                type="submit"
-                label={
-                  isSubmitting
-                    ? 'Submitting'
-                    : selected === options.length - 1
-                    ? 'Register'
-                    : 'Next'
-                }
-              />
-            </div>
-          </Form>
-        )}
-      </Formik>
+      <CurrentForms index={selected} />
     </RegistrationLayout>
   )
 }

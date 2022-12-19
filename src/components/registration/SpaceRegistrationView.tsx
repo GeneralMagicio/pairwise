@@ -1,14 +1,12 @@
 import { useState } from 'react'
-import { Formik, Form } from 'formik'
 import * as Yup from 'yup'
-import classNames from 'classnames'
 import { useAccount } from 'wagmi'
 import { FormSelector } from '@/components/inputs/FormSelector'
 import { TextArea } from '@/components/inputs//TextArea'
 import { TextField } from '@/components/inputs/TextField'
-import { PrimaryButton, ButtonColors } from '@/components/buttons/PrimaryButton'
 import { RegistrationLayout } from '@/components/registration/layout/RegistrationLayout'
 import { trpc } from '@/utils/trpc'
+import { useFormNavigation } from '@/hooks/useFormNavigation'
 import type { FormikHelpers } from 'formik'
 
 interface Values {
@@ -25,7 +23,7 @@ interface Values {
 const options = ['Select addresses for Space', "Setup your Space's Profile"]
 
 export const SpaceRegistrationView = () => {
-  const [selected, setSelected] = useState<number>(0)
+  const { selected, setSelected, handleNavigation } = useFormNavigation()
   const [newSpaceSlug, setNewSpaceSlug] = useState<string>('')
   const { address } = useAccount()
 
@@ -40,6 +38,17 @@ export const SpaceRegistrationView = () => {
 
   const categoryOptions = categories?.map(({ category }) => category) || []
 
+  const initialValues = {
+    creatorName: '',
+    creatorAddress: address || '',
+    adminAddresses: '',
+    spaceName: '',
+    spaceSlug: '',
+    spaceCategory: '',
+    spaceDescription: '',
+    spaceUrl: ''
+  }
+
   const validationSchemas = [
     Yup.object({
       creatorName: Yup.string()
@@ -52,7 +61,6 @@ export const SpaceRegistrationView = () => {
           'Unique Address',
           'There is already a space with this address',
           async (value: string | undefined) => {
-            console.log('address: ', address)
             if (!value) return true
             const { data: space } = await refetchSpaceAddress()
 
@@ -125,10 +133,6 @@ export const SpaceRegistrationView = () => {
   ]
   const CurrentForms = ({ index }: { index: number }) => formList[index] || null
 
-  const handleChange = (indexChange: number) => {
-    setSelected((prevSelected) => prevSelected + indexChange)
-  }
-
   const handleSubmit = (
     values: Values,
     { setSubmitting, setTouched }: FormikHelpers<Values>
@@ -154,52 +158,18 @@ export const SpaceRegistrationView = () => {
       setSelected((prevSelected) => prevSelected + 1)
     }
   }
-  const validationSchema = validationSchemas[selected]
 
   return (
     <RegistrationLayout
+      handleNavigation={handleNavigation}
+      handleSubmit={handleSubmit}
+      initialValues={initialValues}
       options={options}
       selected={selected}
       title="Create your space"
+      validationSchemas={validationSchemas}
     >
-      <Formik
-        validateOnChange={false}
-        validationSchema={validationSchema}
-        initialValues={{
-          creatorName: '',
-          creatorAddress: address || '',
-          adminAddresses: '',
-          spaceName: '',
-          spaceSlug: '',
-          spaceCategory: '',
-          spaceDescription: '',
-          spaceUrl: ''
-        }}
-        onSubmit={handleSubmit}
-      >
-        <Form>
-          <CurrentForms index={selected} />
-          <div className="mt-10 flex justify-between">
-            <PrimaryButton
-              color={ButtonColors.BLUE_GRADIENT}
-              fontStyles="font-medium"
-              label="Previous"
-              styles={classNames(
-                'w-32 h-12',
-                selected === 0 ? 'invisible' : ''
-              )}
-              onClick={() => handleChange(-1)}
-            />
-            <PrimaryButton
-              color={ButtonColors.BLUE_GRADIENT}
-              fontStyles="font-medium"
-              label={selected === options.length - 1 ? 'Register' : 'Next'}
-              styles="w-32 h-12"
-              type="submit"
-            />
-          </div>
-        </Form>
-      </Formik>
+      <CurrentForms index={selected} />
     </RegistrationLayout>
   )
 }

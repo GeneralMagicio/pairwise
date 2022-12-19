@@ -1,13 +1,10 @@
-import { useState } from 'react'
-import { Formik, Form } from 'formik'
 import * as Yup from 'yup'
-import classNames from 'classnames'
-import { PrimaryButton, ButtonColors } from '@/components/buttons/PrimaryButton'
 import { RegistrationLayout } from '@/components/registration/layout/RegistrationLayout'
 import { FormSelector } from '@/components/inputs/FormSelector'
 import { TextArea } from '@/components/inputs/TextArea'
 import { TextField } from '@/components/inputs/TextField'
 import { trpc } from '@/utils/trpc'
+import { useFormNavigation } from '@/hooks/useFormNavigation'
 import type { FormikHelpers } from 'formik'
 
 interface Values {
@@ -23,7 +20,7 @@ interface Values {
 const options = ['Create a project']
 
 export const ProjectRegistrationView = () => {
-  const [selected, setSelected] = useState<number>(0)
+  const { selected, setSelected, handleNavigation } = useFormNavigation()
 
   const { data: spaces, isSuccess: isSuccessSpaces } =
     trpc.space.getAll.useQuery()
@@ -39,6 +36,16 @@ export const ProjectRegistrationView = () => {
     ? budgetBoxes.map(({ title }) => title)
     : []
   budgetBoxOptions.unshift('')
+
+  const initialValues = {
+    spaceSlug: '',
+    budgetBoxName: '',
+    name: '',
+    owner: '',
+    image: '',
+    url: '',
+    description: ''
+  }
 
   const validationSchemas = [
     Yup.object({
@@ -62,7 +69,6 @@ export const ProjectRegistrationView = () => {
         .required('Required')
     })
   ]
-  const validationSchema = validationSchemas[selected]
 
   const formList = [
     <>
@@ -80,9 +86,7 @@ export const ProjectRegistrationView = () => {
     </>
   ]
   const CurrentForms = ({ index }: { index: number }) => formList[index] || null
-  const handleChange = (indexChange: number) => {
-    setSelected((prevSelected) => prevSelected + indexChange)
-  }
+
   const handleSubmit = (
     { budgetBoxName, name, owner, image, url, description }: Values,
     { setSubmitting, setTouched }: FormikHelpers<Values>
@@ -113,55 +117,15 @@ export const ProjectRegistrationView = () => {
 
   return (
     <RegistrationLayout
+      handleNavigation={handleNavigation}
+      handleSubmit={handleSubmit}
+      initialValues={initialValues}
       options={options}
       selected={selected}
       title="Create a project"
+      validationSchemas={validationSchemas}
     >
-      <Formik
-        validationSchema={validationSchema}
-        initialValues={{
-          spaceSlug: '',
-          budgetBoxName: '',
-          name: '',
-          owner: '',
-          image: '',
-          url: '',
-          description: ''
-        }}
-        onSubmit={handleSubmit}
-      >
-        {({ isSubmitting }) => (
-          <Form>
-            <CurrentForms index={selected} />
-            <div className="mt-10 flex justify-between">
-              <PrimaryButton
-                color={ButtonColors.BLUE_GRADIENT}
-                fontStyles="font-medium"
-                label="Previous"
-                styles={classNames(
-                  'w-32 h-12',
-                  selected === 0 ? 'invisible' : ''
-                )}
-                onClick={() => handleChange(-1)}
-              />
-              <PrimaryButton
-                color={ButtonColors.BLUE_GRADIENT}
-                disabled={isSubmitting}
-                fontStyles="font-medium"
-                styles="w-32 h-12"
-                type="submit"
-                label={
-                  isSubmitting
-                    ? 'Submitting'
-                    : selected === options.length - 1
-                    ? 'Register'
-                    : 'Next'
-                }
-              />
-            </div>
-          </Form>
-        )}
-      </Formik>
+      <CurrentForms index={selected} />
     </RegistrationLayout>
   )
 }
