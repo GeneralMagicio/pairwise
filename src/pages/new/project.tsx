@@ -4,7 +4,9 @@ import { ProjectRegistrationView } from '@/components/registration/ProjectRegist
 export const NewProjectPage = () => {
   return (
     <>
-      <Head>Create Project</Head>
+      <Head>
+        <title>Create Project</title>
+      </Head>
       <ProjectRegistrationView />
     </>
   )
