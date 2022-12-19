@@ -1,16 +1,13 @@
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
-import { useAccount, useNetwork, useSignMessage, useSwitchNetwork } from 'wagmi'
-import { SiweMessage } from 'siwe'
 import classNames from 'classnames'
-import axios from 'axios'
 import { PrimaryButton, ButtonColors } from '@/components/buttons/PrimaryButton'
 import { trpc } from '@/utils/trpc'
+import { useSiwe } from '@/hooks/useSiwe'
 import { VotePair } from '@/components/vote/VotePair'
 import { LoadingIcon } from '@/components/icons/LoadingIcon'
 import { BudgetBoxHeroCard } from '@/components/cards/BudgetBoxHeroCard'
 import { VotingProgressDetails } from '@/components/details/VotingProgressDetails'
-import { DEFAULT_NETWORK } from '@/constants/network'
 import type { AppRouter } from '@/server/trpc/router/_app'
 import { NextArrowIcon } from '@/components/icons'
 import type { GetServerSideProps } from 'next'
@@ -41,20 +38,19 @@ const Vote = ({ budgetBoxId }: IVote) => {
   const [isConnected, setIsConnected] = useState<boolean>(false)
   const [isValidAddress, setIsValidAddress] = useState<boolean | null>(null)
   const [isVoteLoading, setIsVoteLoading] = useState<boolean>(false)
-  const [isSignLoading, setIsSignLoading] = useState<boolean>(false)
-  const [isWrongNetwork, setIsWrongNetwork] = useState<boolean>(false)
   const [alreadyVoted, setAlreadyVoted] = useState<boolean | null>(null)
-  const [nonce, setNonce] = useState<string | undefined>('')
-
   const [pagination, setPagination] = useState<number>(0)
   const [votes, setVotes] = useState<Array<string>>([])
   const [pairs, setPairs] = useState<Array<IVotePair>>([])
   const router = useRouter()
-  const { address } = useAccount()
-  const { chain: activeChain } = useNetwork()
-  const { signMessageAsync } = useSignMessage()
-  const { isLoading: isSwitchNetworkLoading, switchNetworkAsync } =
-    useSwitchNetwork()
+  const {
+    address,
+    isSignLoading,
+    isSwitchNetworkLoading,
+    isWrongNetwork,
+    signIn
+  } = useSiwe()
+
   const { data: projects, isLoading } =
     trpc.project.getManyByBudgetBoxId.useQuery(
       {
@@ -99,42 +95,6 @@ const Vote = ({ budgetBoxId }: IVote) => {
     setVotes(nextVotes)
   }
 
-  const signIn = async () => {
-    try {
-      const chainId = activeChain?.id
-      if (!address || !chainId) return
-      if (chainId !== DEFAULT_NETWORK.chainId) {
-        await switchNetworkAsync?.(DEFAULT_NETWORK.chainId)
-      }
-      setIsSignLoading(true)
-      const message = new SiweMessage({
-        domain: window.location.host,
-        address,
-        statement: 'Sign in with Ethereum to Budget Boxes',
-        uri: window.location.origin,
-        version: '1',
-        chainId: DEFAULT_NETWORK.chainId,
-        nonce
-      })
-      const signature = await signMessageAsync({
-        message: message.prepareMessage()
-      })
-      const { data: verifyData } = await axios.post('/api/siwe/verify', {
-        message,
-        signature
-      })
-      setIsSignLoading(false)
-
-      return verifyData?.ok
-    } catch (e) {
-      setIsSignLoading(false)
-      setNonce(undefined)
-      fetchNonce()
-
-      return false
-    }
-  }
-
   const handleSubmit = async () => {
     const signSuccess = await signIn()
     if (signSuccess && address) {
@@ -164,14 +124,6 @@ const Vote = ({ budgetBoxId }: IVote) => {
     }
     setIsVoteLoading(false)
   }
-  const fetchNonce = async () => {
-    const nonceRes = await axios.get('/api/siwe/nonce')
-    setNonce(nonceRes?.data || '')
-  }
-
-  useEffect(() => {
-    fetchNonce()
-  }, [])
 
   useEffect(() => {
     if (Array.isArray(previousVotes)) {
@@ -209,10 +161,6 @@ const Vote = ({ budgetBoxId }: IVote) => {
       setVotes(Array(pairs.length).fill(''))
     }
   }, [pairs])
-
-  useEffect(() => {
-    setIsWrongNetwork(activeChain?.id !== DEFAULT_NETWORK.chainId)
-  }, [activeChain])
 
   if (isLoading)
     return (
