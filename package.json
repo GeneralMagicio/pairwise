@@ -25,6 +25,8 @@
     "ethers": "^5.7.2",
     "formik": "^2.2.9",
     "framer-motion": "^7.6.19",
+    "graphql": "^16.6.0",
+    "graphql-request": "^5.1.0",
     "iron-session": "^6.3.1",
     "linear-algebra": "^3.1.4",
     "moment": "^2.29.4",

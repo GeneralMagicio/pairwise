@@ -11,10 +11,9 @@ import type { FormikHelpers } from 'formik'
 
 interface Values {
   creatorName: string
-  creatorAddress: string
+  ens: string
   adminAddresses: string
   spaceName: string
-  spaceSlug: string
   spaceCategory: string
   spaceDescription: string
   spaceUrl: string
@@ -26,24 +25,26 @@ export const SpaceRegistrationView = () => {
   const { selected, setSelected, handleNavigation } = useFormNavigation()
   const [newSpaceSlug, setNewSpaceSlug] = useState<string>('')
   const { address } = useAccount()
+  const { data: ensNames, isSuccess: ensNamesSuccess } =
+    trpc.ens.getEnsNamesByAddress.useQuery({
+      address: address || ''
+    })
+  const ensNamesOptions = ensNamesSuccess ? ['', ...ensNames] : []
 
   const { refetch: refetchSpaceSlug } = trpc.space.getOneBySlug.useQuery({
     slug: newSpaceSlug
   })
-  const { refetch: refetchSpaceAddress } = trpc.space.getOneByAddress.useQuery({
-    address: address || ''
-  })
+
   const insertOneSpaceMutation = trpc.space.insertOne.useMutation()
-  const { data: categories } = trpc.categoryRouter.getAll.useQuery()
+  const { data: categories } = trpc.category.getAll.useQuery()
 
   const categoryOptions = categories?.map(({ category }) => category) || []
 
   const initialValues = {
     creatorName: '',
-    creatorAddress: address || '',
+    ens: '',
     adminAddresses: '',
     spaceName: '',
-    spaceSlug: '',
     spaceCategory: '',
     spaceDescription: '',
     spaceUrl: ''
@@ -51,31 +52,14 @@ export const SpaceRegistrationView = () => {
 
   const validationSchemas = [
     Yup.object({
-      creatorName: Yup.string()
-        .max(15, 'Must be 15 characters or less')
-        .required('Required'),
-      creatorAddress: Yup.string()
-        .min(42, 'Must be a valid address')
-        .required('Required')
-        .test(
-          'Unique Address',
-          'There is already a space with this address',
-          async (value: string | undefined) => {
-            if (!value) return true
-            const { data: space } = await refetchSpaceAddress()
-
-            // If there is no space with the given address the test will pass
-            return !space
-          }
-        ),
-      adminAddresses: Yup.string().required('Required')
-    }),
-    Yup.object({
       spaceName: Yup.string()
         .max(15, 'Must be 15 characters or less')
         .required('Required'),
-      spaceSlug: Yup.string()
+      spaceCategory: Yup.string()
         .max(15, 'Must be 15 characters or less')
+        .required('Required'),
+      ens: Yup.string()
+        .min(0, 'Min 1')
         .required('Required')
         .test(
           'Unique slug',
@@ -88,66 +72,61 @@ export const SpaceRegistrationView = () => {
             // If there is no space with the given slug the test will pass
             return !space
           }
-        ),
-      spaceCategory: Yup.string()
+        )
+    }),
+    Yup.object({
+      creatorName: Yup.string()
         .max(15, 'Must be 15 characters or less')
         .required('Required'),
       spaceDescription: Yup.string()
-        .min(20, 'Must be 15 characters or less')
+        .min(20, 'Must be 20 characters or more')
         .required('Required'),
-      spaceUrl: Yup.string()
-        .matches(
-          /^((http|https):\/\/)?(www.)?(?!.*(http|https|www.))[a-zA-Z0-9_-]+(\.[a-zA-Z]+)+(\/)?.([\w\?[a-zA-Z-_%\/@?]+)*([^\/\w\?[a-zA-Z0-9_-]+=\w+(&[a-zA-Z0-9_]+=\w+)*)?$/,
-          'Website should be a valid URL'
-        )
-        .required('Required')
+      spaceUrl: Yup.string().matches(
+        /^((http|https):\/\/)?(www.)?(?!.*(http|https|www.))[a-zA-Z0-9_-]+(\.[a-zA-Z]+)+(\/)?.([\w\?[a-zA-Z-_%\/@?]+)*([^\/\w\?[a-zA-Z0-9_-]+=\w+(&[a-zA-Z0-9_]+=\w+)*)?$/,
+        'Website should be a valid URL'
+      ),
+      adminAddresses: Yup.string().required('Required')
     })
   ]
 
   const formList = [
     <>
-      <TextField name="creatorName" title="Space creator name" />
-      <TextField
-        disabled={true}
-        maxLength={42}
-        name="creatorAddress"
-        title="Wallets adress for the space"
-        value={address}
-      />
-      <TextArea
-        name="adminAddresses"
-        title="Set up admin accounts for your space (add comma separated addresses)"
-      />
-    </>,
-    <>
       <TextField name="spaceName" title="Name" />
-      <TextField name="spaceSlug" title="Slug" />
+      <FormSelector
+        name="ens"
+        options={ensNamesOptions}
+        title="ENS for the space"
+      />
       <FormSelector
         name="spaceCategory"
         options={categoryOptions}
         title="Category"
       />
+    </>,
+    <>
+      <TextField name="creatorName" title="Space creator name" />
       <TextArea name="spaceDescription" title="Description" />
       <TextField name="spaceUrl" title="Website" />
+      <TextArea
+        name="adminAddresses"
+        title="Set up admin accounts for your space (add comma separated addresses)"
+      />
     </>
   ]
   const CurrentForms = ({ index }: { index: number }) => formList[index] || null
-
   const handleSubmit = (
     values: Values,
     { setSubmitting, setTouched }: FormikHelpers<Values>
   ) => {
     if (selected === options.length - 1) {
       insertOneSpaceMutation.mutate({
-        address: values.creatorAddress,
         admins: values.adminAddresses.split(','),
         categoryName: values.spaceCategory,
         creator: values.creatorName,
         description: values.spaceDescription,
         image:
           'https://user-images.githubusercontent.com/18421017/206027384-4869ad77-e635-4525-a5e8-e88eb8a5b206.png',
-        slug: values.spaceSlug,
-
+        slug: values.ens,
         title: values.spaceName,
         url: values.spaceUrl
       })

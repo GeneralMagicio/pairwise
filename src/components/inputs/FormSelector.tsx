@@ -34,6 +34,11 @@ export const FormSelector = ({
           </option>
         ))}
       </select>
+      {meta.touched && meta.error ? (
+        <div>
+          <span className="text-xs text-red-400"> {meta.error}</span>
+        </div>
+      ) : null}
     </div>
   )
 }

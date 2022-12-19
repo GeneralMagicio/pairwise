@@ -20,7 +20,6 @@ model Space {
   title       String
   creator     String
   slug        String      @unique
-  address     String      @unique
   image       String
   description String
   url         String?
@@ -80,7 +79,7 @@ model Preference {
 
 model Category {
   id       String  @id @default(cuid())
-  category String
+  category String  @unique
   Spaces   Space[]
 }
 

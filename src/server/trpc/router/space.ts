@@ -9,7 +9,6 @@ export const spaceRouter = router({
         categoryName: z.string(),
         creator: z.string(),
         slug: z.string(),
-        address: z.string(),
         image: z.string(),
         description: z.string(),
         url: z.string().optional(),
@@ -21,7 +20,6 @@ export const spaceRouter = router({
         title,
         creator,
         slug,
-        address,
         image,
         description,
         url,
@@ -40,7 +38,6 @@ export const spaceRouter = router({
             title,
             creator,
             slug,
-            address,
             image,
             description,
             url,
@@ -77,16 +74,6 @@ export const spaceRouter = router({
         },
         include: {
           Categories: true
-        }
-      })
-    }),
-  getOneByAddress: publicProcedure
-    .input(z.object({ address: z.string() }))
-    .query(({ ctx, input }) => {
-      const { address } = input
-      return ctx.prisma.space.findFirst({
-        where: {
-          address
         }
       })
     }),
