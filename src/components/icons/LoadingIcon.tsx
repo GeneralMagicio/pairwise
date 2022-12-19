@@ -1,5 +1,5 @@
 interface ILoadingIcon {
-  label: string
+  label?: string
 }
 
 export const LoadingIcon = ({ label }: ILoadingIcon) => {
@@ -21,7 +21,7 @@ export const LoadingIcon = ({ label }: ILoadingIcon) => {
           fill="currentFill"
         />
       </svg>
-      <div className="ml-2 text-base">{label}</div>
+      {label ? <div className="ml-2 text-base">{label}</div> : null}
       <span className="sr-only">Loading...</span>
     </div>
   )

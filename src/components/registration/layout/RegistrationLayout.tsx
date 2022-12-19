@@ -3,6 +3,7 @@ import { Formik, Form } from 'formik'
 import { RegistrationMain } from '@/components/registration/layout/RegistrationMain'
 import { RegistrationSidebar } from '@/components/registration/layout/RegistrationSidebar'
 import { PrimaryButton, ButtonColors } from '@/components/buttons/PrimaryButton'
+import { LoadingIcon } from '@/components/icons/LoadingIcon'
 import type * as Yup from 'yup'
 import type { ReactElement } from 'react'
 import type { FormikHelpers } from 'formik'
@@ -29,6 +30,7 @@ export const RegistrationLayout = <Values extends object>({
   validationSchemas
 }: IRegistrationLayout<Values>) => {
   const validationSchema = validationSchemas[selected]
+  const isLastPage = selected === options.length - 1
 
   return (
     <div className="mx-auto grid max-w-7xl grid-cols-4 gap-x-6">
@@ -43,7 +45,7 @@ export const RegistrationLayout = <Values extends object>({
             validationSchema={validationSchema}
             onSubmit={handleSubmit}
           >
-            {({ isSubmitting }) => (
+            {({ isSubmitting, isValid }) => (
               <Form>
                 {children}
                 <div className="mt-10 flex justify-between">
@@ -59,16 +61,18 @@ export const RegistrationLayout = <Values extends object>({
                   />
                   <PrimaryButton
                     color={ButtonColors.BLUE_GRADIENT}
-                    disabled={isSubmitting}
+                    disabled={!isValid || (isLastPage && isSubmitting)}
                     fontStyles="font-medium"
                     styles="w-32 h-12"
-                    type="submit"
+                    type={'submit'}
                     label={
-                      isSubmitting
-                        ? 'Submitting'
-                        : selected === options.length - 1
-                        ? 'Register'
-                        : 'Next'
+                      isSubmitting ? (
+                        <LoadingIcon />
+                      ) : isLastPage ? (
+                        'Register'
+                      ) : (
+                        'Next'
+                      )
                     }
                   />
                 </div>

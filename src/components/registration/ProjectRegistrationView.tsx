@@ -5,6 +5,7 @@ import { TextArea } from '@/components/inputs/TextArea'
 import { TextField } from '@/components/inputs/TextField'
 import { trpc } from '@/utils/trpc'
 import { useFormNavigation } from '@/hooks/useFormNavigation'
+import { useSiwe } from '@/hooks/useSiwe'
 import type { FormikHelpers } from 'formik'
 
 interface Values {
@@ -21,6 +22,7 @@ const options = ['Create a project']
 
 export const ProjectRegistrationView = () => {
   const { selected, setSelected, handleNavigation } = useFormNavigation()
+  const { address, signIn } = useSiwe()
 
   const { data: spaces, isSuccess: isSuccessSpaces } =
     trpc.space.getAll.useQuery()
@@ -87,30 +89,32 @@ export const ProjectRegistrationView = () => {
   ]
   const CurrentForms = ({ index }: { index: number }) => formList[index] || null
 
-  const handleSubmit = (
+  const handleSubmit = async (
     { budgetBoxName, name, owner, image, url, description }: Values,
-    { setSubmitting, setTouched }: FormikHelpers<Values>
+    { setSubmitting }: FormikHelpers<Values>
   ) => {
     if (selected === options.length - 1) {
-      const selectedBudgetBox = budgetBoxes
-        ?.filter(({ title }) => budgetBoxName === title)
-        .map(({ id }) => ({
-          id
-        }))
+      const signSuccess = await signIn()
 
-      insertOneProjectMutation.mutate({
-        slug: '',
-        owner,
-        title: name,
-        url,
-        description,
-        image,
-        BudgetBoxes: selectedBudgetBox || []
-      })
-      setSubmitting(false)
+      if (signSuccess && address) {
+        const selectedBudgetBox = budgetBoxes
+          ?.filter(({ title }) => budgetBoxName === title)
+          .map(({ id }) => ({
+            id
+          }))
+
+        insertOneProjectMutation.mutate({
+          slug: '',
+          owner,
+          title: name,
+          url,
+          description,
+          image,
+          BudgetBoxes: selectedBudgetBox || []
+        })
+        setSubmitting(false)
+      }
     } else {
-      setTouched({})
-      setSubmitting(false)
       setSelected((prevSelected) => prevSelected + 1)
     }
   }

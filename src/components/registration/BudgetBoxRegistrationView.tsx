@@ -1,5 +1,4 @@
 import * as Yup from 'yup'
-import { useAccount } from 'wagmi'
 import { RegistrationLayout } from '@/components/registration/layout/RegistrationLayout'
 import { FormSelector } from '@/components/inputs/FormSelector'
 import { DatePicker } from '@/components/inputs/DatePicker'
@@ -7,6 +6,7 @@ import { TextArea } from '@/components/inputs/TextArea'
 import { TextField } from '@/components/inputs/TextField'
 import { trpc } from '@/utils/trpc'
 import { useFormNavigation } from '@/hooks/useFormNavigation'
+import { useSiwe } from '@/hooks/useSiwe'
 import type { FormikHelpers } from 'formik'
 
 const options = [
@@ -29,7 +29,7 @@ interface Values {
 
 export const BudgetBoxRegistrationView = () => {
   const { selected, setSelected, handleNavigation } = useFormNavigation()
-  const { address } = useAccount()
+  const { address, signIn } = useSiwe()
 
   const { data: spaces, isSuccess } = trpc.space.getAll.useQuery()
   const insertOneBudgetBoxMutation = trpc.budgetBox.insertOne.useMutation()
@@ -53,7 +53,7 @@ export const BudgetBoxRegistrationView = () => {
   const validationSchemas = [
     Yup.object({
       spaceSlug: Yup.string()
-        .max(15, 'Must be 15 characters or less')
+        .min(1, 'Space slug cannot be empty')
         .required('Required'),
       name: Yup.string()
         .max(15, 'Must be 15 characters or less')
@@ -124,7 +124,7 @@ export const BudgetBoxRegistrationView = () => {
   ]
   const CurrentForms = ({ index }: { index: number }) => formList[index] || null
 
-  const handleSubmit = (
+  const handleSubmit = async (
     {
       spaceSlug,
       name,
@@ -135,24 +135,26 @@ export const BudgetBoxRegistrationView = () => {
       dampingFactor,
       allowlist
     }: Values,
-    { setSubmitting, setTouched }: FormikHelpers<Values>
+    { setSubmitting }: FormikHelpers<Values>
   ) => {
     if (selected === options.length - 1) {
-      insertOneBudgetBoxMutation.mutate({
-        startDate: new Date(startDate),
-        endDate: new Date(endDate),
-        creator: creatorAddress,
-        title: name,
-        image:
-          'https://user-images.githubusercontent.com/18421017/206027384-4869ad77-e635-4525-a5e8-e88eb8a5b206.png',
-        description,
-        dampingFactor,
-        allowlist: allowlist.split(','),
-        spaceSlug
-      })
-      setSubmitting(false)
+      const signSuccess = await signIn()
+      if (signSuccess && address) {
+        insertOneBudgetBoxMutation.mutate({
+          startDate: new Date(startDate),
+          endDate: new Date(endDate),
+          creator: creatorAddress,
+          title: name,
+          image:
+            'https://user-images.githubusercontent.com/18421017/206027384-4869ad77-e635-4525-a5e8-e88eb8a5b206.png',
+          description,
+          dampingFactor,
+          allowlist: allowlist.split(','),
+          spaceSlug
+        })
+        setSubmitting(false)
+      }
     } else {
-      setTouched({})
       setSubmitting(false)
       setSelected((prevSelected) => prevSelected + 1)
     }
