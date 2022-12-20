@@ -24,7 +24,7 @@ export const ProjectCard = ({
   page
 }: IProjectCard) => {
   return (
-    <AnimatePresence exitBeforeEnter>
+    <AnimatePresence mode="wait">
       <motion.div
         key={page}
         animate={{ opacity: 1 }}
