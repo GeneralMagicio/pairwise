@@ -1,5 +1,7 @@
+import { LoadingModal } from '../modals/LoadingModal'
 import { useState } from 'react'
 import * as Yup from 'yup'
+import { useRouter } from 'next/router'
 import { FormSelector } from '@/components/inputs/FormSelector'
 import { TextArea } from '@/components/inputs//TextArea'
 import { TextField } from '@/components/inputs/TextField'
@@ -7,6 +9,7 @@ import { RegistrationLayout } from '@/components/registration/layout/Registratio
 import { trpc } from '@/utils/trpc'
 import { useFormNavigation } from '@/hooks/useFormNavigation'
 import { useSiwe } from '@/hooks/useSiwe'
+import { useModal } from '@/hooks/useModal'
 import type { FormikHelpers } from 'formik'
 
 interface Values {
@@ -24,7 +27,10 @@ const options = ['Select addresses for Space', "Setup your Space's Profile"]
 export const SpaceRegistrationView = () => {
   const { selected, setSelected, handleNavigation } = useFormNavigation()
   const [newSpaceSlug, setNewSpaceSlug] = useState<string>('')
+  const { isModalOpen, setIsModalOpen } = useModal({})
+  const router = useRouter()
   const { address, signIn } = useSiwe()
+  const trpcContext = trpc.useContext()
 
   const { data: ensNames, isSuccess: ensNamesSuccess } =
     trpc.ens.getEnsNamesByAddress.useQuery({
@@ -36,7 +42,48 @@ export const SpaceRegistrationView = () => {
     slug: newSpaceSlug
   })
 
-  const insertOneSpaceMutation = trpc.space.insertOne.useMutation()
+  const insertOneSpaceMutation = trpc.space.insertOne.useMutation({
+    onMutate: async (newSpace) => {
+      const {
+        admins,
+        creator,
+        description,
+        image,
+        slug,
+        title,
+        url,
+        categoryName
+      } = newSpace
+      await trpcContext.space.getOneBySlug.cancel({ slug })
+
+      trpcContext.space.getOneBySlug.setData(
+        { slug },
+        {
+          id: '',
+          admins,
+          creator,
+          createdAt: new Date(),
+          description,
+          image,
+          slug,
+          title,
+          url: url || '',
+          Categories: [{ id: '', category: categoryName }]
+        },
+        {}
+      )
+      return { newSpace }
+    },
+
+    onSettled: (newTodo, error, variables, context) => {
+      if (!error) {
+        router.push({
+          pathname: `/${context?.newSpace.slug}`,
+          query: { q: 'success' }
+        })
+      }
+    }
+  })
   const { data: categories } = trpc.category.getAll.useQuery()
 
   const categoryOptions = categories?.map(({ category }) => category) || []
@@ -156,6 +203,7 @@ export const SpaceRegistrationView = () => {
           title: values.spaceName,
           url: values.spaceUrl
         })
+        setIsModalOpen(true)
         setSubmitting(false)
       }
     } else {
@@ -165,16 +213,19 @@ export const SpaceRegistrationView = () => {
   }
 
   return (
-    <RegistrationLayout
-      handleNavigation={handleNavigation}
-      handleSubmit={handleSubmit}
-      initialValues={initialValues}
-      options={options}
-      selected={selected}
-      title="Create your space"
-      validationSchemas={validationSchemas}
-    >
-      <CurrentForms index={selected} />
-    </RegistrationLayout>
+    <>
+      <LoadingModal isOpen={isModalOpen} title="Creating space" />
+      <RegistrationLayout
+        handleNavigation={handleNavigation}
+        handleSubmit={handleSubmit}
+        initialValues={initialValues}
+        options={options}
+        selected={selected}
+        title="Create your space"
+        validationSchemas={validationSchemas}
+      >
+        <CurrentForms index={selected} />
+      </RegistrationLayout>
+    </>
   )
 }

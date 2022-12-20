@@ -1,5 +1,6 @@
 import { createProxySSGHelpers } from '@trpc/react-query/ssg'
 import Head from 'next/head'
+import { useRouter } from 'next/router'
 import superjson from '@/utils/superjson'
 import { appRouter } from '@/server/trpc/router/_app'
 import { trpc } from '@/utils/trpc'
@@ -10,6 +11,8 @@ import { Divider } from '@/components/general/Divider'
 import { SearchInput } from '@/components/inputs/SearchInput'
 import { useSearchInput } from '@/hooks/useSearchInput'
 import { textSearch } from '@/utils/helpers/textSearch'
+import { SuccessModal } from '@/components/modals/SuccessModal'
+import { useModal } from '@/hooks/useModal'
 import type {
   GetStaticPaths,
   InferGetStaticPropsType,
@@ -51,6 +54,13 @@ const SpaceDetails = ({
   spaceSlug
 }: InferGetStaticPropsType<typeof getStaticProps>) => {
   const [search, searchInputHandler] = useSearchInput()
+  const router = useRouter()
+  const { q } = router.query
+  const { isModalOpen, closeModal } = useModal({
+    dependency: q === 'success',
+    onCloseModal: () => router.push(`/${spaceSlug}`)
+  })
+
   const { data: budgetBoxes } = trpc.budgetBox.getManyBySpaceSlug.useQuery({
     slug: spaceSlug
   })
@@ -61,6 +71,11 @@ const SpaceDetails = ({
       <Head>
         <title>{spaceSlug}</title>
       </Head>
+      <SuccessModal
+        closeModal={closeModal}
+        isOpen={isModalOpen}
+        title="Congratulations!"
+      />
       {space ? (
         <main className="py-16">
           <div className="mx-auto max-w-[1100px]">
