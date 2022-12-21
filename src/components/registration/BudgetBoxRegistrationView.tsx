@@ -35,6 +35,9 @@ export const BudgetBoxRegistrationView = () => {
   const { isModalOpen, setIsModalOpen } = useModal({})
   const { address, signIn } = useSiwe()
 
+  const { data: space, isSuccess: isSuccessSpace } =
+    trpc.space.getOneBySlug.useQuery({ slug: spaceSlug })
+
   const insertOneBudgetBoxMutation = trpc.budgetBox.insertOne.useMutation({
     onSettled: (data, error) => {
       if (!error) {
@@ -45,6 +48,9 @@ export const BudgetBoxRegistrationView = () => {
       }
     }
   })
+
+  const isValidInputs =
+    isSuccessSpace && address ? space?.admins.includes(address) : false
 
   const initialValues = {
     name: '',
@@ -136,6 +142,8 @@ export const BudgetBoxRegistrationView = () => {
       startDate,
       endDate,
       dampingFactor,
+      maxVotesPerUser,
+      maxPairsPerVote,
       allowlist
     }: Values,
     { setSubmitting }: FormikHelpers<Values>
@@ -152,6 +160,8 @@ export const BudgetBoxRegistrationView = () => {
             'https://user-images.githubusercontent.com/18421017/206027384-4869ad77-e635-4525-a5e8-e88eb8a5b206.png',
           description,
           dampingFactor,
+          maxVotesPerUser,
+          maxPairsPerVote,
           allowlist: allowlist.split(','),
           spaceSlug
         })
@@ -171,6 +181,7 @@ export const BudgetBoxRegistrationView = () => {
         handleNavigation={handleNavigation}
         handleSubmit={handleSubmit}
         initialValues={initialValues}
+        isValidInputs={isValidInputs}
         options={options}
         selected={selected}
         title="Create your Budget Box"

@@ -1,5 +1,6 @@
 import { createProxySSGHelpers } from '@trpc/react-query/ssg'
 import Head from 'next/head'
+import { useRouter } from 'next/router'
 import superjson from '@/utils/superjson'
 import { appRouter } from '@/server/trpc/router/_app'
 import { trpc } from '@/utils/trpc'
@@ -8,6 +9,8 @@ import { BudgetBoxDetails } from '@/components/details/BudgetBoxDetails'
 import { BudgetBoxInfoButtonCard } from '@/components/cards/BudgetBoxInfoButtonCard'
 import { BudgetBoxInfoLiveCard } from '@/components/cards/BudgetBoxInfoLiveCard'
 import { BudgetBoxInfoVotingCard } from '@/components/cards/BudgetBoxInfoVotingCard'
+import { SuccessModal } from '@/components/modals/SuccessModal'
+import { useModal } from '@/hooks/useModal'
 import type {
   GetStaticPaths,
   GetStaticPropsContext,
@@ -62,8 +65,15 @@ export const getStaticProps = async (
 }
 
 export const BudgetBoxDetailsPage = ({
-  budgetBoxId
+  budgetBoxId,
+  spaceSlug
 }: InferGetStaticPropsType<typeof getStaticProps>) => {
+  const router = useRouter()
+  const { q } = router.query
+  const { isModalOpen, closeModal } = useModal({
+    dependency: q === 'success',
+    onCloseModal: () => router.push(`/${spaceSlug}`)
+  })
   const { data: budgetBox } = trpc.budgetBox.getOne.useQuery({
     id: budgetBoxId
   })
@@ -83,6 +93,11 @@ export const BudgetBoxDetailsPage = ({
       <Head>
         <title>{budgetBox?.title}</title>
       </Head>
+      <SuccessModal
+        closeModal={closeModal}
+        isOpen={isModalOpen}
+        title="Congratulations!"
+      />
       {budgetBox ? (
         <main className="py-16">
           <div className="mx-auto grid max-w-[1100px] grid-cols-3 gap-x-10">
@@ -96,6 +111,7 @@ export const BudgetBoxDetailsPage = ({
               <BudgetBoxInfoButtonCard
                 budgetBoxId={budgetBox.id}
                 description={budgetBox.description}
+                spaceSlug={spaceSlug}
                 title="Information"
               />
               <BudgetBoxInfoLiveCard

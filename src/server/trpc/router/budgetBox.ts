@@ -13,6 +13,8 @@ export const budgetBoxRouter = router({
         image: z.string(),
         description: z.string(),
         dampingFactor: z.number().min(0).max(1),
+        maxVotesPerUser: z.number().min(1),
+        maxPairsPerVote: z.number().min(1),
         allowlist: z.string().array(),
         spaceSlug: z.string().min(1)
       })
@@ -26,6 +28,8 @@ export const budgetBoxRouter = router({
         image,
         description,
         dampingFactor,
+        maxVotesPerUser,
+        maxPairsPerVote,
         allowlist,
         spaceSlug
       } = input
@@ -39,6 +43,8 @@ export const budgetBoxRouter = router({
             image,
             description,
             dampingFactor,
+            maxVotesPerUser,
+            maxPairsPerVote,
             allowlist,
             Space: {
               connect: {

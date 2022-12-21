@@ -19,12 +19,6 @@ const sidebarItems = [
     alt: 'New Space button',
     link: '/new/space',
     icon: <CreateIcon height={iconSize} width={iconSize} />
-  },
-  {
-    title: 'New Project',
-    alt: 'New Project button',
-    link: '/new/project',
-    icon: <CreateIcon height={iconSize} width={iconSize} />
   }
 ]
 

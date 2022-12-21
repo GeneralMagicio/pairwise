@@ -20,11 +20,10 @@ export const projectRouter = router({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      const { slug, owner, title, url, description, image, BudgetBoxes } = input
+      const { owner, title, url, description, image, BudgetBoxes } = input
       try {
         await ctx.prisma.project.create({
           data: {
-            slug,
             owner,
             title,
             url,

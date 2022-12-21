@@ -17,6 +17,7 @@ interface IRegistrationLayout<Values> {
   handleSubmit: (values: Values, helpers: FormikHelpers<Values>) => void
   initialValues: Values
   validationSchemas: Array<Yup.AnySchema>
+  isValidInputs?: boolean
 }
 
 export const RegistrationLayout = <Values extends object>({
@@ -27,7 +28,8 @@ export const RegistrationLayout = <Values extends object>({
   handleNavigation,
   handleSubmit,
   initialValues,
-  validationSchemas
+  validationSchemas,
+  isValidInputs = true
 }: IRegistrationLayout<Values>) => {
   const validationSchema = validationSchemas[selected]
   const isLastPage = selected === options.length - 1
@@ -61,10 +63,12 @@ export const RegistrationLayout = <Values extends object>({
                   />
                   <PrimaryButton
                     color={ButtonColors.BLUE_GRADIENT}
-                    disabled={!isValid || (isLastPage && isSubmitting)}
                     fontStyles="font-medium"
                     styles="w-32 h-12"
                     type={'submit'}
+                    disabled={
+                      !isValidInputs || !isValid || (isLastPage && isSubmitting)
+                    }
                     label={
                       isSubmitting ? (
                         <LoadingIcon />

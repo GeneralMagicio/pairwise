@@ -86,7 +86,9 @@ export const SpaceRegistrationView = () => {
   })
   const { data: categories } = trpc.category.getAll.useQuery()
 
-  const categoryOptions = categories?.map(({ category }) => category) || []
+  const categoryOptions = categories
+    ? ['', ...categories.map(({ category }) => category)]
+    : []
 
   const initialValues = {
     creatorName: '',

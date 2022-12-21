@@ -22,7 +22,7 @@ export const BudgetBoxCard = ({
   return (
     <Link
       className="h-[350px] min-w-[330px] overflow-hidden rounded-lg border bg-white shadow-md"
-      href={`${spaceSlug}/budget-box/${id}`}
+      href={`${spaceSlug}/${id}`}
     >
       <div className="relative h-[200px] min-w-[330px] overflow-hidden ">
         <Image

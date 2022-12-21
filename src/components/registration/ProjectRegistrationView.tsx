@@ -1,16 +1,16 @@
 import * as Yup from 'yup'
+import { useRouter } from 'next/router'
 import { RegistrationLayout } from '@/components/registration/layout/RegistrationLayout'
-import { FormSelector } from '@/components/inputs/FormSelector'
 import { TextArea } from '@/components/inputs/TextArea'
 import { TextField } from '@/components/inputs/TextField'
+import { LoadingModal } from '@/components/modals/LoadingModal'
+import { useModal } from '@/hooks/useModal'
 import { trpc } from '@/utils/trpc'
 import { useFormNavigation } from '@/hooks/useFormNavigation'
 import { useSiwe } from '@/hooks/useSiwe'
 import type { FormikHelpers } from 'formik'
 
 interface Values {
-  spaceSlug: string
-  budgetBoxName: string
   name: string
   owner: string
   image: string
@@ -22,26 +22,30 @@ const options = ['Create a project']
 
 export const ProjectRegistrationView = () => {
   const { selected, setSelected, handleNavigation } = useFormNavigation()
+  const router = useRouter()
+  const budgetBoxId = router.query.budgetBoxId as string
+  const spaceSlug = router.query.spaceSlug as string
+  const { isModalOpen, setIsModalOpen } = useModal({})
   const { address, signIn } = useSiwe()
 
-  const { data: spaces, isSuccess: isSuccessSpaces } =
-    trpc.space.getAll.useQuery()
-  const { data: budgetBoxes, isSuccess: isSuccessBudgetBoxes } =
-    trpc.budgetBox.getAll.useQuery()
+  const { data: space, isSuccess: isSuccessSpace } =
+    trpc.space.getOneBySlug.useQuery({ slug: spaceSlug })
 
-  const insertOneProjectMutation = trpc.project.insertOne.useMutation()
+  const insertOneProjectMutation = trpc.project.insertOne.useMutation({
+    onSettled: (data, error) => {
+      if (!error) {
+        router.push({
+          pathname: `/${spaceSlug}/${budgetBoxId}`,
+          query: { q: 'success' }
+        })
+      }
+    }
+  })
 
-  const spaceOptions = isSuccessSpaces ? spaces.map(({ slug }) => slug) : []
-  spaceOptions.unshift('')
-
-  const budgetBoxOptions = isSuccessBudgetBoxes
-    ? budgetBoxes.map(({ title }) => title)
-    : []
-  budgetBoxOptions.unshift('')
+  const isValidInputs =
+    isSuccessSpace && address ? space?.admins.includes(address) : false
 
   const initialValues = {
-    spaceSlug: '',
-    budgetBoxName: '',
     name: '',
     owner: '',
     image: '',
@@ -51,35 +55,21 @@ export const ProjectRegistrationView = () => {
 
   const validationSchemas = [
     Yup.object({
-      spaceSlug: Yup.string()
-        .max(15, 'Must be 15 characters or less')
-        .required('Required'),
-      budgetBoxName: Yup.string().required(),
       name: Yup.string()
-        .max(15, 'Must be 15 characters or less')
+        .max(40, 'Must be 40 characters max')
         .required('Required'),
-      owner: Yup.string().required('Required'),
-      image: Yup.string().required('Required'),
-      url: Yup.string()
-        .matches(
-          /^((http|https):\/\/)?(www.)?(?!.*(http|https|www.))[a-zA-Z0-9_-]+(\.[a-zA-Z]+)+(\/)?.([\w\?[a-zA-Z-_%\/@?]+)*([^\/\w\?[a-zA-Z0-9_-]+=\w+(&[a-zA-Z0-9_]+=\w+)*)?$/,
-          'Website should be a valid URL'
-        )
-        .required('Required'),
-      description: Yup.string()
-        .min(20, 'Must be 15 characters or less')
-        .required('Required')
+      owner: Yup.string(),
+      image: Yup.string(),
+      url: Yup.string().matches(
+        /^((http|https):\/\/)?(www.)?(?!.*(http|https|www.))[a-zA-Z0-9_-]+(\.[a-zA-Z]+)+(\/)?.([\w\?[a-zA-Z-_%\/@?]+)*([^\/\w\?[a-zA-Z0-9_-]+=\w+(&[a-zA-Z0-9_]+=\w+)*)?$/,
+        'Website should be a valid URL'
+      ),
+      description: Yup.string().min(20, 'Must be 20 characters or more')
     })
   ]
 
   const formList = [
     <>
-      <FormSelector name="spaceSlug" options={spaceOptions} title="Space" />
-      <FormSelector
-        name="budgetBoxName"
-        options={budgetBoxOptions}
-        title="Budget Box"
-      />
       <TextField name="name" title="Name" />
       <TextField name="owner" title="Owner" />
       <TextField maxLength={200} name="image" title="Image Link" />
@@ -90,19 +80,13 @@ export const ProjectRegistrationView = () => {
   const CurrentForms = ({ index }: { index: number }) => formList[index] || null
 
   const handleSubmit = async (
-    { budgetBoxName, name, owner, image, url, description }: Values,
+    { name, owner, image, url, description }: Values,
     { setSubmitting }: FormikHelpers<Values>
   ) => {
     if (selected === options.length - 1) {
       const signSuccess = await signIn()
 
       if (signSuccess && address) {
-        const selectedBudgetBox = budgetBoxes
-          ?.filter(({ title }) => budgetBoxName === title)
-          .map(({ id }) => ({
-            id
-          }))
-
         insertOneProjectMutation.mutate({
           slug: '',
           owner,
@@ -110,8 +94,9 @@ export const ProjectRegistrationView = () => {
           url,
           description,
           image,
-          BudgetBoxes: selectedBudgetBox || []
+          BudgetBoxes: [{ id: budgetBoxId }]
         })
+        setIsModalOpen(true)
         setSubmitting(false)
       }
     } else {
@@ -120,16 +105,20 @@ export const ProjectRegistrationView = () => {
   }
 
   return (
-    <RegistrationLayout
-      handleNavigation={handleNavigation}
-      handleSubmit={handleSubmit}
-      initialValues={initialValues}
-      options={options}
-      selected={selected}
-      title="Create a project"
-      validationSchemas={validationSchemas}
-    >
-      <CurrentForms index={selected} />
-    </RegistrationLayout>
+    <>
+      <LoadingModal isOpen={isModalOpen} title="Creating Project" />
+      <RegistrationLayout
+        handleNavigation={handleNavigation}
+        handleSubmit={handleSubmit}
+        initialValues={initialValues}
+        isValidInputs={isValidInputs}
+        options={options}
+        selected={selected}
+        title="Create a project"
+        validationSchemas={validationSchemas}
+      >
+        <CurrentForms index={selected} />
+      </RegistrationLayout>
+    </>
   )
 }
