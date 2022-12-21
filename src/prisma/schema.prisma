@@ -38,8 +38,8 @@ model BudgetBox {
   image           String
   description     String
   dampingFactor   Float     @default(0.8)
-  maxVotesPerUser Decimal   @default(1)
-  maxpairsPerUser Decimal   @default(20)
+  maxVotesPerUser Int       @default(1)
+  maxPairsPerVote Int       @default(20)
   allowlist       String[]
   Projects        Project[]
   Votes           Vote[]

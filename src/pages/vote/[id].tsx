@@ -127,9 +127,10 @@ const Vote = ({ budgetBoxId }: IVote) => {
 
   useEffect(() => {
     if (Array.isArray(previousVotes)) {
-      setAlreadyVoted(previousVotes.length > 0)
+      const maxVotesPerUser = budgetBoxData?.maxVotesPerUser as number
+      setAlreadyVoted(previousVotes.length > maxVotesPerUser)
     }
-  }, [previousVotes])
+  }, [previousVotes, budgetBoxData])
 
   useEffect(() => {
     if (projects) {
@@ -142,10 +143,10 @@ const Vote = ({ budgetBoxId }: IVote) => {
             })
           )
           .sort(() => 0.5 - Math.random())
-          .slice(0, 20) ?? []
+          .slice(0, budgetBoxData?.maxPairsPerVote) ?? []
       )
     }
-  }, [projects])
+  }, [projects, budgetBoxData])
 
   useEffect(() => {
     setIsConnected(!!address)
