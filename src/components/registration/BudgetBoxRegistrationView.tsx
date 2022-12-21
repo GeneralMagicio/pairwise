@@ -4,6 +4,8 @@ import { RegistrationLayout } from '@/components/registration/layout/Registratio
 import { DatePicker } from '@/components/inputs/DatePicker'
 import { TextArea } from '@/components/inputs/TextArea'
 import { TextField } from '@/components/inputs/TextField'
+import { LoadingModal } from '@/components/modals/LoadingModal'
+import { useModal } from '@/hooks/useModal'
 import { trpc } from '@/utils/trpc'
 import { useFormNavigation } from '@/hooks/useFormNavigation'
 import { useSiwe } from '@/hooks/useSiwe'
@@ -30,9 +32,19 @@ export const BudgetBoxRegistrationView = () => {
   const { selected, setSelected, handleNavigation } = useFormNavigation()
   const router = useRouter()
   const spaceSlug = router.query.spaceSlug as string
+  const { isModalOpen, setIsModalOpen } = useModal({})
   const { address, signIn } = useSiwe()
 
-  const insertOneBudgetBoxMutation = trpc.budgetBox.insertOne.useMutation()
+  const insertOneBudgetBoxMutation = trpc.budgetBox.insertOne.useMutation({
+    onSettled: (data, error) => {
+      if (!error) {
+        router.push({
+          pathname: `/${spaceSlug}`,
+          query: { q: 'success' }
+        })
+      }
+    }
+  })
 
   const initialValues = {
     name: '',
@@ -143,6 +155,7 @@ export const BudgetBoxRegistrationView = () => {
           allowlist: allowlist.split(','),
           spaceSlug
         })
+        setIsModalOpen(true)
         setSubmitting(false)
       }
     } else {
@@ -152,16 +165,19 @@ export const BudgetBoxRegistrationView = () => {
   }
 
   return (
-    <RegistrationLayout
-      handleNavigation={handleNavigation}
-      handleSubmit={handleSubmit}
-      initialValues={initialValues}
-      options={options}
-      selected={selected}
-      title="Create your Budget Box"
-      validationSchemas={validationSchemas}
-    >
-      <CurrentForms index={selected} />
-    </RegistrationLayout>
+    <>
+      <LoadingModal isOpen={isModalOpen} title="Creating Budget Box" />
+      <RegistrationLayout
+        handleNavigation={handleNavigation}
+        handleSubmit={handleSubmit}
+        initialValues={initialValues}
+        options={options}
+        selected={selected}
+        title="Create your Budget Box"
+        validationSchemas={validationSchemas}
+      >
+        <CurrentForms index={selected} />
+      </RegistrationLayout>
+    </>
   )
 }
