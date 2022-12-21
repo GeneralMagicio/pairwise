@@ -20,7 +20,8 @@ export function TextArea({
   maxLength,
   name,
   placeholder,
-  title
+  title,
+  ...props
 }: ITextArea) {
   const [field, meta] = useField(name)
 
@@ -40,6 +41,7 @@ export function TextArea({
           className
         )}
         {...field}
+        {...props}
       />
       {meta.touched && meta.error ? (
         <div>

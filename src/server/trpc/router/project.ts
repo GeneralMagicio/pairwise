@@ -5,7 +5,6 @@ export const projectRouter = router({
   insertOne: publicProcedure
     .input(
       z.object({
-        slug: z.string(),
         owner: z.string(),
         title: z.string(),
         url: z.string(),

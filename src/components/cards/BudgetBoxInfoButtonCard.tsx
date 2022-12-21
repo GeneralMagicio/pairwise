@@ -20,9 +20,12 @@ export const BudgetBoxInfoButtonCard = ({
   const handleRedirect = (href: string) => router.push(href)
 
   return (
-    <BudgetBoxInfoCard className="flex flex-col justify-between" title={title}>
+    <BudgetBoxInfoCard
+      className="flex h-[390px] flex-col justify-between"
+      title={title}
+    >
       <>
-        <div className="pb-2 font-light text-gray-500 line-clamp-3">
+        <div className="font-light text-gray-500 line-clamp-3">
           {description}
         </div>
         <div>
@@ -32,6 +35,15 @@ export const BudgetBoxInfoButtonCard = ({
             label="Create Project"
             styles="h-[45px]"
             onClick={() => handleRedirect(`/${spaceSlug}/${budgetBoxId}/new`)}
+          />
+          <PrimaryButton
+            color={ButtonColors.BLUE_GRADIENT}
+            fontStyles="font-normal"
+            label="Import Project"
+            styles="mt-2 h-[45px]"
+            onClick={() =>
+              handleRedirect(`/${spaceSlug}/${budgetBoxId}/import`)
+            }
           />
           <PrimaryButton
             color={ButtonColors.BLUE_GRADIENT}

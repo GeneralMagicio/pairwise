@@ -1,5 +1,8 @@
 import * as Yup from 'yup'
+import { gql, GraphQLClient } from 'graphql-request'
+
 import { useRouter } from 'next/router'
+import { useEffect, useState } from 'react'
 import { RegistrationLayout } from '@/components/registration/layout/RegistrationLayout'
 import { TextArea } from '@/components/inputs/TextArea'
 import { TextField } from '@/components/inputs/TextField'
@@ -18,10 +21,36 @@ interface Values {
   description: string
 }
 
-const options = ['Create a project']
+const options = ['Import a project']
 
-export const ProjectRegistrationView = () => {
+const getQuery = (slug: string) => {
+  return gql`
+  {
+    projectBySlug(slug: "${slug}") {
+      slug
+      title
+      image
+      description
+      adminUser {
+        name
+      }
+    }
+  }
+`
+}
+
+const graphQLClient = new GraphQLClient(
+  'https://mainnet.serve.giveth.io/graphql'
+)
+
+export const ProjectImportView = () => {
   const { selected, setSelected, handleNavigation } = useFormNavigation()
+  const [name, setname] = useState<string>('')
+  const [owner, setOwner] = useState<string>('')
+  const [image, setImage] = useState<string>('')
+  const [description, setDescription] = useState<string>('')
+
+  const [url, setUrl] = useState<string>('')
   const router = useRouter()
   const budgetBoxId = router.query.budgetBoxId as string
   const spaceSlug = router.query.spaceSlug as string
@@ -43,7 +72,9 @@ export const ProjectRegistrationView = () => {
   })
 
   const isValidInputs =
-    isSuccessSpace && address ? space?.admins.includes(address) : false
+    isSuccessSpace && address
+      ? space?.admins.includes(address) && !!name && !!url
+      : false
 
   const initialValues = {
     name: '',
@@ -62,23 +93,36 @@ export const ProjectRegistrationView = () => {
         /^((http|https):\/\/)?(www.)?(?!.*(http|https|www.))[a-zA-Z0-9_-]+(\.[a-zA-Z]+)+(\/)?.([\w\?[a-zA-Z-_%\/@?]+)*([^\/\w\?[a-zA-Z0-9_-]+=\w+(&[a-zA-Z0-9_]+=\w+)*)?$/,
         'Website should be a valid URL'
       ),
-      description: Yup.string().min(20, 'Must be 20 characters or more')
+      description: Yup.string()
     })
   ]
 
   const formList = [
     <>
-      <TextField name="name" title="Name" />
-      <TextField name="owner" title="Owner" />
-      <TextField maxLength={200} name="image" title="Image Link" />
-      <TextField maxLength={200} name="url" title="Website" />
-      <TextArea name="description" title="Description" />
+      <TextField name="name" title="Name" value={name} />
+      <TextField name="owner" title="Owner" value={owner} />
+      <TextField
+        maxLength={200}
+        name="image"
+        title="Image Link"
+        value={image}
+      />
+      <TextField
+        maxLength={200}
+        name="url"
+        title="Website"
+        value={url}
+        onChange={(e) => {
+          setUrl(e.target.value)
+        }}
+      />
+      <TextArea name="description" title="Description" value={description} />
     </>
   ]
   const CurrentForms = ({ index }: { index: number }) => formList[index] || null
 
   const handleSubmit = async (
-    { name, owner, image, url, description }: Values,
+    {}: Values,
     { setSubmitting }: FormikHelpers<Values>
   ) => {
     if (selected === options.length - 1) {
@@ -101,6 +145,22 @@ export const ProjectRegistrationView = () => {
     }
   }
 
+  useEffect(() => {
+    const fetchGivethProjects = async () => {
+      const domain = url.match(/(?:[^:]+:\/\/)(?:www\.)*([.a-z0-9]+)+/)?.[1]
+      const slug = url.match(/[^\/]+/g)?.pop()
+      if (slug !== '' && domain === 'giveth.io') {
+        const response = await graphQLClient.request(getQuery(slug || ''))
+        const { title, adminUser, description, image } = response.projectBySlug
+        setname(title)
+        setOwner(adminUser.name)
+        setImage(image)
+        setDescription(description.replace(/(<([^>]+)>)/gi, ''))
+      }
+    }
+    fetchGivethProjects().catch((e) => e)
+  }, [url])
+
   return (
     <>
       <LoadingModal isOpen={isModalOpen} title="Creating Project" />
@@ -111,7 +171,7 @@ export const ProjectRegistrationView = () => {
         isValidInputs={isValidInputs}
         options={options}
         selected={selected}
-        title="Create a project"
+        title="Import a project"
         validationSchemas={validationSchemas}
       >
         <CurrentForms index={selected} />
