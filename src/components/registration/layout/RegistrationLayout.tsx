@@ -41,7 +41,7 @@ export const RegistrationLayout = <Values extends object>({
         <RegistrationMain title={title}>
           <Formik
             initialValues={initialValues}
-            validateOnChange={false}
+            validateOnBlur={true}
             validationSchema={validationSchema}
             onSubmit={handleSubmit}
           >

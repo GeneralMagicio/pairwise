@@ -1,6 +1,6 @@
+import { useRouter } from 'next/router'
 import * as Yup from 'yup'
 import { RegistrationLayout } from '@/components/registration/layout/RegistrationLayout'
-import { FormSelector } from '@/components/inputs/FormSelector'
 import { DatePicker } from '@/components/inputs/DatePicker'
 import { TextArea } from '@/components/inputs/TextArea'
 import { TextField } from '@/components/inputs/TextField'
@@ -15,7 +15,6 @@ const options = [
 ]
 
 interface Values {
-  spaceSlug: string
   name: string
   creatorAddress: string
   description: string
@@ -29,16 +28,13 @@ interface Values {
 
 export const BudgetBoxRegistrationView = () => {
   const { selected, setSelected, handleNavigation } = useFormNavigation()
+  const router = useRouter()
+  const spaceSlug = router.query.spaceSlug as string
   const { address, signIn } = useSiwe()
 
-  const { data: spaces, isSuccess } = trpc.space.getAll.useQuery()
   const insertOneBudgetBoxMutation = trpc.budgetBox.insertOne.useMutation()
 
-  const spaceOptions = isSuccess ? spaces.map((space) => space.slug) : []
-  spaceOptions.unshift('')
-
   const initialValues = {
-    spaceSlug: '',
     name: '',
     creatorAddress: address || '',
     description: '',
@@ -52,9 +48,6 @@ export const BudgetBoxRegistrationView = () => {
 
   const validationSchemas = [
     Yup.object({
-      spaceSlug: Yup.string()
-        .min(1, 'Space slug cannot be empty')
-        .required('Required'),
       name: Yup.string()
         .max(15, 'Must be 15 characters or less')
         .required('Required'),
@@ -82,7 +75,6 @@ export const BudgetBoxRegistrationView = () => {
 
   const formList = [
     <>
-      <FormSelector name="spaceSlug" options={spaceOptions} title="Space" />
       <TextField name="name" title="Name" />
       <TextField
         disabled={true}
@@ -126,7 +118,6 @@ export const BudgetBoxRegistrationView = () => {
 
   const handleSubmit = async (
     {
-      spaceSlug,
       name,
       creatorAddress,
       description,
