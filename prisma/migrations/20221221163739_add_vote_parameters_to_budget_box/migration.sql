@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "BudgetBox" ADD COLUMN     "maxVotesPerUser" DECIMAL(65,30) NOT NULL DEFAULT 1,
+ADD COLUMN     "maxpairsPerUser" DECIMAL(65,30) NOT NULL DEFAULT 20;
