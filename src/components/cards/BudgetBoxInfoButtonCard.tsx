@@ -21,7 +21,7 @@ export const BudgetBoxInfoButtonCard = ({
 
   return (
     <BudgetBoxInfoCard
-      className="flex h-[390px] flex-col justify-between"
+      className="flex min-h-[390px] flex-col justify-between"
       title={title}
     >
       <>
