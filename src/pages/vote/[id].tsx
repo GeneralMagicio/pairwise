@@ -9,7 +9,7 @@ import { LoadingIcon } from '@/components/icons/LoadingIcon'
 import { BudgetBoxHeroCard } from '@/components/cards/BudgetBoxHeroCard'
 import { VotingProgressDetails } from '@/components/details/VotingProgressDetails'
 import { NextArrowIcon } from '@/components/icons'
-import type { AppRouter } from 'server/trpc/router/_app'
+import type { AppRouter } from '@/server/trpc/router/_app'
 import type { GetServerSideProps } from 'next'
 import type { inferRouterOutputs } from '@trpc/server'
 
