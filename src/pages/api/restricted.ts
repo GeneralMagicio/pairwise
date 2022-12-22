@@ -1,4 +1,4 @@
-import { getServerAuthSession } from '../../server/common/get-server-auth-session'
+import { getServerAuthSession } from '../../../server/common/get-server-auth-session'
 import { type NextApiRequest, type NextApiResponse } from 'next'
 
 const restricted = async (req: NextApiRequest, res: NextApiResponse) => {
