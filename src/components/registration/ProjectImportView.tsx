@@ -1,6 +1,4 @@
 import * as Yup from 'yup'
-import { gql, GraphQLClient } from 'graphql-request'
-
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { RegistrationLayout } from '@/components/registration/layout/RegistrationLayout'
@@ -23,26 +21,6 @@ interface Values {
 
 const options = ['Import a project']
 
-const getQuery = (slug: string) => {
-  return gql`
-  {
-    projectBySlug(slug: "${slug}") {
-      slug
-      title
-      image
-      description
-      adminUser {
-        name
-      }
-    }
-  }
-`
-}
-
-const graphQLClient = new GraphQLClient(
-  'https://mainnet.serve.giveth.io/graphql'
-)
-
 export const ProjectImportView = () => {
   const { selected, setSelected, handleNavigation } = useFormNavigation()
   const [name, setname] = useState<string>('')
@@ -51,11 +29,25 @@ export const ProjectImportView = () => {
   const [description, setDescription] = useState<string>('')
 
   const [url, setUrl] = useState<string>('')
+  const urlDomain = url.match(/(?:[^:]+:\/\/)(?:www\.)*([.a-z0-9]+)+/)?.[1]
+  const urlSlug = url.match(/[^\/]+/g)?.pop()
+
   const router = useRouter()
   const budgetBoxId = router.query.budgetBoxId as string
   const spaceSlug = router.query.spaceSlug as string
   const { isModalOpen, setIsModalOpen } = useModal({})
   const { address, signIn } = useSiwe()
+
+  const { data: givethData, isSuccess: isSuccessGiveth } =
+    trpc.giveth.getOneProjectBySlug.useQuery(
+      { slug: urlSlug || '' },
+      {
+        enabled:
+          typeof urlSlug === 'string' &&
+          urlSlug !== '' &&
+          urlDomain === 'giveth.io'
+      }
+    )
 
   const { data: space, isSuccess: isSuccessSpace } =
     trpc.space.getOneBySlug.useQuery({ slug: spaceSlug })
@@ -99,14 +91,6 @@ export const ProjectImportView = () => {
 
   const formList = [
     <>
-      <TextField name="name" title="Name" value={name} />
-      <TextField name="owner" title="Owner" value={owner} />
-      <TextField
-        maxLength={200}
-        name="image"
-        title="Image Link"
-        value={image}
-      />
       <TextField
         maxLength={200}
         name="url"
@@ -115,6 +99,14 @@ export const ProjectImportView = () => {
         onChange={(e) => {
           setUrl(e.target.value)
         }}
+      />
+      <TextField name="name" title="Name" value={name} />
+      <TextField name="owner" title="Owner" value={owner} />
+      <TextField
+        maxLength={200}
+        name="image"
+        title="Image Link"
+        value={image}
       />
       <TextArea name="description" title="Description" value={description} />
     </>
@@ -146,20 +138,13 @@ export const ProjectImportView = () => {
   }
 
   useEffect(() => {
-    const fetchGivethProjects = async () => {
-      const domain = url.match(/(?:[^:]+:\/\/)(?:www\.)*([.a-z0-9]+)+/)?.[1]
-      const slug = url.match(/[^\/]+/g)?.pop()
-      if (slug !== '' && domain === 'giveth.io') {
-        const response = await graphQLClient.request(getQuery(slug || ''))
-        const { title, adminUser, description, image } = response.projectBySlug
-        setname(title)
-        setOwner(adminUser.name)
-        setImage(image)
-        setDescription(description.replace(/(<([^>]+)>)/gi, ''))
-      }
+    if (isSuccessGiveth) {
+      setname(givethData.title)
+      setOwner(givethData.owner)
+      setImage(givethData.image)
+      setDescription(givethData.description.replace(/(<([^>]+)>)/gi, ''))
     }
-    fetchGivethProjects().catch((e) => e)
-  }, [url])
+  }, [givethData, isSuccessGiveth])
 
   return (
     <>
