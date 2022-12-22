@@ -12,7 +12,7 @@ export const Navbar = () => {
           src={'/images/logos/budget-boxes-logo.svg'}
           width={50}
         />
-        <h2 className="ml-3 text-2xl font-semibold">Budget Boxes</h2>
+        <h2 className="ml-3 text-2xl font-semibold">Pairwise</h2>
       </Link>
       <CustomConnectButton />
     </nav>

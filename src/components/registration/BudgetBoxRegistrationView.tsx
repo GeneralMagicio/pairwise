@@ -176,7 +176,7 @@ export const BudgetBoxRegistrationView = () => {
 
   return (
     <>
-      <LoadingModal isOpen={isModalOpen} title="Creating Budget Box" />
+      <LoadingModal isOpen={isModalOpen} title="Creating Pairwise" />
       <RegistrationLayout
         handleNavigation={handleNavigation}
         handleSubmit={handleSubmit}
@@ -184,7 +184,7 @@ export const BudgetBoxRegistrationView = () => {
         isValidInputs={isValidInputs}
         options={options}
         selected={selected}
-        title="Create your Budget Box"
+        title="Create your Pairwise"
         validationSchemas={validationSchemas}
       >
         <CurrentForms index={selected} />

@@ -4,7 +4,7 @@ import { BudgetBoxRegistrationView } from '@/components/registration/BudgetBoxRe
 export const NewBudgetBoxPage = () => {
   return (
     <>
-      <Head>Create Budget Box</Head>
+      <Head>Create Pairwise</Head>
       <BudgetBoxRegistrationView />
     </>
   )

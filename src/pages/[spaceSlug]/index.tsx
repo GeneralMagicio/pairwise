@@ -77,6 +77,8 @@ const SpaceDetails = ({
         closeModal={closeModal}
         isOpen={isModalOpen}
         title="Congratulations!"
+        description="You have successfully registered your space. Proceed to
+          creating a pairwise for your space."
       />
       {space ? (
         <main className="py-16">
@@ -95,12 +97,12 @@ const SpaceDetails = ({
               />
               <Link
                 className="flex items-center"
-                href={`/${spaceSlug}/new/budget-box`}
+                href={`/${spaceSlug}/new/pairwise`}
               >
                 <div className="grid h-7 w-7 place-content-center rounded-full bg-gradient-to-b from-blue-500 to-cyan-300 ">
                   <CreateIcon height={15} width={15} />
                 </div>
-                <h3 className="ml-2 text-gray-600">Create Budget Box</h3>
+                <h3 className="ml-2 text-gray-600">Create Pairwise</h3>
               </Link>
             </div>
 

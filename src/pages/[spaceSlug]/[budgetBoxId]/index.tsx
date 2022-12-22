@@ -95,6 +95,7 @@ export const BudgetBoxDetailsPage = ({
       </Head>
       <SuccessModal
         closeModal={closeModal}
+        description="You have successfully registered your project."
         isOpen={isModalOpen}
         title="Congratulations!"
       />
