@@ -16,7 +16,7 @@
     "tailwindcss/no-custom-classname": [
       "warn",
       {
-        "whitelist": ["font\\-(inter|poppinss)", "line\\-clamp\\-2"]
+        "whitelist": ["font\\-(inter|poppins)", "line\\-clamp\\-[1-9]"]
       }
     ],
     "import/order": [
