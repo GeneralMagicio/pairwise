@@ -8,9 +8,12 @@ interface IAppLayout {
 
 export const AppLayout = ({ children }: IAppLayout) => {
   return (
-    <div className="bg-gray-100">
-      <Navbar />
-      <Sidebar>{children}</Sidebar>
+    <div className="flex min-h-screen bg-gray-100">
+      <Sidebar />
+      <div className="w-full">
+        <Navbar title="Welcome to Pairwise" />
+        <main className="w-full py-12">{children}</main>
+      </div>
     </div>
   )
 }
