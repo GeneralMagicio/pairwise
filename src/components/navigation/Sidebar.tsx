@@ -24,7 +24,7 @@ export const Sidebar = () => {
   const router = useRouter()
 
   return (
-    <aside className="sticky z-30 hidden h-screen min-w-[287px] flex-col items-start justify-start gap-y-12 bg-white pl-8 pt-11 shadow-xl sm:flex">
+    <aside className="sticky top-0 z-30 hidden h-screen min-w-[287px] flex-col items-start justify-start gap-y-12 bg-white pl-8 pt-11 shadow-xl sm:flex">
       <Link className="flex items-center pl-3" href={'/'}>
         <Image
           alt={'Budget boxes logo'}
