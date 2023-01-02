@@ -44,7 +44,9 @@ module.exports = {
         }
       },
       fontFamily: {
-        sans: ['var(--font-inter)', ...fontFamily.sans]
+        sans: ['Inter', 'sans-serif'],
+        inter: ['Inter', 'sans-serif'],
+        poppins: ['Poppins', 'sans-serif']
       }
     }
   },

@@ -1,6 +1,5 @@
 import { trpc } from '../utils/trpc'
 import { type AppType } from 'next/app'
-import { Inter } from '@next/font/google'
 import { type Session } from 'next-auth'
 import { SessionProvider } from 'next-auth/react'
 import { RainbowKitProvider } from '@rainbow-me/rainbowkit'
@@ -10,11 +9,6 @@ import { wagmiClient, chains } from '@/api/clients/wagmi'
 import '@rainbow-me/rainbowkit/styles.css'
 import '../styles/globals.css'
 
-const inter = Inter({
-  subsets: ['latin'],
-  variable: '--font-inter'
-})
-
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
   pageProps: { session, ...pageProps }
@@ -23,11 +17,9 @@ const MyApp: AppType<{ session: Session | null }> = ({
     <SessionProvider session={session}>
       <WagmiConfig client={wagmiClient}>
         <RainbowKitProvider chains={chains}>
-          <div className={`${inter.variable} font-sans`}>
-            <AppLayout>
-              <Component {...pageProps} />
-            </AppLayout>
-          </div>
+          <AppLayout>
+            <Component {...pageProps} />
+          </AppLayout>
         </RainbowKitProvider>
       </WagmiConfig>
     </SessionProvider>
