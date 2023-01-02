@@ -5,9 +5,12 @@ import { appRouter } from '@/server/trpc/router/_app'
 import { trpc } from '@/utils/trpc'
 import { SpaceCard } from '@/components/cards/SpaceCard'
 import { prisma } from '@/server/db/client'
-import { SearchInput } from '@/components/inputs/SearchInput'
 import { useSearchInput } from '@/hooks/useSearchInput'
 import { textSearch } from '@/utils/helpers/textSearch'
+import { SearchInputWithSelector } from '@/components/inputs/SearchInputWithSelector'
+import { PrimaryButton, ButtonColors } from '@/components/buttons/PrimaryButton'
+import { useSelector } from '@/hooks/useSelector'
+import { useShowAll } from '@/hooks/useShowAll'
 import type { GetStaticProps, NextPage } from 'next'
 
 export const getStaticProps: GetStaticProps = async () => {
@@ -18,6 +21,8 @@ export const getStaticProps: GetStaticProps = async () => {
   })
 
   await ssg.space.getAll.prefetch()
+  await ssg.category.getAll.prefetch()
+
   return {
     props: {
       trpcState: ssg.dehydrate()
@@ -27,43 +32,74 @@ export const getStaticProps: GetStaticProps = async () => {
 }
 
 const Home: NextPage = () => {
-  const [search, searchInputHandler] = useSearchInput()
   const { data: spaces } = trpc.space.getAll.useQuery()
+  const { data: categories } = trpc.category.getAll.useQuery()
+  const selectCategories = [
+    'All Categories',
+    ...(categories?.map(({ category }) => category) || [])
+  ]
+
+  const { showAll, setShowAll, maxItems } = useShowAll()
+  const { search, searchInputHandler } = useSearchInput()
+  const { selected, handleSelect } = useSelector(
+    selectCategories,
+    'All Categories'
+  )
 
   return (
-    <div>
+    <>
       <Head>
         <title>Explore</title>
       </Head>
-      <main className="flex w-full justify-center">
-        <div className="mt-16 grid gap-y-4">
-          <h1 className="text-2xl font-semibold">Explore Spaces</h1>
-          <SearchInput
+      <main className="mx-auto mt-8 grid gap-y-4">
+        <div className="pl-10">
+          <h1 className="mb-3 text-2xl font-semibold">Explore Spaces</h1>
+          <SearchInputWithSelector
+            handleSelect={handleSelect}
+            options={selectCategories}
             placeholder="Search spaces"
+            selected={selected}
             value={search}
             onChange={searchInputHandler}
           />
-          <div className="grid w-[1200px] justify-items-center gap-y-8 gap-x-6 pt-10 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {spaces
-              ? spaces
-                  .filter(({ title, description }) =>
-                    textSearch(search, [title, description])
-                  )
-                  .map((space) => (
-                    <SpaceCard
-                      key={space.id}
-                      categories={space.Categories}
-                      description={space.description}
-                      img={space.image}
-                      slug={space.slug}
-                      title={space.title}
-                    />
-                  ))
-              : null}
-          </div>
         </div>
+
+        <div className="mx-auto grid justify-items-center gap-6 pt-10 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {spaces
+            ? spaces
+                .filter(({ title, description }) =>
+                  textSearch(search, [title, description])
+                )
+                .filter(({ Categories }) =>
+                  Categories.some(
+                    ({ category }) =>
+                      selected == 'All Categories' || category == selected
+                  )
+                )
+                .slice(0, showAll ? spaces.length : maxItems)
+                .map((space) => (
+                  <SpaceCard
+                    key={space.id}
+                    categories={space.Categories}
+                    description={space.description}
+                    img={space.image}
+                    slug={space.slug}
+                    title={space.title}
+                  />
+                ))
+            : null}
+        </div>
+        {!showAll && spaces && spaces.length > maxItems ? (
+          <PrimaryButton
+            color={ButtonColors.BLUE_GRADIENT}
+            fontStyles="font-medium"
+            label="Show More"
+            styles="w-fit h-[45px] mt-4 mx-auto"
+            onClick={() => setShowAll(true)}
+          />
+        ) : null}
       </main>
-    </div>
+    </>
   )
 }
 

@@ -12,7 +12,7 @@ export const AppLayout = ({ children }: IAppLayout) => {
       <Sidebar />
       <div className="w-full">
         <Navbar title="Welcome to Pairwise" />
-        <main className="w-full py-12">{children}</main>
+        <main className="mx-auto w-full max-w-6xl py-12">{children}</main>
       </div>
     </div>
   )

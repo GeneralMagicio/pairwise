@@ -55,7 +55,7 @@ export const getStaticProps = async (
 const SpaceDetails = ({
   spaceSlug
 }: InferGetStaticPropsType<typeof getStaticProps>) => {
-  const [search, searchInputHandler] = useSearchInput()
+  const { search, searchInputHandler } = useSearchInput()
   const router = useRouter()
   const { q } = router.query
   const { isModalOpen, closeModal } = useModal({
