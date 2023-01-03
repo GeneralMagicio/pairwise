@@ -10,7 +10,7 @@ export const VotingProgressDetails = ({
   maxProjects
 }: IVotingProgressDetails) => {
   return (
-    <div className="mt-14 w-full">
+    <div className="mt-2 w-full">
       <div className="mb-4 text-2xl font-bold text-blue-900">
         Voting Progress
       </div>

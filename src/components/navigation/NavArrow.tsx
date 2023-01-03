@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { ArrowDownIcon } from '@/components/icons'
 
 interface INavArrow {
-  items: Array<{ name: string; path: string }>
+  items: Array<{ name: string | null | undefined; path: string }>
 }
 
 export const NavArrow = ({ items }: INavArrow) => {

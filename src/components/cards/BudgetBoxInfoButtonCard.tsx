@@ -63,14 +63,16 @@ export const BudgetBoxInfoButtonCard = ({
             fontStyles="font-normal"
             label="Vote Now"
             styles="mt-2 h-[40px]"
-            onClick={() => handleRedirect(`/vote/${budgetBoxId}`)}
+            onClick={() => handleRedirect(`/${spaceSlug}/${budgetBoxId}/vote`)}
           />
           <PrimaryButton
             color={ButtonColors.BLUE_GRADIENT}
             fontStyles="font-normal"
             label="See Vote Results"
             styles="mt-2 h-[40px]"
-            onClick={() => handleRedirect(`/ranking/${budgetBoxId}`)}
+            onClick={() =>
+              handleRedirect(`/${spaceSlug}/${budgetBoxId}/ranking`)
+            }
           />
         </div>
         <div className="absolute right-10 top-8">

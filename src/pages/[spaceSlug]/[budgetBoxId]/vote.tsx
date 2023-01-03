@@ -1,4 +1,5 @@
 import { useRouter } from 'next/router'
+import Head from 'next/head'
 import { useEffect, useState } from 'react'
 import classNames from 'classnames'
 import { PrimaryButton, ButtonColors } from '@/components/buttons/PrimaryButton'
@@ -6,10 +7,10 @@ import { trpc } from '@/utils/trpc'
 import { useSiwe } from '@/hooks/useSiwe'
 import { VotePair } from '@/components/vote/VotePair'
 import { LoadingIcon } from '@/components/icons/LoadingIcon'
-import { BudgetBoxHeroCard } from '@/components/cards/BudgetBoxHeroCard'
 import { VotingProgressDetails } from '@/components/details/VotingProgressDetails'
 import { NextArrowIcon } from '@/components/icons'
 import type { AppRouter } from '@/server/trpc/router/_app'
+import { NavArrow } from '@/components/navigation/NavArrow'
 import type { GetServerSideProps } from 'next'
 import type { inferRouterOutputs } from '@trpc/server'
 
@@ -17,13 +18,15 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const { params } = context
   return {
     props: {
-      budgetBoxId: params?.id
+      budgetBoxId: params?.budgetBoxId,
+      spaceSlug: params?.spaceSlug
     }
   }
 }
 
 interface IVote {
   budgetBoxId: string
+  spaceSlug: string
 }
 type RouterOutput = inferRouterOutputs<AppRouter>
 type GetOneBudgetBoxOutput = RouterOutput['project']['getOne']
@@ -33,7 +36,7 @@ interface IVotePair {
   beta: GetOneBudgetBoxOutput
 }
 
-const Vote = ({ budgetBoxId }: IVote) => {
+const Vote = ({ budgetBoxId, spaceSlug }: IVote) => {
   const [voted, setVoted] = useState<boolean>(false)
   const [isConnected, setIsConnected] = useState<boolean>(false)
   const [isValidAddress, setIsValidAddress] = useState<boolean | null>(null)
@@ -51,6 +54,7 @@ const Vote = ({ budgetBoxId }: IVote) => {
     signIn
   } = useSiwe()
 
+  const { data: space } = trpc.space.getOneBySlug.useQuery({ slug: spaceSlug })
   const { data: projects, isLoading } =
     trpc.project.getManyByBudgetBoxId.useQuery(
       {
@@ -163,9 +167,16 @@ const Vote = ({ budgetBoxId }: IVote) => {
     }
   }, [pairs])
 
+  const navArrowItems = [
+    { name: 'Home', path: '/' },
+    { name: space?.title, path: `/${spaceSlug}` },
+    { name: budgetBoxData?.title, path: `/${spaceSlug}/${budgetBoxId}` },
+    { name: 'Vote', path: `/${spaceSlug}/${budgetBoxId}/vote` }
+  ]
+
   if (isLoading)
     return (
-      <main className="flex min-h-[calc(100vh_-_100px)] flex-col items-center justify-center">
+      <main className="flex min-h-screen flex-col items-center justify-center">
         <div className="w-full px-4 text-center text-lg">
           <LoadingIcon label="loading" />
         </div>
@@ -175,14 +186,10 @@ const Vote = ({ budgetBoxId }: IVote) => {
   if (!budgetBoxData) return <main>No Budget box found</main>
 
   return (
-    <main className="py-16">
-      <div className="mx-auto flex max-w-[1100px] flex-col items-center justify-center">
-        <BudgetBoxHeroCard
-          description={budgetBoxData.description}
-          image={budgetBoxData.image}
-          title={budgetBoxData.title}
-        />
-
+    <>
+      <Head>Vote</Head>
+      <NavArrow items={navArrowItems} />
+      <main className="mx-auto flex max-w-[1100px] flex-col items-center justify-center">
         {pairs.length < 1 ? (
           <div className="grid h-[500px] w-full place-content-center px-4 text-xl">
             There is no project in this budget box
@@ -197,7 +204,7 @@ const Vote = ({ budgetBoxId }: IVote) => {
               currentProject={pagination + 1}
               maxProjects={pairs.length}
             />
-            <div className="flex w-full items-center justify-center pt-8 lg:pt-16">
+            <div className="flex w-full items-center justify-center pt-8 lg:pt-12">
               <NextArrowIcon
                 className={classNames(
                   'rotate-180',
@@ -276,8 +283,8 @@ const Vote = ({ budgetBoxId }: IVote) => {
               : `You're not allowed to vote on this budget box`}
           </div>
         )}
-      </div>
-    </main>
+      </main>
+    </>
   )
 }
 
