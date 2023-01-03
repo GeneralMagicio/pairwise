@@ -11,6 +11,7 @@ import { BudgetBoxInfoLiveCard } from '@/components/cards/BudgetBoxInfoLiveCard'
 import { BudgetBoxInfoVotingCard } from '@/components/cards/BudgetBoxInfoVotingCard'
 import { SuccessModal } from '@/components/modals/SuccessModal'
 import { useModal } from '@/hooks/useModal'
+import { NavArrow } from '@/components/navigation/NavArrow'
 import type {
   GetStaticPaths,
   GetStaticPropsContext,
@@ -77,6 +78,9 @@ export const BudgetBoxDetailsPage = ({
   const { data: budgetBox } = trpc.budgetBox.getOne.useQuery({
     id: budgetBoxId
   })
+  const { data: space } = trpc.space.getOneBySlug.useQuery({
+    slug: spaceSlug
+  })
   const { data: projects } = trpc.project.getManyByBudgetBoxId.useQuery({
     id: budgetBoxId
   })
@@ -87,6 +91,11 @@ export const BudgetBoxDetailsPage = ({
     power,
     title
   }))
+  const navArrowItems = [
+    { name: 'Home', path: '/' },
+    { name: space?.title || '', path: `/${spaceSlug}` },
+    { name: budgetBox?.title || '', path: router.asPath }
+  ]
 
   return (
     <div>
@@ -99,6 +108,7 @@ export const BudgetBoxDetailsPage = ({
         isOpen={isModalOpen}
         title="Congratulations!"
       />
+      <NavArrow items={navArrowItems} />
       {budgetBox ? (
         <main className="mx-auto grid grid-cols-3 gap-x-10">
           <BudgetBoxDetails
