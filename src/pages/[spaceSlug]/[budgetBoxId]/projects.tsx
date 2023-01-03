@@ -87,7 +87,9 @@ export const ProjectsPage = ({
 
   return (
     <>
-      <Head>Projects</Head>
+      <Head>
+        <title>Projects</title>
+      </Head>
       {projects ? (
         <>
           <NavArrow items={navArrowItems} />

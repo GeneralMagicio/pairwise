@@ -187,7 +187,9 @@ const Vote = ({ budgetBoxId, spaceSlug }: IVote) => {
 
   return (
     <>
-      <Head>Vote</Head>
+      <Head>
+        <title>Vote</title>
+      </Head>
       <NavArrow items={navArrowItems} />
       <main className="mx-auto flex max-w-[1100px] flex-col items-center justify-center">
         {pairs.length < 1 ? (
