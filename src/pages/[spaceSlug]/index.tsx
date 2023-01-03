@@ -1,6 +1,5 @@
 import { createProxySSGHelpers } from '@trpc/react-query/ssg'
 import Head from 'next/head'
-import Link from 'next/link'
 import { useRouter } from 'next/router'
 import superjson from '@/utils/superjson'
 import { appRouter } from '@/server/trpc/router/_app'
@@ -12,7 +11,6 @@ import { Divider } from '@/components/general/Divider'
 import { SearchInput } from '@/components/inputs/SearchInput'
 import { PrimaryButton, ButtonColors } from '@/components/buttons/PrimaryButton'
 import { NavArrow } from '@/components/navigation/NavArrow'
-import { CreateIcon } from '@/components/icons'
 import { useSearchInput } from '@/hooks/useSearchInput'
 import { textSearch } from '@/utils/helpers/textSearch'
 import { SuccessModal } from '@/components/modals/SuccessModal'
@@ -95,6 +93,7 @@ const SpaceDetails = ({
             categories={space.Categories}
             description={space.description}
             image={space.image}
+            slug={space.slug}
             title={space.title}
           />
           <div className="mt-14 flex items-center justify-between">
@@ -103,15 +102,6 @@ const SpaceDetails = ({
               value={search}
               onChange={searchInputHandler}
             />
-            <Link
-              className="flex items-center"
-              href={`/${spaceSlug}/new/pairwise`}
-            >
-              <div className="grid h-7 w-7 place-content-center rounded-full bg-gradient-to-b from-blue-500 to-cyan-300 ">
-                <CreateIcon height={15} width={15} />
-              </div>
-              <h3 className="ml-2 text-gray-600">Create Pairwise</h3>
-            </Link>
           </div>
           <Divider text="Now Voting" />
           <div className="mt-10 grid justify-center gap-8 md:grid-cols-2 lg:grid-cols-3">
