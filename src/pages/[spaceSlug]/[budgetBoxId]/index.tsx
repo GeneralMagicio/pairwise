@@ -100,34 +100,32 @@ export const BudgetBoxDetailsPage = ({
         title="Congratulations!"
       />
       {budgetBox ? (
-        <main className="py-16">
-          <div className="mx-auto grid max-w-[1100px] grid-cols-3 gap-x-10">
-            <BudgetBoxDetails
-              className="col-span-2 w-[660px]"
+        <main className="mx-auto grid grid-cols-3 gap-x-10">
+          <BudgetBoxDetails
+            className="col-span-2 w-[660px]"
+            description={budgetBox.description}
+            image={budgetBox.image}
+            title={budgetBox.title}
+          />
+          <aside className="col-span-1 grid gap-y-6">
+            <BudgetBoxInfoButtonCard
+              budgetBoxId={budgetBox.id}
               description={budgetBox.description}
-              image={budgetBox.image}
-              title={budgetBox.title}
+              spaceSlug={spaceSlug}
+              title="Information"
             />
-            <div className="col-span-1 grid gap-y-6">
-              <BudgetBoxInfoButtonCard
-                budgetBoxId={budgetBox.id}
-                description={budgetBox.description}
-                spaceSlug={spaceSlug}
-                title="Information"
-              />
-              <BudgetBoxInfoLiveCard
-                projectsCount={projects?.length || 0}
-                title="Live project information"
-                topProjects={topProjects}
-              />
-              <BudgetBoxInfoVotingCard
-                allowanceMethod="Allowlist"
-                endDate={budgetBox.endDate}
-                startDate={budgetBox.startDate}
-                title="Voting information"
-              />
-            </div>
-          </div>
+            <BudgetBoxInfoLiveCard
+              projectsCount={projects?.length || 0}
+              title="Live project information"
+              topProjects={topProjects}
+            />
+            <BudgetBoxInfoVotingCard
+              allowanceMethod="Allowlist"
+              endDate={budgetBox.endDate}
+              startDate={budgetBox.startDate}
+              title="Voting information"
+            />
+          </aside>
         </main>
       ) : null}
     </div>
