@@ -10,11 +10,14 @@ import { BudgetBoxCard } from '@/components/cards/BudgetBoxCard'
 import { SpaceHeroCard } from '@/components/cards/SpaceHeroCard'
 import { Divider } from '@/components/general/Divider'
 import { SearchInput } from '@/components/inputs/SearchInput'
+import { PrimaryButton, ButtonColors } from '@/components/buttons/PrimaryButton'
+import { NavArrow } from '@/components/navigation/NavArrow'
 import { CreateIcon } from '@/components/icons'
 import { useSearchInput } from '@/hooks/useSearchInput'
 import { textSearch } from '@/utils/helpers/textSearch'
 import { SuccessModal } from '@/components/modals/SuccessModal'
 import { useModal } from '@/hooks/useModal'
+import { useShowAll } from '@/hooks/useShowAll'
 import type {
   GetStaticPaths,
   InferGetStaticPropsType,
@@ -55,6 +58,7 @@ export const getStaticProps = async (
 const SpaceDetails = ({
   spaceSlug
 }: InferGetStaticPropsType<typeof getStaticProps>) => {
+  const { showAll, setShowAll, maxItems } = useShowAll(6)
   const { search, searchInputHandler } = useSearchInput()
   const router = useRouter()
   const { q } = router.query
@@ -67,11 +71,15 @@ const SpaceDetails = ({
     slug: spaceSlug
   })
   const { data: space } = trpc.space.getOneBySlug.useQuery({ slug: spaceSlug })
+  const navArrowItems = [
+    { name: 'Home', path: '/' },
+    { name: space?.title || '', path: router.asPath }
+  ]
 
   return (
     <div>
       <Head>
-        <title>{spaceSlug}</title>
+        <title>{space?.title}</title>
       </Head>
       <SuccessModal
         closeModal={closeModal}
@@ -80,51 +88,59 @@ const SpaceDetails = ({
         description="You have successfully registered your space. Proceed to
           creating a pairwise for your space."
       />
+      <NavArrow items={navArrowItems} />
       {space ? (
-        <main className="py-16">
-          <div className="mx-auto max-w-[1100px]">
-            <SpaceHeroCard
-              categories={space.Categories}
-              description={space.description}
-              image={space.image}
-              title={space.title}
+        <main className="mx-auto flex flex-col justify-center">
+          <SpaceHeroCard
+            categories={space.Categories}
+            description={space.description}
+            image={space.image}
+            title={space.title}
+          />
+          <div className="mt-14 flex items-center justify-between">
+            <SearchInput
+              placeholder="Search boxes"
+              value={search}
+              onChange={searchInputHandler}
             />
-            <div className="mt-14 flex items-center justify-between">
-              <SearchInput
-                placeholder="Search boxes"
-                value={search}
-                onChange={searchInputHandler}
-              />
-              <Link
-                className="flex items-center"
-                href={`/${spaceSlug}/new/pairwise`}
-              >
-                <div className="grid h-7 w-7 place-content-center rounded-full bg-gradient-to-b from-blue-500 to-cyan-300 ">
-                  <CreateIcon height={15} width={15} />
-                </div>
-                <h3 className="ml-2 text-gray-600">Create Pairwise</h3>
-              </Link>
-            </div>
-
-            <Divider text="Now Voting" />
-            <div className="mt-10 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-              {budgetBoxes
-                ?.filter(({ title, description }) =>
-                  textSearch(search, [title, description])
-                )
-                .map((budgetBox) => (
-                  <BudgetBoxCard
-                    key={budgetBox.id}
-                    description={budgetBox.description}
-                    id={budgetBox.id}
-                    image={budgetBox.image}
-                    spaceSlug={spaceSlug}
-                    startDate={budgetBox.startDate}
-                    title={budgetBox.title}
-                  />
-                ))}
-            </div>
+            <Link
+              className="flex items-center"
+              href={`/${spaceSlug}/new/pairwise`}
+            >
+              <div className="grid h-7 w-7 place-content-center rounded-full bg-gradient-to-b from-blue-500 to-cyan-300 ">
+                <CreateIcon height={15} width={15} />
+              </div>
+              <h3 className="ml-2 text-gray-600">Create Pairwise</h3>
+            </Link>
           </div>
+          <Divider text="Now Voting" />
+          <div className="mt-10 grid justify-center gap-8 md:grid-cols-2 lg:grid-cols-3">
+            {budgetBoxes
+              ?.filter(({ title, description }) =>
+                textSearch(search, [title, description])
+              )
+              .slice(0, showAll ? budgetBoxes.length : maxItems)
+              .map((budgetBox) => (
+                <BudgetBoxCard
+                  key={budgetBox.id}
+                  description={budgetBox.description}
+                  id={budgetBox.id}
+                  image={budgetBox.image}
+                  spaceSlug={spaceSlug}
+                  startDate={budgetBox.startDate}
+                  title={budgetBox.title}
+                />
+              ))}
+          </div>
+          {!showAll && budgetBoxes && budgetBoxes.length > maxItems ? (
+            <PrimaryButton
+              color={ButtonColors.BLUE_GRADIENT}
+              fontStyles="font-medium"
+              label="Show More"
+              styles="w-[60px] h-[52px] mt-14 mx-auto"
+              onClick={() => setShowAll(true)}
+            />
+          ) : null}
         </main>
       ) : null}
     </div>

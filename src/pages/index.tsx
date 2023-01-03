@@ -51,7 +51,7 @@ const Home: NextPage = () => {
       <Head>
         <title>Explore</title>
       </Head>
-      <main className="mx-auto mt-8 grid gap-y-4">
+      <main className="mx-auto grid gap-y-4">
         <div className="pl-10">
           <h1 className="mb-3 text-2xl font-semibold">Explore Spaces</h1>
           <SearchInputWithSelector

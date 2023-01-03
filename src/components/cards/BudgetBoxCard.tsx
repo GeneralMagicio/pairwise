@@ -21,7 +21,7 @@ export const BudgetBoxCard = ({
 }: IBudgetBoxCard) => {
   return (
     <Link
-      className="h-[350px] min-w-[330px] overflow-hidden rounded-lg border bg-white shadow-md"
+      className="h-[350px] min-w-[330px] overflow-hidden rounded-lg border bg-white shadow-md transition duration-150 hover:shadow-lg hover:shadow-green-400/40"
       href={`${spaceSlug}/${id}`}
     >
       <div className="relative h-[200px] min-w-[330px] overflow-hidden ">

@@ -20,11 +20,11 @@ export const SpaceHeroCard = ({
         <div className="relative mr-8 h-[130px] min-w-[130px] overflow-hidden rounded-full shadow-md">
           <Image fill alt="Space image" sizes="130px" src={image} />
         </div>
-        <div className="flex flex-col items-start gap-y-2">
-          <div className="text-4xl font-extrabold">{title}</div>
+        <article className="flex flex-col items-start gap-y-2">
+          <h2 className="text-4xl font-extrabold">{title}</h2>
           <SpaceCategoryTags categories={categories} />
-          <div className="font-light text-gray-500">{description}</div>
-        </div>
+          <p className="font-light text-gray-500">{description}</p>
+        </article>
       </>
     </HeroCard>
   )
