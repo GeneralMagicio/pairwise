@@ -86,52 +86,54 @@ const SpaceDetails = ({
         description="You have successfully registered your space. Proceed to
           creating a pairwise for your space."
       />
-      <NavArrow items={navArrowItems} />
       {space ? (
-        <main className="mx-auto flex flex-col justify-center">
-          <SpaceHeroCard
-            categories={space.Categories}
-            description={space.description}
-            image={space.image}
-            slug={space.slug}
-            title={space.title}
-          />
-          <div className="mt-14 flex items-center justify-between">
-            <SearchInput
-              placeholder="Search boxes"
-              value={search}
-              onChange={searchInputHandler}
+        <>
+          <NavArrow items={navArrowItems} />
+          <main className="mx-auto flex flex-col justify-center">
+            <SpaceHeroCard
+              categories={space.Categories}
+              description={space.description}
+              image={space.image}
+              slug={space.slug}
+              title={space.title}
             />
-          </div>
-          <Divider text="Now Voting" />
-          <div className="mt-10 grid justify-center gap-8 md:grid-cols-2 lg:grid-cols-3">
-            {budgetBoxes
-              ?.filter(({ title, description }) =>
-                textSearch(search, [title, description])
-              )
-              .slice(0, showAll ? budgetBoxes.length : maxItems)
-              .map((budgetBox) => (
-                <BudgetBoxCard
-                  key={budgetBox.id}
-                  description={budgetBox.description}
-                  id={budgetBox.id}
-                  image={budgetBox.image}
-                  spaceSlug={spaceSlug}
-                  startDate={budgetBox.startDate}
-                  title={budgetBox.title}
-                />
-              ))}
-          </div>
-          {!showAll && budgetBoxes && budgetBoxes.length > maxItems ? (
-            <PrimaryButton
-              color={ButtonColors.BLUE_GRADIENT}
-              fontStyles="font-medium"
-              label="Show More"
-              styles="w-[60px] h-[52px] mt-14 mx-auto"
-              onClick={() => setShowAll(true)}
-            />
-          ) : null}
-        </main>
+            <div className="mt-14 flex items-center justify-between">
+              <SearchInput
+                placeholder="Search boxes"
+                value={search}
+                onChange={searchInputHandler}
+              />
+            </div>
+            <Divider text="Now Voting" />
+            <div className="mt-10 grid justify-center gap-8 md:grid-cols-2 lg:grid-cols-3">
+              {budgetBoxes
+                ?.filter(({ title, description }) =>
+                  textSearch(search, [title, description])
+                )
+                .slice(0, showAll ? budgetBoxes.length : maxItems)
+                .map((budgetBox) => (
+                  <BudgetBoxCard
+                    key={budgetBox.id}
+                    description={budgetBox.description}
+                    id={budgetBox.id}
+                    image={budgetBox.image}
+                    spaceSlug={spaceSlug}
+                    startDate={budgetBox.startDate}
+                    title={budgetBox.title}
+                  />
+                ))}
+            </div>
+            {!showAll && budgetBoxes && budgetBoxes.length > maxItems ? (
+              <PrimaryButton
+                color={ButtonColors.BLUE_GRADIENT}
+                fontStyles="font-medium"
+                label="Show More"
+                styles="w-[60px] h-[52px] mt-14 mx-auto"
+                onClick={() => setShowAll(true)}
+              />
+            ) : null}
+          </main>
+        </>
       ) : null}
     </div>
   )

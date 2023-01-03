@@ -8,12 +8,12 @@
  */
 export const textSearch = (
   search: string,
-  text: string | Array<string>
+  text: string | Array<string | null>
 ): boolean => {
   const checkIncludesLowerCase = (text: string, search: string) =>
     text.toLowerCase().includes(search.toLowerCase())
   if (typeof text === 'string') {
     return checkIncludesLowerCase(text, search)
   }
-  return text.some((item) => checkIncludesLowerCase(item, search))
+  return text.some((item) => checkIncludesLowerCase(item || '', search))
 }

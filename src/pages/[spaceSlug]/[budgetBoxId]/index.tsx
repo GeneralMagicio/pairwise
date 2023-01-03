@@ -98,7 +98,7 @@ export const BudgetBoxDetailsPage = ({
   ]
 
   return (
-    <div>
+    <>
       <Head>
         <title>{budgetBox?.title}</title>
       </Head>
@@ -108,37 +108,41 @@ export const BudgetBoxDetailsPage = ({
         isOpen={isModalOpen}
         title="Congratulations!"
       />
-      <NavArrow items={navArrowItems} />
       {budgetBox ? (
-        <main className="mx-auto grid grid-cols-3 gap-x-10">
-          <BudgetBoxDetails
-            className="col-span-2 w-[660px]"
-            description={budgetBox.description}
-            image={budgetBox.image}
-            title={budgetBox.title}
-          />
-          <aside className="col-span-1 grid gap-y-6">
-            <BudgetBoxInfoButtonCard
-              budgetBoxId={budgetBox.id}
+        <>
+          <NavArrow items={navArrowItems} />
+          <main className="mx-auto grid grid-cols-3 gap-x-10">
+            <BudgetBoxDetails
+              className="col-span-2 w-[660px]"
               description={budgetBox.description}
-              spaceSlug={spaceSlug}
-              title="Information"
+              image={budgetBox.image}
+              title={budgetBox.title}
             />
-            <BudgetBoxInfoLiveCard
-              projectsCount={projects?.length || 0}
-              title="Live project information"
-              topProjects={topProjects}
-            />
-            <BudgetBoxInfoVotingCard
-              allowanceMethod="Allowlist"
-              endDate={budgetBox.endDate}
-              startDate={budgetBox.startDate}
-              title="Voting information"
-            />
-          </aside>
-        </main>
+            <aside className="col-span-1 grid gap-y-6">
+              <BudgetBoxInfoButtonCard
+                budgetBoxId={budgetBox.id}
+                description={budgetBox.description}
+                spaceSlug={spaceSlug}
+                title="Information"
+              />
+              <BudgetBoxInfoLiveCard
+                budgetBoxId={budgetBox.id}
+                projectsCount={projects?.length || 0}
+                spaceSlug={spaceSlug}
+                title="Live project information"
+                topProjects={topProjects}
+              />
+              <BudgetBoxInfoVotingCard
+                allowanceMethod="Allowlist"
+                endDate={budgetBox.endDate}
+                startDate={budgetBox.startDate}
+                title="Voting information"
+              />
+            </aside>
+          </main>
+        </>
       ) : null}
-    </div>
+    </>
   )
 }
 

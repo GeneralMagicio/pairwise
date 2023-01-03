@@ -58,22 +58,6 @@ export const BudgetBoxInfoButtonCard = ({
           {description}
         </div>
         <div>
-          {/* <PrimaryButton
-            color={ButtonColors.BLUE_GRADIENT}
-            fontStyles="font-normal"
-            label="Create Project"
-            styles="h-[35px]"
-            onClick={() => handleRedirect(`/${spaceSlug}/${budgetBoxId}/new`)}
-          />
-          <PrimaryButton
-            color={ButtonColors.BLUE_GRADIENT}
-            fontStyles="font-normal"
-            label="Import Project"
-            styles="mt-2 h-[35px]"
-            onClick={() =>
-              handleRedirect(`/${spaceSlug}/${budgetBoxId}/import`)
-            }
-          /> */}
           <PrimaryButton
             color={ButtonColors.BLUE_GRADIENT}
             fontStyles="font-normal"

@@ -5,13 +5,14 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { CircleGradientIcon, CircleGradientTickIcon } from '@/components/icons'
 
 interface IProjectCard {
-  isSelected: boolean
+  isSelected?: boolean
+  voteMode?: boolean
   title: string
   url?: string
   owner?: string
   description?: string
   image?: string
-  page: number
+  page?: number
 }
 
 export const ProjectCard = ({
@@ -21,7 +22,8 @@ export const ProjectCard = ({
   owner,
   description,
   image,
-  page
+  page,
+  voteMode = true
 }: IProjectCard) => {
   return (
     <AnimatePresence mode="wait">
@@ -32,8 +34,11 @@ export const ProjectCard = ({
         initial={{ opacity: 0 }}
         transition={{ duration: 0.15 }}
         className={classNames(
-          'max-h-[470px] w-full cursor-pointer overflow-hidden rounded-lg bg-white pb-4 shadow-md transition duration-200 hover:shadow-lg  hover:shadow-cyan-300 hover:ring-4 hover:ring-cyan-300 sm:max-w-[370px]',
-          isSelected
+          'max-h-[470px] w-full cursor-pointer overflow-hidden rounded-lg bg-white pb-4 shadow-md transition duration-200 hover:shadow-lg  sm:max-w-[370px]',
+          voteMode
+            ? 'hover:shadow-cyan-300 hover:ring-4 hover:ring-cyan-300 '
+            : '',
+          voteMode && isSelected
             ? 'shadow-lg shadow-cyan-300 ring-4 ring-cyan-300 hover:ring-4 '
             : ''
         )}
@@ -81,11 +86,13 @@ export const ProjectCard = ({
           ) : (
             <div></div>
           )}
-          {isSelected ? (
-            <CircleGradientTickIcon height={32} width={32} />
-          ) : (
-            <CircleGradientIcon height={32} width={32} />
-          )}
+          {voteMode ? (
+            isSelected ? (
+              <CircleGradientTickIcon height={32} width={32} />
+            ) : (
+              <CircleGradientIcon height={32} width={32} />
+            )
+          ) : null}
         </div>
       </motion.div>
     </AnimatePresence>
