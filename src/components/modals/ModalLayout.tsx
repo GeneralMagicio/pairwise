@@ -20,7 +20,7 @@ export const ModalLayout = ({
       {isOpen ? (
         <motion.div
           animate={{ opacity: 1 }}
-          className="fixed inset-0 bottom-0 z-20 flex items-center justify-center bg-gray-500/75  placeholder:text-opacity-75"
+          className="fixed inset-0 bottom-0 z-30 flex items-center justify-center bg-gray-500/75  placeholder:text-opacity-75"
           exit={{ opacity: 0 }}
           initial={{ opacity: 0 }}
           onClick={closeModal}
