@@ -39,10 +39,10 @@ export const BudgetBoxRegistrationView = () => {
     trpc.space.getOneBySlug.useQuery({ slug: spaceSlug })
 
   const insertOneBudgetBoxMutation = trpc.budgetBox.insertOne.useMutation({
-    onSettled: (data, error) => {
-      if (!error) {
+    onSuccess: (data) => {
+      if (data) {
         router.push({
-          pathname: `/${spaceSlug}`,
+          pathname: `/${spaceSlug}/${data.id}`,
           query: { q: 'success' }
         })
       }

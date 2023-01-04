@@ -20,7 +20,7 @@ export const SettingsDropdown = ({ items }: ISettingsDropdown) => {
 
   return (
     <div className="relative" onClick={toggleIsOpen}>
-      <i className="cursor-pointer">
+      <i className="inline-block cursor-pointer px-2 py-1 ">
         <EllipsisIcon />
       </i>
       {isOpen ? (

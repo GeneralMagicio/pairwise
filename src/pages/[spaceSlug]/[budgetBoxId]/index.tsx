@@ -73,7 +73,7 @@ export const BudgetBoxDetailsPage = ({
   const { q } = router.query
   const { isModalOpen, closeModal } = useModal({
     dependency: q === 'success',
-    onCloseModal: () => router.push(`/${spaceSlug}`)
+    onCloseModal: () => router.push(router.asPath)
   })
   const { data: budgetBox } = trpc.budgetBox.getOne.useQuery({
     id: budgetBoxId
@@ -104,7 +104,7 @@ export const BudgetBoxDetailsPage = ({
       </Head>
       <SuccessModal
         closeModal={closeModal}
-        description="You have successfully registered your project."
+        description="You have successfully registered your Pairwise."
         isOpen={isModalOpen}
         title="Congratulations!"
       />

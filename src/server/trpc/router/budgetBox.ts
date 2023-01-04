@@ -34,7 +34,7 @@ export const budgetBoxRouter = router({
         spaceSlug
       } = input
       try {
-        await ctx.prisma.budgetBox.create({
+        const response = await ctx.prisma.budgetBox.create({
           data: {
             startDate,
             endDate,
@@ -53,6 +53,7 @@ export const budgetBoxRouter = router({
             }
           }
         })
+        return response
       } catch (error) {
         console.error(error)
       }

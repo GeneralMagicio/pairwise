@@ -75,7 +75,7 @@ export const BudgetBoxInfoButtonCard = ({
             }
           />
         </div>
-        <div className="absolute right-10 top-8">
+        <div className="absolute right-6 top-6">
           <SettingsDropdown items={settingsDropdownItems} />
         </div>
       </>

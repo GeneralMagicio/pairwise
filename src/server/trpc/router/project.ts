@@ -37,6 +37,47 @@ export const projectRouter = router({
         console.error(error)
       }
     }),
+  insertMany: publicProcedure
+    .input(
+      z
+        .object({
+          owner: z.string(),
+          title: z.string(),
+          url: z.string(),
+          description: z.string(),
+          image: z.string(),
+          BudgetBoxes: z
+            .object({
+              id: z.string()
+            })
+            .array()
+            .optional()
+        })
+        .array()
+    )
+    .mutation(async ({ ctx, input }) => {
+      try {
+        const promiseList = Promise.allSettled(
+          input.map(({ owner, title, url, description, image, BudgetBoxes }) =>
+            ctx.prisma.project.create({
+              data: {
+                owner,
+                title,
+                url,
+                description,
+                image,
+                BudgetBoxes: {
+                  connect: BudgetBoxes
+                }
+              }
+            })
+          )
+        )
+        await promiseList
+      } catch (error) {
+        console.error(error)
+      }
+    }),
   getManyByBudgetBoxId: publicProcedure
     .input(
       z.object({

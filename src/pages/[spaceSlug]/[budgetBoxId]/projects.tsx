@@ -1,4 +1,5 @@
 import Head from 'next/head'
+import { useRouter } from 'next/router'
 import { createProxySSGHelpers } from '@trpc/react-query/ssg'
 import superjson from '@/utils/superjson'
 import { appRouter } from '@/server/trpc/router/_app'
@@ -7,8 +8,10 @@ import { trpc } from '@/utils/trpc'
 import { NavArrow } from '@/components/navigation/NavArrow'
 import { SearchInput } from '@/components/inputs/SearchInput'
 import { ProjectCard } from '@/components/cards/ProjectCard'
+import { SuccessModal } from '@/components/modals/SuccessModal'
 import { Divider } from '@/components/general/Divider'
 import { useSearchInput } from '@/hooks/useSearchInput'
+import { useModal } from '@/hooks/useModal'
 import { textSearch } from '@/utils/helpers/textSearch'
 import type {
   GetStaticPaths,
@@ -70,6 +73,13 @@ export const ProjectsPage = ({
   spaceSlug
 }: InferGetStaticPropsType<typeof getStaticProps>) => {
   const { search, searchInputHandler } = useSearchInput()
+  const router = useRouter()
+  const { q } = router.query
+  const { isModalOpen, closeModal } = useModal({
+    dependency: q === 'success',
+    onCloseModal: () => router.replace(`/${spaceSlug}/${budgetBoxId}/projects`)
+  })
+
   const { data: projects } = trpc.project.getManyByBudgetBoxId.useQuery({
     id: budgetBoxId
   })
@@ -92,6 +102,12 @@ export const ProjectsPage = ({
       </Head>
       {projects ? (
         <>
+          <SuccessModal
+            closeModal={closeModal}
+            description="You have successfully registered your project."
+            isOpen={isModalOpen}
+            title="Congratulations!"
+          />
           <NavArrow items={navArrowItems} />
           <main>
             <SearchInput

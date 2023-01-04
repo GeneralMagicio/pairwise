@@ -40,18 +40,20 @@ export const BudgetBoxInfoLiveCard = ({
               See all projects
             </h4>
           </Link>
-          <div className="my-2 font-semibold">Top Projects</div>
-          {topProjects
-            ? topProjects.map((project) => (
-                <div key={project.title} className="flex flex-col gap-y-2">
-                  <ProjectVotesBar
-                    maxPercentage={maxPercentage}
-                    projectPercentage={project.power * 100}
-                    title={project.title}
-                  />
-                </div>
-              ))
-            : null}
+          <h3 className="my-2 font-semibold">Top Projects</h3>
+          {topProjects && topProjects.length > 0 ? (
+            topProjects.map((project) => (
+              <div key={project.title} className="flex flex-col gap-y-2">
+                <ProjectVotesBar
+                  maxPercentage={maxPercentage}
+                  projectPercentage={project.power * 100}
+                  title={project.title}
+                />
+              </div>
+            ))
+          ) : (
+            <p className="mb-2 text-center text-gray-500">No voting data</p>
+          )}
         </>
       ) : (
         <div className="flex h-full items-center">
