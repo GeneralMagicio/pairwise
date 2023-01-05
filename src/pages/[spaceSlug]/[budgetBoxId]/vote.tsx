@@ -112,8 +112,13 @@ const Vote = ({ budgetBoxId, spaceSlug }: IVote) => {
       })
       const { data: previousVotes } = await refetchPreviousVotes()
 
-      // only let first time voters to submit their votes
-      if (Array.isArray(previousVotes) && previousVotes.length === 0) {
+      if (
+        (budgetBoxData && budgetBoxData.maxVotesPerUser === null) ||
+        (Array.isArray(previousVotes) &&
+          budgetBoxData &&
+          budgetBoxData.maxVotesPerUser !== null &&
+          previousVotes.length < budgetBoxData.maxVotesPerUser)
+      ) {
         insertOneVoteMutation.mutate({
           voter: address || '',
           budgetBoxId,
