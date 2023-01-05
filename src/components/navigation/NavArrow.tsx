@@ -16,7 +16,7 @@ export const NavArrow = ({ items }: INavArrow) => {
         width={40}
       />
       {items.map((item, index) => (
-        <>
+        <Link key={item.path} className="flex items-center" href={item.path}>
           {index !== 0 ? (
             <ArrowDownIcon
               className="-rotate-90"
@@ -25,18 +25,16 @@ export const NavArrow = ({ items }: INavArrow) => {
               width={12}
             />
           ) : null}
-          <Link href={item.path}>
-            <h3
-              key={item.path}
-              className="relative mx-3 cursor-pointer text-gray-600 before:absolute before:bottom-0 before:left-0 before:block before:h-[2px] before:w-full 
+          <h3
+            key={item.path}
+            className="relative mx-3 cursor-pointer text-gray-600 before:absolute before:bottom-0 before:left-0 before:block before:h-[2px] before:w-full 
             before:origin-top-left before:scale-x-0 before:bg-gray-800
             before:transition before:duration-300 before:ease-in-out
             before:content-[''] hover:text-gray-800 before:hover:scale-x-100"
-            >
-              {item.name}
-            </h3>
-          </Link>
-        </>
+          >
+            {item.name}
+          </h3>
+        </Link>
       ))}
     </nav>
   )
