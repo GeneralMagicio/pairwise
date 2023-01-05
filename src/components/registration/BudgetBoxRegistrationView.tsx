@@ -1,4 +1,5 @@
 import { Switch } from '../buttons/Switch'
+import { Slider } from '../inputs/Slider'
 import { useRouter } from 'next/router'
 import * as Yup from 'yup'
 import { useState } from 'react'
@@ -131,12 +132,7 @@ export const BudgetBoxRegistrationView = () => {
           title="Unlimited votes"
         />
       </div>
-      <TextField
-        className="grow"
-        name="dampingFactor"
-        title="Damping Factor"
-        type="number"
-      />
+      <Slider max={1} min={0} name="dampingFactor" title="Damping Factor" />
       <div className="flex items-center justify-between gap-x-10">
         <DatePicker className="grow" name="startDate" title="Start Date" />
         <DatePicker
