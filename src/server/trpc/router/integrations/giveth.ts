@@ -43,7 +43,7 @@ export const givethRouter = router({
         const { title, adminUser, description, image } = response.projectBySlug
         return {
           title,
-          owner: adminUser.name,
+          owner: adminUser?.name || '',
           url: `https://giveth.io/project/${slug}`,
           description,
           image

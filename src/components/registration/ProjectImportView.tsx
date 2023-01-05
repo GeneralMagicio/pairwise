@@ -147,6 +147,7 @@ export const ProjectImportView = () => {
   const multipleImportForm = [
     <>
       <TextArea
+        maxLength={4000}
         name="url"
         title="Website"
         value={url}
