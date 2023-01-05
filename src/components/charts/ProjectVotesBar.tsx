@@ -13,10 +13,10 @@ export const ProjectVotesBar = ({
 }: IProjectVotesBar) => {
   return (
     <>
-      <div className="flex h-6 justify-between pt-1 text-sm text-gray-500">
-        <span>{title}</span>
+      <p className="flex h-6 justify-between pt-1 text-sm text-gray-500">
+        {title}
         <span className="self-end">{`${projectPercentage.toFixed(1)}%`}</span>
-      </div>
+      </p>
       <BarChart
         height={6}
         maxPercentage={maxPercentage}

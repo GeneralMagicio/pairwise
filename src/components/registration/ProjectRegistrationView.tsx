@@ -35,7 +35,7 @@ export const ProjectRegistrationView = () => {
     onSettled: (data, error) => {
       if (!error) {
         router.push({
-          pathname: `/${spaceSlug}/${budgetBoxId}`,
+          pathname: `/${spaceSlug}/${budgetBoxId}/projects`,
           query: { q: 'success' }
         })
       }

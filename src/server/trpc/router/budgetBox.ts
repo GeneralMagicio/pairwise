@@ -7,14 +7,14 @@ export const budgetBoxRouter = router({
     .input(
       z.object({
         startDate: z.date(),
-        endDate: z.date(),
+        endDate: z.date().nullable(),
         creator: z.string(),
         title: z.string(),
         image: z.string(),
         description: z.string(),
         dampingFactor: z.number().min(0).max(1),
-        maxVotesPerUser: z.number().min(1),
-        maxPairsPerVote: z.number().min(1),
+        maxVotesPerUser: z.number().min(1).nullable(),
+        maxPairsPerVote: z.number().min(1).nullable(),
         allowlist: z.string().array(),
         spaceSlug: z.string().min(1)
       })
@@ -34,7 +34,7 @@ export const budgetBoxRouter = router({
         spaceSlug
       } = input
       try {
-        await ctx.prisma.budgetBox.create({
+        const response = await ctx.prisma.budgetBox.create({
           data: {
             startDate,
             endDate,
@@ -53,6 +53,7 @@ export const budgetBoxRouter = router({
             }
           }
         })
+        return response
       } catch (error) {
         console.error(error)
       }

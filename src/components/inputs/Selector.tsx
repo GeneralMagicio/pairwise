@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import classNames from 'classnames'
 import { ArrowDownIcon } from '@/components/icons'
 
 const variants = {
@@ -11,19 +12,28 @@ const variants = {
   }
 }
 
-interface ISelector {
+export interface ISelector {
+  className?: string
   selected: string
-  options: Array<{ name: string }>
+  options: Array<string>
   handleSelect: (option: number) => void
 }
 
-export const Selector = ({ selected, options, handleSelect }: ISelector) => {
+export const Selector = ({
+  className,
+  selected,
+  options,
+  handleSelect
+}: ISelector) => {
   const [open, setOpen] = useState<boolean>(false)
 
   return (
-    <div>
+    <>
       <div
-        className="flex w-48 items-center justify-between rounded-lg border border-gray-300 bg-gray-100 px-6 py-3 text-gray-900"
+        className={classNames(
+          'flex w-48 items-center justify-between rounded-lg border border-gray-300 bg-gray-100 px-6 py-3 text-gray-900',
+          className
+        )}
         onClick={() => setOpen(!open)}
       >
         {selected}
@@ -40,7 +50,7 @@ export const Selector = ({ selected, options, handleSelect }: ISelector) => {
         {open ? (
           <motion.div
             animate={{ height: 'fit-content', opacity: 100 }}
-            className="absolute z-10 mt-2 flex w-48 flex-col overflow-hidden rounded-lg border border-gray-300 bg-gray-100 text-gray-900"
+            className="absolute z-10 mt-14 flex w-48 flex-col overflow-hidden rounded-lg border border-gray-300 bg-white text-gray-900"
             exit={{ height: '0px', opacity: 0 }}
             initial={{ height: '0', opacity: 0 }}
             transition={{
@@ -52,22 +62,22 @@ export const Selector = ({ selected, options, handleSelect }: ISelector) => {
           >
             {options.map((option, index) => (
               <motion.div
-                key={option.name}
+                key={option}
                 animate={{ opacity: 100, transition: { delay: 0.2 } }}
                 exit={{ opacity: 0 }}
                 initial={{ opacity: 0 }}
                 transition={{ duration: 0.2 }}
                 className={
-                  'flex cursor-pointer items-center gap-x-2 py-4 pl-6 hover:bg-gray-100'
+                  'flex cursor-pointer items-center gap-x-2 py-4 pl-6 hover:bg-green-50'
                 }
                 onClick={() => handleSelect(index)}
               >
-                <span>{option.name}</span>
+                <span>{option}</span>
               </motion.div>
             ))}
           </motion.div>
         ) : null}
       </AnimatePresence>
-    </div>
+    </>
   )
 }

@@ -9,5 +9,5 @@ export const useSearchInput = () => {
     setSearch((event.target as HTMLInputElement).value)
   }
 
-  return [search, searchInputHandler] as const
+  return { search, searchInputHandler }
 }

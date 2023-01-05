@@ -1,11 +1,13 @@
 import type { IconProps } from '.'
 
 export const ArrowDownIcon = ({
+  className = '',
   color = '#FFFFFF',
   height = 24,
   width = 24
 }: IconProps) => (
   <svg
+    className={className}
     fill="FFFFFF"
     height={height}
     viewBox="0 0 24 24"

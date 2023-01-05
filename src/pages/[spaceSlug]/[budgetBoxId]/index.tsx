@@ -11,6 +11,7 @@ import { BudgetBoxInfoLiveCard } from '@/components/cards/BudgetBoxInfoLiveCard'
 import { BudgetBoxInfoVotingCard } from '@/components/cards/BudgetBoxInfoVotingCard'
 import { SuccessModal } from '@/components/modals/SuccessModal'
 import { useModal } from '@/hooks/useModal'
+import { NavArrow } from '@/components/navigation/NavArrow'
 import type {
   GetStaticPaths,
   GetStaticPropsContext,
@@ -72,10 +73,13 @@ export const BudgetBoxDetailsPage = ({
   const { q } = router.query
   const { isModalOpen, closeModal } = useModal({
     dependency: q === 'success',
-    onCloseModal: () => router.push(`/${spaceSlug}`)
+    onCloseModal: () => router.push(router.asPath)
   })
   const { data: budgetBox } = trpc.budgetBox.getOne.useQuery({
     id: budgetBoxId
+  })
+  const { data: space } = trpc.space.getOneBySlug.useQuery({
+    slug: spaceSlug
   })
   const { data: projects } = trpc.project.getManyByBudgetBoxId.useQuery({
     id: budgetBoxId
@@ -87,28 +91,34 @@ export const BudgetBoxDetailsPage = ({
     power,
     title
   }))
+  const navArrowItems = [
+    { name: 'Home', path: '/' },
+    { name: space?.title || '', path: `/${spaceSlug}` },
+    { name: budgetBox?.title || '', path: router.asPath }
+  ]
 
   return (
-    <div>
+    <>
       <Head>
         <title>{budgetBox?.title}</title>
       </Head>
       <SuccessModal
         closeModal={closeModal}
-        description="You have successfully registered your project."
+        description="You have successfully registered your Pairwise."
         isOpen={isModalOpen}
         title="Congratulations!"
       />
       {budgetBox ? (
-        <main className="py-16">
-          <div className="mx-auto grid max-w-[1100px] grid-cols-3 gap-x-10">
+        <>
+          <NavArrow items={navArrowItems} />
+          <main className="mx-auto grid grid-cols-3 gap-x-10">
             <BudgetBoxDetails
               className="col-span-2 w-[660px]"
               description={budgetBox.description}
               image={budgetBox.image}
               title={budgetBox.title}
             />
-            <div className="col-span-1 grid gap-y-6">
+            <aside className="col-span-1 grid gap-y-6">
               <BudgetBoxInfoButtonCard
                 budgetBoxId={budgetBox.id}
                 description={budgetBox.description}
@@ -116,7 +126,9 @@ export const BudgetBoxDetailsPage = ({
                 title="Information"
               />
               <BudgetBoxInfoLiveCard
+                budgetBoxId={budgetBox.id}
                 projectsCount={projects?.length || 0}
+                spaceSlug={spaceSlug}
                 title="Live project information"
                 topProjects={topProjects}
               />
@@ -126,11 +138,11 @@ export const BudgetBoxDetailsPage = ({
                 startDate={budgetBox.startDate}
                 title="Voting information"
               />
-            </div>
-          </div>
-        </main>
+            </aside>
+          </main>
+        </>
       ) : null}
-    </div>
+    </>
   )
 }
 

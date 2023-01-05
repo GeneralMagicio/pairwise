@@ -3,7 +3,7 @@ import moment from 'moment'
 
 interface IBudgetBoxInfoVotingCard {
   allowanceMethod: string
-  endDate: Date
+  endDate: Date | null
   startDate: Date
   title: string
 }

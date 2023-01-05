@@ -2,6 +2,7 @@ import { authRouter } from './auth'
 import { budgetBoxRouter } from './budgetBox'
 import { categoryRouter } from './category'
 import { ensRouter } from './ens'
+import { givethRouter } from './integrations/giveth'
 import { projectRouter } from './project'
 import { voteRouter } from './vote'
 import { spaceRouter } from './space'
@@ -12,6 +13,7 @@ export const appRouter = router({
   budgetBox: budgetBoxRouter,
   category: categoryRouter,
   ens: ensRouter,
+  giveth: givethRouter,
   project: projectRouter,
   space: spaceRouter,
   vote: voteRouter

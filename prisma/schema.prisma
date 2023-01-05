@@ -32,14 +32,14 @@ model BudgetBox {
   id              String    @id @default(cuid())
   createdAt       DateTime  @default(now())
   startDate       DateTime
-  endDate         DateTime
+  endDate         DateTime?
   creator         String
   title           String
   image           String
   description     String
   dampingFactor   Float     @default(0.8)
-  maxVotesPerUser Int       @default(1)
-  maxPairsPerVote Int       @default(20)
+  maxVotesPerUser Int?
+  maxPairsPerVote Int?
   allowlist       String[]
   Projects        Project[]
   Votes           Vote[]

@@ -15,7 +15,7 @@ export const BudgetBoxInfoCard = ({
   return (
     <div
       className={classNames(
-        'h-[280px] w-[330px] rounded-lg bg-gray-50 px-8 py-6 shadow-md',
+        'min-h-[280px] w-[330px] rounded-lg bg-gray-50 px-8 py-6 shadow-md',
         className
       )}
     >

@@ -32,7 +32,9 @@ module.exports = {
         },
         cyan: {
           300: '#22B7A0',
-          400: '#27A1AD'
+          400: '#27A1AD',
+          500: '#25ABA7',
+          600: '#3080C2'
         },
         gray: {
           350: '#F9FAFB'
@@ -44,7 +46,9 @@ module.exports = {
         }
       },
       fontFamily: {
-        sans: ['var(--font-inter)', ...fontFamily.sans]
+        sans: ['Inter', 'sans-serif'],
+        inter: ['Inter', 'sans-serif'],
+        poppins: ['Poppins', 'sans-serif']
       }
     }
   },

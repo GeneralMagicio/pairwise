@@ -1,6 +1,5 @@
 import { createProxySSGHelpers } from '@trpc/react-query/ssg'
 import Head from 'next/head'
-import Link from 'next/link'
 import { useRouter } from 'next/router'
 import superjson from '@/utils/superjson'
 import { appRouter } from '@/server/trpc/router/_app'
@@ -10,11 +9,13 @@ import { BudgetBoxCard } from '@/components/cards/BudgetBoxCard'
 import { SpaceHeroCard } from '@/components/cards/SpaceHeroCard'
 import { Divider } from '@/components/general/Divider'
 import { SearchInput } from '@/components/inputs/SearchInput'
-import { CreateIcon } from '@/components/icons'
+import { PrimaryButton, ButtonColors } from '@/components/buttons/PrimaryButton'
+import { NavArrow } from '@/components/navigation/NavArrow'
 import { useSearchInput } from '@/hooks/useSearchInput'
 import { textSearch } from '@/utils/helpers/textSearch'
 import { SuccessModal } from '@/components/modals/SuccessModal'
 import { useModal } from '@/hooks/useModal'
+import { useShowAll } from '@/hooks/useShowAll'
 import type {
   GetStaticPaths,
   InferGetStaticPropsType,
@@ -55,7 +56,8 @@ export const getStaticProps = async (
 const SpaceDetails = ({
   spaceSlug
 }: InferGetStaticPropsType<typeof getStaticProps>) => {
-  const [search, searchInputHandler] = useSearchInput()
+  const { showAll, setShowAll, maxItems } = useShowAll(6)
+  const { search, searchInputHandler } = useSearchInput()
   const router = useRouter()
   const { q } = router.query
   const { isModalOpen, closeModal } = useModal({
@@ -67,11 +69,15 @@ const SpaceDetails = ({
     slug: spaceSlug
   })
   const { data: space } = trpc.space.getOneBySlug.useQuery({ slug: spaceSlug })
+  const navArrowItems = [
+    { name: 'Home', path: '/' },
+    { name: space?.title || '', path: router.asPath }
+  ]
 
   return (
     <div>
       <Head>
-        <title>{spaceSlug}</title>
+        <title>{space?.title}</title>
       </Head>
       <SuccessModal
         closeModal={closeModal}
@@ -81,12 +87,14 @@ const SpaceDetails = ({
           creating a pairwise for your space."
       />
       {space ? (
-        <main className="py-16">
-          <div className="mx-auto max-w-[1100px]">
+        <>
+          <NavArrow items={navArrowItems} />
+          <main className="mx-auto flex flex-col justify-center">
             <SpaceHeroCard
               categories={space.Categories}
               description={space.description}
               image={space.image}
+              slug={space.slug}
               title={space.title}
             />
             <div className="mt-14 flex items-center justify-between">
@@ -95,23 +103,14 @@ const SpaceDetails = ({
                 value={search}
                 onChange={searchInputHandler}
               />
-              <Link
-                className="flex items-center"
-                href={`/${spaceSlug}/new/pairwise`}
-              >
-                <div className="grid h-7 w-7 place-content-center rounded-full bg-gradient-to-b from-blue-500 to-cyan-300 ">
-                  <CreateIcon height={15} width={15} />
-                </div>
-                <h3 className="ml-2 text-gray-600">Create Pairwise</h3>
-              </Link>
             </div>
-
             <Divider text="Now Voting" />
-            <div className="mt-10 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+            <div className="mt-10 grid justify-center gap-8 md:grid-cols-2 lg:grid-cols-3">
               {budgetBoxes
                 ?.filter(({ title, description }) =>
                   textSearch(search, [title, description])
                 )
+                .slice(0, showAll ? budgetBoxes.length : maxItems)
                 .map((budgetBox) => (
                   <BudgetBoxCard
                     key={budgetBox.id}
@@ -124,8 +123,17 @@ const SpaceDetails = ({
                   />
                 ))}
             </div>
-          </div>
-        </main>
+            {!showAll && budgetBoxes && budgetBoxes.length > maxItems ? (
+              <PrimaryButton
+                color={ButtonColors.BLUE_GRADIENT}
+                fontStyles="font-medium"
+                label="Show More"
+                styles="w-[60px] h-[52px] mt-14 mx-auto"
+                onClick={() => setShowAll(true)}
+              />
+            ) : null}
+          </main>
+        </>
       ) : null}
     </div>
   )

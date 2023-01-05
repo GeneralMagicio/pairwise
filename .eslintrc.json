@@ -13,6 +13,12 @@
     "@typescript-eslint/consistent-type-imports": "warn",
     "@typescript-eslint/no-unused-vars": "error",
     "@typescript-eslint/no-explicit-any": "error",
+    "tailwindcss/no-custom-classname": [
+      "warn",
+      {
+        "whitelist": ["font\\-(inter|poppins)", "line\\-clamp\\-[1-9]"]
+      }
+    ],
     "import/order": [
       "error",
       {

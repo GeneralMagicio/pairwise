@@ -11,7 +11,7 @@ interface IRankingCard {
 
 export const RankingCard = ({ projects }: IRankingCard) => {
   return (
-    <div className="mx-auto w-fit rounded-lg bg-gray-50 p-8 shadow-xl">
+    <div className="mx-auto w-full rounded-lg bg-gray-50 p-8 shadow-xl">
       {projects.length > 0 ? (
         <>
           <h2 className="mb-4 text-2xl font-bold">Current Results</h2>
@@ -19,6 +19,7 @@ export const RankingCard = ({ projects }: IRankingCard) => {
             {projects.map((project) => (
               <ProjectRankingCard
                 key={project.id}
+                description={project.description as string}
                 image={project.image as string}
                 owner={project.owner as string}
                 power={project.power}
