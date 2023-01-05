@@ -130,9 +130,13 @@ const Vote = ({ budgetBoxId, spaceSlug }: IVote) => {
   }
 
   useEffect(() => {
-    if (Array.isArray(previousVotes)) {
-      const maxVotesPerUser = budgetBoxData?.maxVotesPerUser as number
-      setAlreadyVoted(previousVotes.length > maxVotesPerUser)
+    if (Array.isArray(previousVotes) && budgetBoxData) {
+      const maxVotesPerUser = budgetBoxData.maxVotesPerUser
+      if (maxVotesPerUser) {
+        setAlreadyVoted(previousVotes.length > maxVotesPerUser)
+      } else {
+        setAlreadyVoted(false)
+      }
     }
   }, [previousVotes, budgetBoxData])
 
@@ -147,7 +151,12 @@ const Vote = ({ budgetBoxId, spaceSlug }: IVote) => {
             })
           )
           .sort(() => 0.5 - Math.random())
-          .slice(0, budgetBoxData?.maxPairsPerVote) ?? []
+          .slice(
+            0,
+            budgetBoxData?.maxPairsPerVote
+              ? budgetBoxData?.maxPairsPerVote
+              : projects.length
+          ) ?? []
       )
     }
   }, [projects, budgetBoxData])
