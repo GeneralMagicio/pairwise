@@ -38,10 +38,10 @@ export const BudgetBoxRegistrationView = () => {
   const [unlimitedVotes, setUnlimitedVotes] = useState<boolean>(false)
   const { selected, setSelected, handleNavigation } = useFormNavigation()
   const {
-    spaceImage,
-    setSpaceImage,
-    spaceImageFile,
-    setSpaceImageFile,
+    image: budgetBoxImage,
+    setImage: setBudgetBoxImage,
+    imageFile: budgetBoxImageFile,
+    setImageFile: setBudgetBoxImageFile,
     uploadImage
   } = useImageUploader()
   const router = useRouter()
@@ -112,9 +112,9 @@ export const BudgetBoxRegistrationView = () => {
     <>
       <ImageUploader
         height={300}
-        image={spaceImage}
-        setFile={setSpaceImageFile}
-        setImage={setSpaceImage}
+        image={budgetBoxImage}
+        setFile={setBudgetBoxImageFile}
+        setImage={setBudgetBoxImage}
         width={'100%'}
       />
       <TextField name="name" title="Name" />
@@ -192,9 +192,9 @@ export const BudgetBoxRegistrationView = () => {
         let imageUrl =
           'https://user-images.githubusercontent.com/18421017/206027384-4869ad77-e635-4525-a5e8-e88eb8a5b206.png'
 
-        if (spaceImageFile) {
+        if (budgetBoxImageFile) {
           const formData = new FormData()
-          formData.append('file', spaceImageFile)
+          formData.append('file', budgetBoxImageFile)
           formData.append('upload_preset', 'pairwise-uploads')
           const { data } = await uploadImage(formData)
           if (data.secure_url) {
