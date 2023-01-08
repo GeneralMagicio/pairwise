@@ -3,12 +3,12 @@ import Image from 'next/image'
 import type { FormEventHandler, Dispatch, SetStateAction } from 'react'
 
 interface IImageUploader {
-  height: number
+  height: number | string
   setFile: Dispatch<SetStateAction<File | undefined>>
   image?: string
   setImage: Dispatch<SetStateAction<string>>
   rounded?: true
-  width: number
+  width: number | string
 }
 
 export const ImageUploader = ({
@@ -19,7 +19,7 @@ export const ImageUploader = ({
   rounded,
   width
 }: IImageUploader) => {
-  const handleChange: FormEventHandler<HTMLFormElement> = (event) => {
+  const handleChange: FormEventHandler<HTMLDivElement> = (event) => {
     const reader = new FileReader()
 
     reader.onload = function (onLoadEvent) {
@@ -36,37 +36,33 @@ export const ImageUploader = ({
 
   return (
     <div className="flex flex-col items-center gap-y-4">
-      {image ? (
-        <Image
-          alt="profile image"
-          height={height}
-          src={image}
-          width={width}
-          className={classNames(
-            'shadow-lg',
-            rounded ? 'rounded-full' : 'rounded-lg'
-          )}
-        />
-      ) : (
-        <div
-          style={{ height: height, width: width }}
-          className={classNames(
-            'rounded-lg bg-gradient-to-b from-blue-500 to-cyan-300',
-            rounded ? 'rounded-full' : ''
-          )}
-        ></div>
-      )}
+      <div
+        style={{ height: height, width: width }}
+        className={classNames(
+          'relative overflow-hidden rounded-lg bg-gradient-to-b from-blue-500 to-cyan-300 shadow-lg',
+          rounded ? 'rounded-full' : ''
+        )}
+      >
+        {image ? (
+          <Image
+            fill
+            alt="profile image"
+            className="object-cover"
+            src={image}
+          />
+        ) : null}
+      </div>
 
-      <form className="flex flex-col items-center" onChange={handleChange}>
+      <div className="flex flex-col items-center" onChange={handleChange}>
         <label className="flex cursor-pointer items-center rounded-lg bg-gradient-to-b from-blue-500 to-cyan-300 py-2 px-3">
           <p className="text-lg text-white">Choose Avatar</p>
           <input
-            accept="image/png, image/gif, image/jpeg"
+            accept="image/png, image/gif, image/jpeg, image/webp"
             className="hidden"
             type="file"
           />
         </label>
-      </form>
+      </div>
     </div>
   )
 }
