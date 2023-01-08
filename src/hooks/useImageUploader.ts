@@ -2,8 +2,8 @@ import { useState } from 'react'
 import axios from 'axios'
 
 export const useImageUploader = () => {
-  const [spaceImage, setSpaceImage] = useState<string>('')
-  const [spaceImageFile, setSpaceImageFile] = useState<File>()
+  const [image, setImage] = useState<string>('')
+  const [imageFile, setImageFile] = useState<File>()
 
   const uploadImage = (formData: FormData) =>
     axios.post(
@@ -12,10 +12,10 @@ export const useImageUploader = () => {
     )
 
   return {
-    spaceImage,
-    setSpaceImage,
-    spaceImageFile,
-    setSpaceImageFile,
+    image,
+    setImage,
+    imageFile,
+    setImageFile,
     uploadImage
   }
 }

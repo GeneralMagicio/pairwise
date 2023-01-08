@@ -29,10 +29,10 @@ const options = ['Select addresses for Space', "Setup your Space's Profile"]
 export const SpaceRegistrationView = () => {
   const { selected, setSelected, handleNavigation } = useFormNavigation()
   const {
-    spaceImage,
-    setSpaceImage,
-    spaceImageFile,
-    setSpaceImageFile,
+    image: spaceImage,
+    setImage: setSpaceImage,
+    imageFile: spaceImageFile,
+    setImageFile: setSpaceImageFile,
     uploadImage
   } = useImageUploader()
   const [newSpaceSlug, setNewSpaceSlug] = useState<string>('')
