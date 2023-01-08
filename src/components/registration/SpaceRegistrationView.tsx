@@ -174,9 +174,9 @@ export const SpaceRegistrationView = () => {
   const formList = [
     <>
       <ImageUploader
+        rounded
         height={110}
         image={spaceImage}
-        rounded={true}
         setFile={setSpaceImageFile}
         setImage={setSpaceImage}
         width={110}
@@ -210,21 +210,26 @@ export const SpaceRegistrationView = () => {
   ) => {
     if (selected === options.length - 1) {
       const signSuccess = await signIn()
-      if (signSuccess && address && spaceImageFile) {
-        const formData = new FormData()
+      if (signSuccess && address) {
+        let imageUrl =
+          'https://user-images.githubusercontent.com/18421017/206027384-4869ad77-e635-4525-a5e8-e88eb8a5b206.png'
 
-        formData.append('file', spaceImageFile)
-        formData.append('upload_preset', 'pairwise-uploads')
-        const { data } = await uploadImage(formData)
+        if (spaceImageFile) {
+          const formData = new FormData()
+          formData.append('file', spaceImageFile)
+          formData.append('upload_preset', 'pairwise-uploads')
+          const { data } = await uploadImage(formData)
+          if (data.secure_url) {
+            imageUrl = data.secure_url
+          }
+        }
 
         insertOneSpaceMutation.mutate({
           admins: values.adminAddresses.split(','),
           categoryName: values.spaceCategory,
           creator: values.creatorName,
           description: values.spaceDescription,
-          image: data.secure_url
-            ? data.secure_url
-            : 'https://user-images.githubusercontent.com/18421017/206027384-4869ad77-e635-4525-a5e8-e88eb8a5b206.png',
+          image: imageUrl,
           slug: values.ens,
           title: values.spaceName,
           url: values.spaceUrl
