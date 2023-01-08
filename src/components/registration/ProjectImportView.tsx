@@ -176,7 +176,7 @@ export const ProjectImportView = () => {
           givethDataMultipleImports
         ) {
           const multipleImportData = givethDataMultipleImports.map(
-            ({ adminUser, description, image, title }) => ({
+            ({ adminUser, description, image, url, title }) => ({
               owner: adminUser?.name || '',
               title,
               url,
