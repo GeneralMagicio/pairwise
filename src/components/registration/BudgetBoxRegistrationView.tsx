@@ -8,7 +8,9 @@ import { DatePicker } from '@/components/inputs/DatePicker'
 import { TextArea } from '@/components/inputs/TextArea'
 import { TextField } from '@/components/inputs/TextField'
 import { LoadingModal } from '@/components/modals/LoadingModal'
+import { ImageUploader } from '@/components/inputs/ImageUploader'
 import { useModal } from '@/hooks/useModal'
+import { useImageUploader } from '@/hooks/useImageUploader'
 import { trpc } from '@/utils/trpc'
 import { useFormNavigation } from '@/hooks/useFormNavigation'
 import { useSiwe } from '@/hooks/useSiwe'
@@ -35,6 +37,13 @@ export const BudgetBoxRegistrationView = () => {
   const [noEndDate, setNoEndDate] = useState<boolean>(false)
   const [unlimitedVotes, setUnlimitedVotes] = useState<boolean>(false)
   const { selected, setSelected, handleNavigation } = useFormNavigation()
+  const {
+    image: budgetBoxImage,
+    setImage: setBudgetBoxImage,
+    imageFile: budgetBoxImageFile,
+    setImageFile: setBudgetBoxImageFile,
+    uploadImage
+  } = useImageUploader()
   const router = useRouter()
   const spaceSlug = router.query.spaceSlug as string
   const { isModalOpen, setIsModalOpen } = useModal({})
@@ -75,11 +84,11 @@ export const BudgetBoxRegistrationView = () => {
   const validationSchemas = [
     Yup.object({
       name: Yup.string()
-        .max(15, 'Must be 15 characters or less')
+        .max(30, 'Must be 30 characters or less')
         .required('Required'),
       creatorAddress: Yup.string().min(42).required('Required'),
       description: Yup.string()
-        .min(20, 'Must be 20 characters or more')
+        .min(10, 'Must be 10 characters or more')
         .required('Required')
     }),
     Yup.object({
@@ -101,6 +110,13 @@ export const BudgetBoxRegistrationView = () => {
 
   const formList = [
     <>
+      <ImageUploader
+        height={300}
+        image={budgetBoxImage}
+        setFile={setBudgetBoxImageFile}
+        setImage={setBudgetBoxImage}
+        width={'100%'}
+      />
       <TextField name="name" title="Name" />
       <TextField
         disabled={true}
@@ -173,13 +189,24 @@ export const BudgetBoxRegistrationView = () => {
     if (selected === options.length - 1) {
       const signSuccess = await signIn()
       if (signSuccess && address) {
+        let imageUrl =
+          'https://user-images.githubusercontent.com/18421017/206027384-4869ad77-e635-4525-a5e8-e88eb8a5b206.png'
+
+        if (budgetBoxImageFile) {
+          const formData = new FormData()
+          formData.append('file', budgetBoxImageFile)
+          formData.append('upload_preset', 'pairwise-uploads')
+          const { data } = await uploadImage(formData)
+          if (data.secure_url) {
+            imageUrl = data.secure_url
+          }
+        }
         insertOneBudgetBoxMutation.mutate({
           startDate: new Date(startDate),
           endDate: noEndDate ? null : new Date(endDate),
           creator: creatorAddress,
           title: name,
-          image:
-            'https://user-images.githubusercontent.com/18421017/206027384-4869ad77-e635-4525-a5e8-e88eb8a5b206.png',
+          image: imageUrl,
           description,
           dampingFactor,
           maxVotesPerUser: unlimitedVotes ? null : maxVotesPerUser,

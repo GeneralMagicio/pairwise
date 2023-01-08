@@ -1,7 +1,8 @@
-import { LoadingModal } from '../modals/LoadingModal'
 import { useState } from 'react'
 import * as Yup from 'yup'
 import { useRouter } from 'next/router'
+import { ImageUploader } from '@/components/inputs/ImageUploader'
+import { LoadingModal } from '@/components/modals/LoadingModal'
 import { FormSelector } from '@/components/inputs/FormSelector'
 import { TextArea } from '@/components/inputs//TextArea'
 import { TextField } from '@/components/inputs/TextField'
@@ -10,6 +11,7 @@ import { trpc } from '@/utils/trpc'
 import { useFormNavigation } from '@/hooks/useFormNavigation'
 import { useSiwe } from '@/hooks/useSiwe'
 import { useModal } from '@/hooks/useModal'
+import { useImageUploader } from '@/hooks/useImageUploader'
 import type { FormikHelpers } from 'formik'
 
 interface Values {
@@ -26,6 +28,13 @@ const options = ['Select addresses for Space', "Setup your Space's Profile"]
 
 export const SpaceRegistrationView = () => {
   const { selected, setSelected, handleNavigation } = useFormNavigation()
+  const {
+    image: spaceImage,
+    setImage: setSpaceImage,
+    imageFile: spaceImageFile,
+    setImageFile: setSpaceImageFile,
+    uploadImage
+  } = useImageUploader()
   const [newSpaceSlug, setNewSpaceSlug] = useState<string>('')
   const { isModalOpen, setIsModalOpen } = useModal({})
   const router = useRouter()
@@ -164,6 +173,14 @@ export const SpaceRegistrationView = () => {
 
   const formList = [
     <>
+      <ImageUploader
+        rounded
+        height={110}
+        image={spaceImage}
+        setFile={setSpaceImageFile}
+        setImage={setSpaceImage}
+        width={110}
+      />
       <TextField name="spaceName" title="Name" />
       <FormSelector
         name="ens"
@@ -194,13 +211,25 @@ export const SpaceRegistrationView = () => {
     if (selected === options.length - 1) {
       const signSuccess = await signIn()
       if (signSuccess && address) {
+        let imageUrl =
+          'https://user-images.githubusercontent.com/18421017/206027384-4869ad77-e635-4525-a5e8-e88eb8a5b206.png'
+
+        if (spaceImageFile) {
+          const formData = new FormData()
+          formData.append('file', spaceImageFile)
+          formData.append('upload_preset', 'pairwise-uploads')
+          const { data } = await uploadImage(formData)
+          if (data.secure_url) {
+            imageUrl = data.secure_url
+          }
+        }
+
         insertOneSpaceMutation.mutate({
           admins: values.adminAddresses.split(','),
           categoryName: values.spaceCategory,
           creator: values.creatorName,
           description: values.spaceDescription,
-          image:
-            'https://user-images.githubusercontent.com/18421017/206027384-4869ad77-e635-4525-a5e8-e88eb8a5b206.png',
+          image: imageUrl,
           slug: values.ens,
           title: values.spaceName,
           url: values.spaceUrl

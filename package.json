@@ -20,6 +20,7 @@
     "@trpc/next": "^10.0.0",
     "@trpc/react-query": "^10.0.0",
     "@trpc/server": "^10.0.0",
+    "axios": "^1.2.2",
     "classnames": "^2.3.2",
     "decimal.js": "^10.4.2",
     "ethers": "^5.7.2",
