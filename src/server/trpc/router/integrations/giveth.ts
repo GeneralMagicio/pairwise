@@ -27,6 +27,7 @@ interface IProject {
   adminUser: { name: string }
   description: string
   image: string
+  url: string
 }
 
 export const givethRouter = router({
