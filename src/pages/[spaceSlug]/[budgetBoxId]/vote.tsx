@@ -54,6 +54,7 @@ const Vote = ({ budgetBoxId, spaceSlug }: IVote) => {
     signIn
   } = useSiwe()
 
+  const currentDate = new Date()
   const { data: space } = trpc.space.getOneBySlug.useQuery({ slug: spaceSlug })
   const { data: projects, isLoading: isLoadingProjects } =
     trpc.project.getManyByBudgetBoxId.useQuery(
@@ -205,7 +206,7 @@ const Vote = ({ budgetBoxId, spaceSlug }: IVote) => {
       </main>
     )
 
-  if (!budgetBoxData) return <main>No Budget box found</main>
+  if (!budgetBoxData) return <main>No Pairwise found</main>
 
   return (
     <>
@@ -214,13 +215,29 @@ const Vote = ({ budgetBoxId, spaceSlug }: IVote) => {
       </Head>
       <NavArrow items={navArrowItems} />
       <main className="mx-auto flex max-w-[1100px] flex-col items-center justify-center">
-        {projects && projects.length < 2 ? (
+        {budgetBoxData.startDate > currentDate ? (
           <div className="grid h-[500px] w-full place-content-center px-4 text-xl">
-            There is no project in this budget box
+            <p>
+              This Pairwise is not open to vote yet, it will be available
+              between {budgetBoxData.startDate.toDateString()} and{' '}
+              {budgetBoxData.endDate?.toDateString()}
+            </p>
+          </div>
+        ) : budgetBoxData.endDate && budgetBoxData.endDate < currentDate ? (
+          <div className="grid h-[500px] w-full place-content-center px-4 text-xl">
+            <p>
+              This Pairwise is already closed, it has been available between{' '}
+              {budgetBoxData.startDate.toDateString()} and{' '}
+              {budgetBoxData.endDate.toDateString()}
+            </p>
+          </div>
+        ) : projects && projects.length < 2 ? (
+          <div className="grid h-[500px] w-full place-content-center px-4 text-xl">
+            <p>There is no project in this Pairwise</p>
           </div>
         ) : !isConnected ? (
           <div className="grid h-[500px] w-full place-content-center px-4 text-xl">
-            <span>Connect your wallet to be able to vote</span>
+            <p>Connect your wallet to be able to vote</p>
           </div>
         ) : isValidAddress && alreadyVoted === false ? (
           <>
