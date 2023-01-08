@@ -55,7 +55,7 @@ const Vote = ({ budgetBoxId, spaceSlug }: IVote) => {
   } = useSiwe()
 
   const { data: space } = trpc.space.getOneBySlug.useQuery({ slug: spaceSlug })
-  const { data: projects, isLoading } =
+  const { data: projects, isLoading: isLoadingProjects } =
     trpc.project.getManyByBudgetBoxId.useQuery(
       {
         id: budgetBoxId
@@ -64,14 +64,15 @@ const Vote = ({ budgetBoxId, spaceSlug }: IVote) => {
         refetchOnWindowFocus: false
       }
     )
-  const { data: budgetBoxData } = trpc.budgetBox.getOne.useQuery(
-    {
-      id: budgetBoxId
-    },
-    {
-      refetchOnWindowFocus: false
-    }
-  )
+  const { data: budgetBoxData, isLoading: isLoadingBudgetBox } =
+    trpc.budgetBox.getOne.useQuery(
+      {
+        id: budgetBoxId
+      },
+      {
+        refetchOnWindowFocus: false
+      }
+    )
   const { data: previousVotes, refetch: refetchPreviousVotes } =
     trpc.vote.getManyByVoter.useQuery(
       {
@@ -172,6 +173,8 @@ const Vote = ({ budgetBoxId, spaceSlug }: IVote) => {
       setIsValidAddress(
         budgetBoxData.allowlist.includes(address as `0x${string}`)
       )
+    } else {
+      setIsValidAddress(false)
     }
   }, [address, budgetBoxData])
 
@@ -188,7 +191,12 @@ const Vote = ({ budgetBoxId, spaceSlug }: IVote) => {
     { name: 'Vote', path: `/${spaceSlug}/${budgetBoxId}/vote` }
   ]
 
-  if (isLoading)
+  if (
+    isLoadingProjects ||
+    isLoadingBudgetBox ||
+    isValidAddress === null ||
+    alreadyVoted === null
+  )
     return (
       <main className="flex min-h-screen flex-col items-center justify-center">
         <div className="w-full px-4 text-center text-lg">
@@ -206,7 +214,7 @@ const Vote = ({ budgetBoxId, spaceSlug }: IVote) => {
       </Head>
       <NavArrow items={navArrowItems} />
       <main className="mx-auto flex max-w-[1100px] flex-col items-center justify-center">
-        {pairs.length < 1 ? (
+        {projects && projects.length < 2 ? (
           <div className="grid h-[500px] w-full place-content-center px-4 text-xl">
             There is no project in this budget box
           </div>
