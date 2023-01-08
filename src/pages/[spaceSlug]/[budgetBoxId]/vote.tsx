@@ -139,7 +139,7 @@ const Vote = ({ budgetBoxId, spaceSlug }: IVote) => {
     if (Array.isArray(previousVotes) && budgetBoxData) {
       const maxVotesPerUser = budgetBoxData.maxVotesPerUser
       if (maxVotesPerUser) {
-        setAlreadyVoted(previousVotes.length > maxVotesPerUser)
+        setAlreadyVoted(previousVotes.length >= maxVotesPerUser)
       } else {
         setAlreadyVoted(false)
       }
@@ -195,7 +195,7 @@ const Vote = ({ budgetBoxId, spaceSlug }: IVote) => {
     isLoadingProjects ||
     isLoadingBudgetBox ||
     isValidAddress === null ||
-    alreadyVoted === null
+    (isConnected && alreadyVoted === null)
   )
     return (
       <main className="flex min-h-screen flex-col items-center justify-center">
