@@ -12,7 +12,7 @@ export const CircleGradientIcon = ({ height = 24, width = 24 }: IconProps) => (
       height="21"
       rx="10.5"
       stroke="url(#a)"
-      stroke-width="3"
+      strokeWidth="3"
       width="21"
       x="1.5"
       y="1.5"
