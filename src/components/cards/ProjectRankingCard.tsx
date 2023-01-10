@@ -8,6 +8,7 @@ interface IProjectRankingCard {
   url?: string
   owner?: string
   image?: string
+  rank: number
 }
 
 export const ProjectRankingCard = ({
@@ -16,11 +17,15 @@ export const ProjectRankingCard = ({
   title,
   url,
   owner,
-  image
+  image,
+  rank
 }: IProjectRankingCard) => {
   return (
     <Link href={url || ''} target={url ? '_blank' : '_self'}>
       <div className="flex w-full items-center justify-between rounded-lg bg-white p-6 shadow-sm transition duration-100 hover:bg-green-50">
+        <p className="w-20 text-center text-2xl font-black text-blue-900">
+          {`#${rank}`}
+        </p>
         {image ? (
           <div className="relative h-[100px] w-[120px] overflow-hidden rounded-xl shadow">
             <Image
