@@ -29,21 +29,22 @@ model Space {
 }
 
 model BudgetBox {
-  id              String    @id @default(cuid())
-  createdAt       DateTime  @default(now())
+  id              String             @id @default(cuid())
+  createdAt       DateTime           @default(now())
   startDate       DateTime
   endDate         DateTime?
   creator         String
   title           String
   image           String
   description     String
-  dampingFactor   Float     @default(0.8)
+  dampingFactor   Float              @default(0.8)
   maxVotesPerUser Int?
   maxPairsPerVote Int?
   allowlist       String[]
   Projects        Project[]
+  Strategies      SnapshotStrategy[]
   Votes           Vote[]
-  Space           Space?    @relation(fields: [spaceId], references: [id])
+  Space           Space?             @relation(fields: [spaceId], references: [id])
   spaceId         String?
 }
 
@@ -82,6 +83,15 @@ model Category {
   id       String  @id @default(cuid())
   category String  @unique
   Spaces   Space[]
+}
+
+model SnapshotStrategy {
+  id          String     @id @default(cuid())
+  name        String
+  network     String     @default("1")
+  params      Json
+  BudgetBox   BudgetBox? @relation(fields: [budgetBoxId], references: [id])
+  budgetBoxId String?
 }
 
 // Necessary for Next auth

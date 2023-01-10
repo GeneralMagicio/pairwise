@@ -1,13 +1,17 @@
-import { Switch } from '../buttons/Switch'
-import { Slider } from '../inputs/Slider'
 import { useRouter } from 'next/router'
 import * as Yup from 'yup'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { PrimaryButton, ButtonColors } from '@/components/buttons/PrimaryButton'
+import { SetupStrategyModal } from '@/components/modals/SetupStrategyModal'
+import { Switch } from '@/components/buttons/Switch'
+import { Slider } from '@/components/inputs/Slider'
+import { SelectStrategyModal } from '@/components/modals/SelectStrategyModal'
 import { RegistrationLayout } from '@/components/registration/layout/RegistrationLayout'
 import { DatePicker } from '@/components/inputs/DatePicker'
 import { TextArea } from '@/components/inputs/TextArea'
 import { TextField } from '@/components/inputs/TextField'
 import { LoadingModal } from '@/components/modals/LoadingModal'
+import { StrategyTitleCard } from '@/components/cards/StrategyTitleCard'
 import { ImageUploader } from '@/components/inputs/ImageUploader'
 import { useModal } from '@/hooks/useModal'
 import { useImageUploader } from '@/hooks/useImageUploader'
@@ -37,6 +41,15 @@ export const BudgetBoxRegistrationView = () => {
   const [noEndDate, setNoEndDate] = useState<boolean>(false)
   const [unlimitedVotes, setUnlimitedVotes] = useState<boolean>(false)
   const { selected, setSelected, handleNavigation } = useFormNavigation()
+  const [isSelectStrategyOpen, setIsSelectStrategyOpen] =
+    useState<boolean>(false)
+  const [selectedStrategyId, setSelectedStrategyId] = useState<string>('')
+  const [selectedNetworkId, setSelectedNetworkId] = useState<string>('')
+  const [selectedStrategies, setSelectedStrategies] = useState<
+    Array<{ name: string; params: string; network: string }>
+  >([])
+  /* eslint-disable  @typescript-eslint/no-explicit-any */
+  const [params, setParams] = useState<any>('')
   const {
     image: budgetBoxImage,
     setImage: setBudgetBoxImage,
@@ -52,6 +65,11 @@ export const BudgetBoxRegistrationView = () => {
   const { data: space, isSuccess: isSuccessSpace } =
     trpc.space.getOneBySlug.useQuery({ slug: spaceSlug })
 
+  const { data: strategies } = trpc.snapshot.getAllStrategies.useQuery()
+  const { data: selectedStrategy } = trpc.snapshot.getOneStrategy.useQuery({
+    id: selectedStrategyId
+  })
+
   const insertOneBudgetBoxMutation = trpc.budgetBox.insertOne.useMutation({
     onSuccess: (data) => {
       if (data) {
@@ -63,8 +81,26 @@ export const BudgetBoxRegistrationView = () => {
     }
   })
 
+  const handleSave = (params: string) => {
+    setSelectedStrategies((prevState) => [
+      ...prevState,
+      { name: selectedStrategyId, params, network: selectedNetworkId }
+    ])
+    setIsSelectStrategyOpen(false)
+  }
+
+  const handleRemove = (index: number) => {
+    setSelectedStrategies((prevState) =>
+      prevState.filter((_, i) => i !== index)
+    )
+  }
+
   const isValidInputs =
-    isSuccessSpace && address ? space?.admins.includes(address) : false
+    selected === options.length - 1
+      ? isSuccessSpace && address && selectedStrategies.length > 0
+        ? space?.admins.includes(address)
+        : false
+      : true
 
   const defaultEndDate = new Date()
   defaultEndDate.setDate(new Date().getDate() + 15)
@@ -164,10 +200,34 @@ export const BudgetBoxRegistrationView = () => {
           title="No end date"
         />
       </div>
-      <TextArea
-        name="allowlist"
-        title="Allowlist (add comma separated addresses)"
-      />
+      <div className="py-4">
+        <h3>Selected Strategies</h3>
+        <div className="flex h-48 flex-col gap-y-2 overflow-y-scroll rounded-lg border bg-gray-100 p-3">
+          {selectedStrategies.length > 0 ? (
+            selectedStrategies.map(({ name }, index) => (
+              <div key={index} className="rounded-lg bg-white">
+                <StrategyTitleCard
+                  hasCloseIcon
+                  handleClose={() => handleRemove(index)}
+                  title={name}
+                />
+              </div>
+            ))
+          ) : (
+            <h3 className="m-auto text-lg font-medium">
+              No Strategy selected.
+            </h3>
+          )}
+        </div>
+        {selectedStrategies.length < 8 ? (
+          <PrimaryButton
+            color={ButtonColors.BLUE_GRADIENT}
+            label="Add Strategy"
+            styles="mt-4 w-32 h-12"
+            onClick={() => setIsSelectStrategyOpen(true)}
+          />
+        ) : null}
+      </div>
     </>
   ]
   const CurrentForms = ({ index }: { index: number }) => formList[index] || null
@@ -212,7 +272,14 @@ export const BudgetBoxRegistrationView = () => {
           maxVotesPerUser: unlimitedVotes ? null : maxVotesPerUser,
           maxPairsPerVote: unlimitedVotes ? null : maxPairsPerVote,
           allowlist: allowlist.split(','),
-          spaceSlug
+          spaceSlug,
+          snapshotStrategies: selectedStrategies.map(
+            ({ name, network, params }) => ({
+              name,
+              network,
+              params: JSON.parse(params || '{}')
+            })
+          )
         })
         setIsModalOpen(true)
         setSubmitting(false)
@@ -222,10 +289,31 @@ export const BudgetBoxRegistrationView = () => {
       setSelected((prevSelected) => prevSelected + 1)
     }
   }
+  useEffect(() => {
+    setParams(selectedStrategy)
+    if (selectedStrategyId !== '') {
+      setIsSelectStrategyOpen(false)
+    }
+  }, [selectedStrategyId, selectedStrategy])
 
   return (
     <>
       <LoadingModal isOpen={isModalOpen} title="Creating Pairwise" />
+      <SelectStrategyModal
+        data={strategies}
+        handleClose={() => setIsSelectStrategyOpen(false)}
+        isOpen={isSelectStrategyOpen}
+        setSelectedStrategy={setSelectedStrategyId}
+      />
+      <SetupStrategyModal
+        handleSave={handleSave}
+        isOpen={selectedStrategyId !== ''}
+        params={params ? params?.examples[0]?.strategy.params : '{}'}
+        selectedNetwork={selectedNetworkId}
+        setSelectedNetwork={setSelectedNetworkId}
+        setSelectedStrategy={setSelectedStrategyId}
+        title={selectedStrategyId}
+      />
       <RegistrationLayout
         handleNavigation={handleNavigation}
         handleSubmit={handleSubmit}
