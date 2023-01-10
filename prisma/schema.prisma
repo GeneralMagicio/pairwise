@@ -40,7 +40,6 @@ model BudgetBox {
   dampingFactor   Float              @default(0.8)
   maxVotesPerUser Int?
   maxPairsPerVote Int?
-  allowlist       String[]
   Projects        Project[]
   Strategies      SnapshotStrategy[]
   Votes           Vote[]
