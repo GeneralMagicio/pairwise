@@ -83,6 +83,18 @@ const Vote = ({ budgetBoxId, spaceSlug }: IVote) => {
         refetchOnWindowFocus: false
       }
     )
+
+  const { data: scores } = trpc.snapshot.getScores.useQuery({
+    voters: [address || ''],
+    strategies: budgetBoxData
+      ? budgetBoxData.Strategies.map(({ name, network, params }) => ({
+          name,
+          network,
+          params
+        }))
+      : []
+  })
+
   const insertOneVoteMutation = trpc.vote.insertOne.useMutation()
 
   const handleRedirect = (href: string) => {
@@ -170,14 +182,13 @@ const Vote = ({ budgetBoxId, spaceSlug }: IVote) => {
 
   useEffect(() => {
     setIsConnected(!!address)
-    if (address && budgetBoxData?.allowlist) {
-      setIsValidAddress(
-        budgetBoxData.allowlist.includes(address as `0x${string}`)
-      )
+    if (address && scores) {
+      const finalScore = scores.scoresByVoter[address] || 0
+      setIsValidAddress(finalScore > 0)
     } else {
       setIsValidAddress(false)
     }
-  }, [address, budgetBoxData])
+  }, [address, budgetBoxData, scores])
 
   useEffect(() => {
     if (pairs) {

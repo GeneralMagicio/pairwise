@@ -37,7 +37,6 @@ export const budgetBoxRouter = router({
         dampingFactor,
         maxVotesPerUser,
         maxPairsPerVote,
-        allowlist,
         spaceSlug,
         snapshotStrategies
       } = input
@@ -53,7 +52,6 @@ export const budgetBoxRouter = router({
             dampingFactor,
             maxVotesPerUser,
             maxPairsPerVote,
-            allowlist,
             Strategies: {
               createMany: {
                 data: snapshotStrategies.map(({ name, network, params }) => ({
@@ -76,7 +74,11 @@ export const budgetBoxRouter = router({
       }
     }),
   getAll: publicProcedure.query(({ ctx }) => {
-    return ctx.prisma.budgetBox.findMany()
+    return ctx.prisma.budgetBox.findMany({
+      include: {
+        Strategies: true
+      }
+    })
   }),
   getOne: publicProcedure
     .input(
@@ -89,6 +91,9 @@ export const budgetBoxRouter = router({
       return ctx.prisma.budgetBox.findFirst({
         where: {
           id
+        },
+        include: {
+          Strategies: true
         }
       })
     }),
