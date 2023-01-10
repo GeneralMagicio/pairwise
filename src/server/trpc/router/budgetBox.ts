@@ -16,7 +16,14 @@ export const budgetBoxRouter = router({
         maxVotesPerUser: z.number().min(1).nullable(),
         maxPairsPerVote: z.number().min(1).nullable(),
         allowlist: z.string().array(),
-        spaceSlug: z.string().min(1)
+        spaceSlug: z.string().min(1),
+        snapshotStrategies: z
+          .object({
+            name: z.string(),
+            network: z.string(),
+            params: z.any()
+          })
+          .array()
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -31,7 +38,8 @@ export const budgetBoxRouter = router({
         maxVotesPerUser,
         maxPairsPerVote,
         allowlist,
-        spaceSlug
+        spaceSlug,
+        snapshotStrategies
       } = input
       try {
         const response = await ctx.prisma.budgetBox.create({
@@ -46,6 +54,15 @@ export const budgetBoxRouter = router({
             maxVotesPerUser,
             maxPairsPerVote,
             allowlist,
+            Strategies: {
+              createMany: {
+                data: snapshotStrategies.map(({ name, network, params }) => ({
+                  name,
+                  network,
+                  params: params || ''
+                }))
+              }
+            },
             Space: {
               connect: {
                 slug: spaceSlug

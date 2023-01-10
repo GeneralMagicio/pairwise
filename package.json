@@ -14,6 +14,7 @@
     "@next/font": "^13.0.6",
     "@prisma/client": "^4.7.1",
     "@rainbow-me/rainbowkit": "^0.8.0",
+    "@snapshot-labs/snapshot.js": "^0.4.57",
     "@tailwindcss/line-clamp": "^0.4.2",
     "@tanstack/react-query": "^4.16.0",
     "@trpc/client": "^10.0.0",
