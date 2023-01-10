@@ -94,6 +94,7 @@ export const SetupStrategyModal = ({
               </Link>
               <PrimaryButton
                 color={ButtonColors.BLUE_GRADIENT}
+                disabled={!isJSON(customParams)}
                 label="Save"
                 styles="mt-2 h-10"
                 onClick={() => {
