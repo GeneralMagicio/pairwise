@@ -16,13 +16,14 @@ export const RankingCard = ({ projects }: IRankingCard) => {
         <>
           <h2 className="mb-4 text-2xl font-bold">Current Results</h2>
           <div className="grid gap-y-3">
-            {projects.map((project) => (
+            {projects.map((project, index) => (
               <ProjectRankingCard
                 key={project.id}
                 description={project.description as string}
                 image={project.image as string}
                 owner={project.owner as string}
                 power={project.power}
+                rank={index + 1}
                 title={project.title as string}
                 url={project.url as string}
               />
