@@ -2,6 +2,7 @@ import { useRouter } from 'next/router'
 import * as Yup from 'yup'
 import { useEffect, useState } from 'react'
 import { PrimaryButton, ButtonColors } from '@/components/buttons/PrimaryButton'
+import { StrategiesListCard } from '@/components/cards/StrategiesListCard'
 import { SetupStrategyModal } from '@/components/modals/SetupStrategyModal'
 import { Switch } from '@/components/buttons/Switch'
 import { Slider } from '@/components/inputs/Slider'
@@ -11,7 +12,6 @@ import { DatePicker } from '@/components/inputs/DatePicker'
 import { TextArea } from '@/components/inputs/TextArea'
 import { TextField } from '@/components/inputs/TextField'
 import { LoadingModal } from '@/components/modals/LoadingModal'
-import { StrategyTitleCard } from '@/components/cards/StrategyTitleCard'
 import { ImageUploader } from '@/components/inputs/ImageUploader'
 import { useModal } from '@/hooks/useModal'
 import { useImageUploader } from '@/hooks/useImageUploader'
@@ -202,23 +202,12 @@ export const BudgetBoxRegistrationView = () => {
       </div>
       <div className="py-4">
         <h3>Selected Strategies</h3>
-        <div className="flex h-48 flex-col gap-y-2 overflow-y-scroll rounded-lg border bg-gray-100 p-3">
-          {selectedStrategies.length > 0 ? (
-            selectedStrategies.map(({ name }, index) => (
-              <div key={index} className="rounded-lg bg-white">
-                <StrategyTitleCard
-                  hasCloseIcon
-                  handleClose={() => handleRemove(index)}
-                  title={name}
-                />
-              </div>
-            ))
-          ) : (
-            <h3 className="m-auto text-lg font-medium">
-              No Strategy selected.
-            </h3>
-          )}
-        </div>
+        <StrategiesListCard
+          hasCloseIcon
+          className="h-48"
+          handleClose={handleRemove}
+          strategies={selectedStrategies}
+        />
         {selectedStrategies.length < 8 ? (
           <PrimaryButton
             color={ButtonColors.BLUE_GRADIENT}

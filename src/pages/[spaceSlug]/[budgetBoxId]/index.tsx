@@ -133,10 +133,16 @@ export const BudgetBoxDetailsPage = ({
                 topProjects={topProjects}
               />
               <BudgetBoxInfoVotingCard
-                allowanceMethod="Allowlist"
                 endDate={budgetBox.endDate}
                 startDate={budgetBox.startDate}
                 title="Voting information"
+                strategies={budgetBox.Strategies.map(
+                  ({ name, params, network }) => ({
+                    name,
+                    params: params as string,
+                    network
+                  })
+                )}
               />
             </aside>
           </main>
