@@ -4,7 +4,7 @@ import networks from '@snapshot-labs/snapshot.js/src/networks.json'
 import { PrimaryButton, ButtonColors } from '@/components/buttons/PrimaryButton'
 import { ModalLayout } from '@/components/modals/ModalLayout'
 import { Selector } from '@/components/inputs/Selector'
-import { encodeJson } from '@/utils/helpers/b64'
+import { snapShotPlaygroundLink } from '@/utils/helpers/snapshot'
 import { isJSON } from '@/utils/helpers/json'
 import { useSelector } from '@/hooks/useSelector'
 import type { ChangeEventHandler, Dispatch, SetStateAction } from 'react'
@@ -40,14 +40,11 @@ export const SetupStrategyModal = ({
     networkOptions[0]
   )
 
-  const playgroundLink = customParams
-    ? `https://snapshot.org/#/playground/${title}?query=${encodeJson({
-        params: isJSON(customParams) ? JSON.parse(customParams) : {},
-        network: selectedNetwork,
-        snapshot: '',
-        addresses: []
-      })}`
-    : '/'
+  const playgroundLink = snapShotPlaygroundLink(
+    title,
+    customParams,
+    selectedNetwork
+  )
 
   const handleChange: ChangeEventHandler<HTMLTextAreaElement> = (event) => {
     setCustomParams((event.target as HTMLTextAreaElement).value)
