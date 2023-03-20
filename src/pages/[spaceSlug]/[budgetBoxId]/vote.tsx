@@ -307,7 +307,8 @@ const Vote = ({ budgetBoxId, spaceSlug }: IVote) => {
                       isSignLoading ||
                       isVoteLoading ||
                       isSwitchNetworkLoading ||
-                      pagination !== pairs.length - 1
+                      (!!budgetBoxData.maxPairsPerVote &&
+                        pagination !== pairs.length - 1)
                     }
                     label={
                       isSwitchNetworkLoading ? (
