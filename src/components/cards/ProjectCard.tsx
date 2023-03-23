@@ -80,7 +80,11 @@ export const ProjectCard = ({
         )}
         <div className="mx-6 mt-6 flex items-center justify-between">
           {url ? (
-            <Link href={url} target="_blank">
+            <Link
+              href={url}
+              target="_blank"
+              onClick={(e) => e.stopPropagation()}
+            >
               <div className="w-fit font-medium">View Details</div>
             </Link>
           ) : (
